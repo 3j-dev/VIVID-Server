@@ -1,25 +1,13 @@
-package com.chicplay.mediaserver.controller;
+package com.chicplay.mediaserver.domain.video.api;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.chicplay.mediaserver.service.S3Service;
+import com.chicplay.mediaserver.domain.video.application.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
-
-import static org.hibernate.boot.archive.internal.ArchiveHelper.getBytesFromInputStream;
-
 
 
 @Slf4j

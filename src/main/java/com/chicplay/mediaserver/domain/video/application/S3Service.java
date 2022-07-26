@@ -1,4 +1,4 @@
-package com.chicplay.mediaserver.service;
+package com.chicplay.mediaserver.domain.video.application;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
