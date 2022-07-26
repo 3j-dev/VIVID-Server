@@ -3,6 +3,7 @@ package com.chicplay.mediaserver.controller;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.chicplay.mediaserver.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,8 @@ import java.nio.channels.ReadableByteChannel;
 import static org.hibernate.boot.archive.internal.ArchiveHelper.getBytesFromInputStream;
 
 
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class VideoController {
