@@ -46,7 +46,7 @@ class AccountApiTest extends IntegrationTest {
     @Test
     public void 회원가입_유효하지않은_입력값() throws Exception {
         //given
-        String USER_EMAIL = "asdasd@dasd.com";
+        String USER_EMAIL = "asdasdqwedasd.com";
         String USER_NAME = "김철수";
         String USER_PASSWORD = "qwer1234";
 
