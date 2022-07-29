@@ -7,18 +7,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AccountDto {
 
-    @Valid
+    @Email
+    @NotBlank
     private String email;
 
-    @NotNull
+    @NotBlank
     private String name;
 
+    @NotBlank
     private String password;
 
     public AccountDto(String email, String name, String password) {

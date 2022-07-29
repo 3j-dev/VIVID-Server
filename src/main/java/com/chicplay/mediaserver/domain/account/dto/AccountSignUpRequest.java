@@ -3,26 +3,27 @@ package com.chicplay.mediaserver.domain.account.dto;
 import com.chicplay.mediaserver.domain.account.domain.Account;
 import com.chicplay.mediaserver.domain.account.domain.Password;
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class AccountSignUpRequest {
 
-    @Email
+    @NotBlank
+    @Email(message = "이메일을 양식을 지켜주세요.")
     private String email;
 
-    @NotNull
-    @Valid
+    @NotBlank
     private String name;
 
-
-    @Valid
+    @NotBlank
     private String password;
 
     public AccountSignUpRequest(String email, String name, String password) {

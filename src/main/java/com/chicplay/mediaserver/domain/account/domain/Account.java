@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 public class Account {
 
     @Id
-    @GeneratedValue
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Email
     @Column(name = "email", nullable = false, unique = true)

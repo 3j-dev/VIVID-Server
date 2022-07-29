@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AccountApiTest extends IntegrationTest {
 
     @Test
-    public void 회원가입_성공() throws Exception {
+    public void signup_성공() throws Exception {
 
         //given
         String USER_EMAIL = "test@naver.com";
@@ -32,7 +32,7 @@ class AccountApiTest extends IntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(accountSignUpRequest))
                         .accept(MediaType.APPLICATION_JSON))
-                        .andDo(print());
+                .andDo(print());
 
         //then
         resultActions
@@ -44,10 +44,10 @@ class AccountApiTest extends IntegrationTest {
 
 
     @Test
-    public void 회원가입_유효하지않은_입력값() throws Exception {
+    public void signup_이메일_유효하지않은_입력값() throws Exception {
         //given
-        String USER_EMAIL = "asdasdqwedasd.com";
-        String USER_NAME = "김철수";
+        String USER_EMAIL = "asdasdwedasdcom";
+        String USER_NAME = "홍길동";
         String USER_PASSWORD = "qwer1234";
 
         AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
