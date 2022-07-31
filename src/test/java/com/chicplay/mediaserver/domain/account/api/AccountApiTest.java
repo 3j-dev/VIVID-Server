@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AccountApiTest extends IntegrationTest {
 
     @Test
-    @DisplayName("[service] signup 성공 테스트")
+    @DisplayName("[api] signup 성공 테스트")
     public void signup_성공() throws Exception {
 
         //given
@@ -57,8 +57,36 @@ class AccountApiTest extends IntegrationTest {
         //when
         ResultActions resultActions = mvc.perform(post("/api/account")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(accountSignUpRequest))
-                        .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(accountSignUpRequest)))
+                .andDo(print());
+
+        //then
+        resultActions
+                .andExpect(status().isBadRequest())
+        ;
+    }
+
+    @Test
+    @DisplayName("[api] signup 시, email 중복")
+    public void signup_이메일_중복() throws Exception {
+
+        //given
+        String USER_EMAIL = "asdasd@naver.com";
+        String USER_NAME = "홍길동";
+        String USER_PASSWORD = "qwer1234";
+
+        AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
+
+        //when
+        // 첫번째 계정 등록 api
+        mvc.perform(post("/api/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(accountSignUpRequest)));
+
+        // 두번째 계정 등록 api
+        ResultActions resultActions = mvc.perform(post("/api/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(accountSignUpRequest)))
                 .andDo(print());
 
         //then

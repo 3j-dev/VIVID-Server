@@ -56,7 +56,7 @@ class AccountServiceTest extends ServiceTest {
         assertThat(account).isNotNull();
         assertThat(account.getEmail()).isEqualTo(USER_EMAIL);
         assertThat(account.getName()).isEqualTo(USER_NAME);
-        assertThat(account.getPassword()).isNotEqualTo(USER_PASSWORD)
+        assertThat(account.getPassword()).isNotEqualTo(USER_PASSWORD);
     }
 
     @Test

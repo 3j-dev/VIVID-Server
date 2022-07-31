@@ -1,14 +1,13 @@
 package com.chicplay.mediaserver.domain.account.exception;
 
+import com.chicplay.mediaserver.global.exception.BusinessException;
 import com.chicplay.mediaserver.global.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class PasswordFailedExceededException extends RuntimeException{
-
-    private ErrorCode errorCode;
+public class PasswordFailedExceededException extends BusinessException {
 
     public PasswordFailedExceededException() {
-        this.errorCode = ErrorCode.PASSWORD_FAILED_EXCEEDED;
+        super(ErrorCode.EMAIL_DUPLICATION);
     }
 }
