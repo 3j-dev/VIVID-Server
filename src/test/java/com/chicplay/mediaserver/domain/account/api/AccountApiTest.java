@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AccountApiTest extends IntegrationTest {
 
     @Test
-    @DisplayName("signup 성공 테스트")
+    @DisplayName("[service] signup 성공 테스트")
     public void signup_성공() throws Exception {
 
         //given
@@ -44,7 +44,7 @@ class AccountApiTest extends IntegrationTest {
 
 
     @Test
-    @DisplayName("signup 시, invalid email로 인한 실패 테스")
+    @DisplayName("[api] signup 시, invalid email로 인한 실패 테스트")
     public void signup_이메일_유효하지않은_입력값() throws Exception {
 
         //given
