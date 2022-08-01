@@ -5,18 +5,21 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
+import com.chicplay.mediaserver.domain.video.exception.ImageUploadFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-
-import static org.hibernate.boot.archive.internal.ArchiveHelper.getBytesFromInputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -30,11 +33,15 @@ public class S3Service {
     @Value("${cloud.aws.region.static}")
     private String region;
     @Value("${cloud.aws.s3.test.video.bucket}")
-    private String bucket;
+    private String rawVideoBucket;
+
+    @Value("${cloud.aws.s3.image.snapshot.bucket}")
+    private String imageSnapshotBucket;
+
 
     private final AmazonS3Client amazonS3Client;
 
-    public void uploadFileToS3(String fileUrl) throws IOException {
+    public void uploadRawVideoToS3(String fileUrl) throws IOException {
 
         URL url = new URL(fileUrl);
         URLConnection conn =  url.openConnection();
@@ -47,7 +54,39 @@ public class S3Service {
         metadata.setContentLength(f.length);
 
         // s3 upload
-        amazonS3Client.putObject(new PutObjectRequest(bucket, "test.mp4", byteArrayIs, metadata).withCannedAcl(CannedAccessControlList.PublicRead));
-
+        amazonS3Client.putObject(new PutObjectRequest(rawVideoBucket, "test.mp4", byteArrayIs, metadata)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
     }
+
+    public List<String> uploadSnapshotImagesToS3(List<MultipartFile> multipartFile, String classParticipantListId){
+
+        List<String> fileUrlList = new ArrayList<>();
+
+        multipartFile.forEach(file -> {
+
+            // test용, 실제는 매핑 필요.
+            String folderName = UUID.randomUUID().toString();
+
+            // fileName은 캡처 시간대
+            String fileName = UUID.randomUUID().toString();
+
+            String objectKey = folderName + '/' + fileName;
+
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(file.getSize());
+            objectMetadata.setContentType(file.getContentType());
+
+            try(InputStream inputStream = file.getInputStream()) {
+                amazonS3Client.putObject(new PutObjectRequest(imageSnapshotBucket, objectKey , inputStream, objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+            } catch(IOException e) {
+                throw new ImageUploadFailedException();
+            }
+
+            fileUrlList.add(String.valueOf(amazonS3Client.getUrl(imageSnapshotBucket,objectKey)));
+        });
+
+        return fileUrlList;
+    }
+
 }
