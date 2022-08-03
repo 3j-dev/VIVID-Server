@@ -16,15 +16,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class AccountApiTest extends IntegrationTest {
 
+    private String USER_EMAIL = "test@naver.com";
+    private String USER_NAME = "김철수";
+    private String USER_PASSWORD = "qwer1234";
+
     @Test
     @DisplayName("[api] signup 성공 테스트")
     public void signup_성공() throws Exception {
 
         //given
-        String USER_EMAIL = "test@naver.com";
-        String USER_NAME = "김철수";
-        String USER_PASSWORD = "qwer1234";
-
         AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
 
         //when
@@ -48,10 +48,7 @@ class AccountApiTest extends IntegrationTest {
     public void signup_이메일_유효하지않은_입력값() throws Exception {
 
         //given
-        String USER_EMAIL = "asdasdwedasdcom";
-        String USER_NAME = "홍길동";
-        String USER_PASSWORD = "qwer1234";
-
+        String USER_EMAIL = "testnaver.com";
         AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
 
         //when
@@ -71,10 +68,6 @@ class AccountApiTest extends IntegrationTest {
     public void signup_이메일_중복() throws Exception {
 
         //given
-        String USER_EMAIL = "asdasd@naver.com";
-        String USER_NAME = "홍길동";
-        String USER_PASSWORD = "qwer1234";
-
         AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
 
         //when

@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.account.domain;
 
+import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @Table(name = "account")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Account {
+public class Account extends BaseTime {
 
     @Id
     @Column(name = "account_id")
@@ -32,14 +33,6 @@ public class Account {
 
     @Column(name="name", nullable = false)
     private String name;
-
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "update_at")
-    private LocalDateTime updatedAt;
 
     @Builder
     public Account(long id, String email, Password password, String name) {

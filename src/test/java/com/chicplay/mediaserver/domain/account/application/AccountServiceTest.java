@@ -37,15 +37,15 @@ class AccountServiceTest extends ServiceTest {
     @Mock
     private AccountRepository accountRepository;
 
+    private String USER_EMAIL = "test@naver.com";
+    private String USER_NAME = "김철수";
+    private String USER_PASSWORD = "qwer1234";
+
     @Test
     @DisplayName("[service] signup 성공 테스트")
     public void signup_성공() throws Exception {
 
         //given
-        String USER_EMAIL = "test@naver.com";
-        String USER_NAME = "김철수";
-        String USER_PASSWORD = "qwer1234";
-
         AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
 
         given(accountRepository.save(any())).willReturn(accountSignUpRequest.toEntity());
@@ -65,19 +65,13 @@ class AccountServiceTest extends ServiceTest {
     public void signUp_이메일_중복() {
 
         //given
-        String USER_EMAIL = "qweqwe@naver.com";
-        String USER_NAME = "홍길동";
-        String USER_PASSWORD = "qwer1234";
-
         AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
-
         given(accountRepository.existsByEmail(any())).willReturn(true);
 
         //when
         EmailDuplicateException exception = Assertions.assertThrows(EmailDuplicateException.class, () ->{
             accountService.signUp(accountSignUpRequest);
         });
-
 
         //then
         assertEquals(ErrorCode.EMAIL_DUPLICATION,exception.getErrorCode());
