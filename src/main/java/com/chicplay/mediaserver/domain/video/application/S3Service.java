@@ -5,9 +5,11 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
+import com.chicplay.mediaserver.domain.video.dto.UploadSnapshotImageResponse;
 import com.chicplay.mediaserver.domain.video.exception.ImageUploadFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +35,7 @@ public class S3Service {
     private String secretKey;
     @Value("${cloud.aws.region.static}")
     private String region;
+
     @Value("${cloud.aws.s3.test.video.bucket}")
     private String rawVideoBucket;
 
@@ -58,9 +62,9 @@ public class S3Service {
                 .withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
-    public List<String> uploadSnapshotImagesToS3(List<MultipartFile> multipartFile, String classParticipantListId){
+    public List<UploadSnapshotImageResponse> uploadSnapshotImagesToS3(List<MultipartFile> multipartFile, String classParticipantListId){
 
-        List<String> fileUrlList = new ArrayList<>();
+        List<UploadSnapshotImageResponse> fileUrlList = new ArrayList<>();
 
         multipartFile.forEach(file -> {
 
@@ -69,6 +73,7 @@ public class S3Service {
 
             // fileName은 캡처 시간대
             String fileName = UUID.randomUUID().toString();
+            //String fileName = file.getName();
 
             String objectKey = folderName + '/' + fileName;
 
@@ -83,7 +88,10 @@ public class S3Service {
                 throw new ImageUploadFailedException();
             }
 
-            fileUrlList.add(String.valueOf(amazonS3Client.getUrl(imageSnapshotBucket,objectKey)));
+            fileUrlList.add(UploadSnapshotImageResponse.builder()
+                    .filePath(String.valueOf(amazonS3Client.getUrl(imageSnapshotBucket,objectKey)))
+                    .time(LocalTime.of(00,1,22,00)).build());
+
         });
 
         return fileUrlList;

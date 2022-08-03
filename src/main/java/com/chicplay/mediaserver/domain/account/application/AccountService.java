@@ -2,7 +2,6 @@ package com.chicplay.mediaserver.domain.account.application;
 
 import com.chicplay.mediaserver.domain.account.dao.AccountRepository;
 import com.chicplay.mediaserver.domain.account.domain.Account;
-import com.chicplay.mediaserver.domain.account.dto.AccountDto;
 import com.chicplay.mediaserver.domain.account.dto.AccountSignUpRequest;
 import com.chicplay.mediaserver.domain.account.exception.EmailDuplicateException;
 import lombok.RequiredArgsConstructor;

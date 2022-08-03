@@ -7,6 +7,7 @@ import com.chicplay.mediaserver.domain.account.dto.AccountSignUpResponse;
 import com.chicplay.mediaserver.domain.account.exception.EmailDuplicateException;
 import com.chicplay.mediaserver.global.exception.ErrorCode;
 import com.chicplay.mediaserver.test.ServiceTest;
+import org.joda.time.LocalTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -81,6 +82,4 @@ class AccountServiceTest extends ServiceTest {
         //then
         assertEquals(ErrorCode.EMAIL_DUPLICATION,exception.getErrorCode());
     }
-
-
 }
