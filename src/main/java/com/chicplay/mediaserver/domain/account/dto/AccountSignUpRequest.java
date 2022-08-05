@@ -10,7 +10,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@Builder
 @NoArgsConstructor
 public class AccountSignUpRequest {
 
@@ -24,6 +23,8 @@ public class AccountSignUpRequest {
     @NotBlank
     private String password;
 
+
+    @Builder
     public AccountSignUpRequest(String email, String name, String password) {
         this.email = email;
         this.name = name;

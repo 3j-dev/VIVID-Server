@@ -11,7 +11,6 @@ import java.time.LocalTime;
 
 @Builder
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class UploadSnapshotImageResponse {
 

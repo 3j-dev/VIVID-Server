@@ -1,10 +1,7 @@
 package com.chicplay.mediaserver.domain.account.domain;
 
 import com.chicplay.mediaserver.global.common.BaseTime;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -31,12 +28,15 @@ public class Account extends BaseTime {
     @Embedded
     private Password password;
 
+    @Embedded
+    private Institution institution;
+
     @Column(name="name", nullable = false)
     private String name;
 
+
     @Builder
-    public Account(long id, String email, Password password, String name) {
-        this.id = id;
+    public Account(String email, Password password, String name) {
         this.email = email;
         this.password = password;
         this.name = name;
