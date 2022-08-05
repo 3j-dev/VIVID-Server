@@ -2,6 +2,7 @@ package com.chicplay.mediaserver.domain.account.domain;
 
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,9 +17,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account extends BaseTime {
 
-    @Id
-    @Column(name = "account_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name="uuid2", strategy = "uuid2")
+    @Column(name = "account_id", columnDefinition = "BINARY(16)")
     private Long id;
 
     @Email

@@ -1,21 +1,24 @@
 package com.chicplay.mediaserver.domain.video.domain;
 
 import com.chicplay.mediaserver.global.common.BaseTime;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "ocr_text")
+@Table(name = "stt_text")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OcrText extends BaseTime {
+public class SttText extends BaseTime {
 
     @Id @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")
-    @Column(name = "ocr_text_id", columnDefinition = "BINARY(16)")
+    @Column(name = "stt_text_id   ", columnDefinition = "1BINARY(16)")
     private Long id;
 
     @ManyToOne
@@ -32,7 +35,7 @@ public class OcrText extends BaseTime {
     private LocalTime duration;
 
     @Builder
-    public OcrText(Video video, String text, LocalTime startTime, LocalTime duration) {
+    public SttText(Video video, String text, LocalTime startTime, LocalTime duration) {
         this.video = video;
         this.text = text;
         this.startTime = startTime;

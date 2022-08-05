@@ -2,6 +2,7 @@ package com.chicplay.mediaserver.domain.video.domain;
 
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,13 +11,13 @@ import java.util.List;
 @Entity
 @Table(name = "video")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Video extends BaseTime{
 
-    @Id
-    @Column(name = "video_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name="uuid2", strategy = "uuid2")
+    @Column(name = "video_id", columnDefinition = "BINARY(16)")
     private Long id;
 
     @Column(name="file_path", nullable = false)

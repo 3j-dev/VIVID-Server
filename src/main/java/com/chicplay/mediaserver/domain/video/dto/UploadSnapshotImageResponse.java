@@ -12,6 +12,7 @@ import java.time.LocalTime;
 @Builder
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class UploadSnapshotImageResponse {
 
     @Schema(description = "이미지 파일 경로" , example = "test01.aws.com")
