@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "stt_text")
@@ -18,8 +19,8 @@ public class SttText extends BaseTime {
 
     @Id @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")
-    @Column(name = "stt_text_id   ", columnDefinition = "1BINARY(16)")
-    private Long id;
+    @Column(name = "stt_text_id", columnDefinition = "BINARY(16)")
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "video_id")

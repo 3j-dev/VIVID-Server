@@ -39,7 +39,7 @@ class AccountRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    @DisplayName("[repository] save 성공 테스트")
+    @DisplayName("[account repository] save 성공 테스트")
     public void save_성공() {
 
         // when
@@ -54,7 +54,7 @@ class AccountRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    @DisplayName("[repository] findByEmail 성공 테스트")
+    @DisplayName("[account repository] findByEmail 성공 테스트")
     public void findByEmail_성공() {
 
         // given
@@ -69,7 +69,7 @@ class AccountRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    @DisplayName("[repository] existsByEmail_존재하는경우_true")
+    @DisplayName("[account repository] existsByEmail_존재하는경우_true")
     public void existsByEmail_존재하는경우_true() {
 
         // given
@@ -83,7 +83,7 @@ class AccountRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    @DisplayName("[repository] existsByEmail_존재하는경우_false")
+    @DisplayName("[account repository] existsByEmail_존재하는경우_false")
     public void existsByEmail_존재하지않은_경우_false() {
 
         // given

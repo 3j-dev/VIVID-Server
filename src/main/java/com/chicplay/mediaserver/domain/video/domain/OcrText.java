@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "ocr_text")
@@ -16,7 +17,7 @@ public class OcrText extends BaseTime {
     @Id @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")
     @Column(name = "ocr_text_id", columnDefinition = "BINARY(16)")
-    private Long id;
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "video_id")
