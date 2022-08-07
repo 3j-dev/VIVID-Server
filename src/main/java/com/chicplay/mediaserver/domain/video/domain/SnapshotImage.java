@@ -1,5 +1,7 @@
 package com.chicplay.mediaserver.domain.video.domain;
 
+import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
+import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -14,15 +16,16 @@ import java.util.UUID;
 @Table(name = "snapshot_image")
 @Getter
 @NoArgsConstructor
-public class SnapshotImage {
+public class SnapshotImage extends BaseTime {
 
     @Id @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")
-    @Column(name = "snpashot_image_id", columnDefinition = "BINARY(16)")
+    @Column(name = "snapshot_image_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @Column(name = "individual_class_id", nullable = false, unique = true)
-    private Long individualClassId;
+    @ManyToOne
+    @JoinColumn(name = "video_id")
+    private Video video;
 
     @Column(name = "time")
     private LocalTime time;

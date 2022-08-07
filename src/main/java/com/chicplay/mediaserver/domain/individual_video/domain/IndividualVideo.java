@@ -2,6 +2,7 @@ package com.chicplay.mediaserver.domain.individual_video.domain;
 
 import com.chicplay.mediaserver.domain.account.domain.Account;
 import com.chicplay.mediaserver.domain.video.domain.Video;
+import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @Table(name = "individual_video")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class IndividualVideo {
+public class IndividualVideo extends BaseTime {
 
     @Id @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")
