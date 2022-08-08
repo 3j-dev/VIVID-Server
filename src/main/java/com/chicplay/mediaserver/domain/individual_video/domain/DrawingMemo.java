@@ -8,38 +8,39 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "text_memo")
+@Table(name = "drawing_memo")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TextMemo extends BaseTime {
+public class DrawingMemo extends BaseTime {
 
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")
-    @Column(name = "text_memo_id", columnDefinition = "BINARY(16)")
+    @Column(name = "drawing_memo_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "individual_video_id")
     private IndividualVideo individualVideo;
 
-    @Email
-    @Column(name = "text")
-    private String text;
+    @Column(name = "start_time")
+    private LocalTime startTime;
 
-    @Column(name = "video_time")
-    private LocalTime videoTime;
+    @Column(name = "duration")
+    private Integer duration;
+
+    @Column(name = "file_path")
+    private String filePath;
 
     @Builder
-    public TextMemo(IndividualVideo individualVideo, String text, LocalTime videoTime) {
+    public DrawingMemo(IndividualVideo individualVideo, LocalTime startTime, Integer duration, String filePath) {
         this.individualVideo = individualVideo;
-        this.text = text;
-        this.videoTime = videoTime;
+        this.startTime = startTime;
+        this.duration = duration;
+        this.filePath = filePath;
     }
 }

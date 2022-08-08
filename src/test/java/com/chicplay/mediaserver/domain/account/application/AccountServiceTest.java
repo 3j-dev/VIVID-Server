@@ -2,6 +2,7 @@ package com.chicplay.mediaserver.domain.account.application;
 
 import com.chicplay.mediaserver.domain.account.dao.AccountRepository;
 import com.chicplay.mediaserver.domain.account.domain.Account;
+import com.chicplay.mediaserver.domain.account.domain.AccountBuilder;
 import com.chicplay.mediaserver.domain.account.dto.AccountSignUpRequest;
 import com.chicplay.mediaserver.domain.account.dto.AccountSignUpResponse;
 import com.chicplay.mediaserver.domain.account.exception.EmailDuplicateException;
@@ -29,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-class AccountServiceTest extends ServiceTest {
+public class AccountServiceTest extends ServiceTest {
 
     @InjectMocks
     private AccountService accountService;
@@ -37,16 +38,12 @@ class AccountServiceTest extends ServiceTest {
     @Mock
     private AccountRepository accountRepository;
 
-    private String USER_EMAIL = "test@naver.com";
-    private String USER_NAME = "김철수";
-    private String USER_PASSWORD = "qwer1234";
-
     @Test
-    @DisplayName("[service] signup 성공 테스트")
+    @DisplayName("[AccountService] signup 성공 테스트")
     public void signup_성공() throws Exception {
 
         //given
-        AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
+        AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME, AccountBuilder.USER_PASSWORD);
 
         given(accountRepository.save(any())).willReturn(accountSignUpRequest.toEntity());
 
@@ -55,17 +52,17 @@ class AccountServiceTest extends ServiceTest {
 
         //then
         assertThat(account).isNotNull();
-        assertThat(account.getEmail()).isEqualTo(USER_EMAIL);
-        assertThat(account.getName()).isEqualTo(USER_NAME);
-        assertThat(account.getPassword()).isNotEqualTo(USER_PASSWORD);
+        assertThat(account.getEmail()).isEqualTo(AccountBuilder.USER_EMAIL);
+        assertThat(account.getName()).isEqualTo(AccountBuilder.USER_NAME);
+        assertThat(account.getPassword()).isNotEqualTo(AccountBuilder.USER_PASSWORD);
     }
 
     @Test
-    @DisplayName("[service] signup 이메일 중복")
+    @DisplayName("[AccountService] signup 이메일 중복")
     public void signUp_이메일_중복() {
 
         //given
-        AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
+        AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME, AccountBuilder.USER_PASSWORD);
         given(accountRepository.existsByEmail(any())).willReturn(true);
 
         //when

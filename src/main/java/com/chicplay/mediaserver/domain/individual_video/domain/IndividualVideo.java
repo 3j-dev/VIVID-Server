@@ -33,10 +33,11 @@ public class IndividualVideo extends BaseTime {
 
     @Builder
     public IndividualVideo(Video video, Account account) {
-        this.video = video;
-        this.account = account;
+        changeVideo(video);
+        changeAccount(account);
     }
 
+    // 연관 관계 편의 메소드
     public void changeVideo(Video video){
 
         // 기존의 비디오 관계가 있다면,
@@ -48,6 +49,8 @@ public class IndividualVideo extends BaseTime {
         this.video.getIndividualVideos().add(this);
     }
 
+
+    // 연관 관계 편의 메소드
     public void changeAccount(Account account){
 
         // 기존의 비디오 관계가 있다면,

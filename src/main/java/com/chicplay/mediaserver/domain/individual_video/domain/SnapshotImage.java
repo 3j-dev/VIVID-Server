@@ -1,7 +1,9 @@
-package com.chicplay.mediaserver.domain.video.domain;
+package com.chicplay.mediaserver.domain.individual_video.domain;
 
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
+import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.global.common.BaseTime;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -9,6 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -24,17 +27,19 @@ public class SnapshotImage extends BaseTime {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "video_id")
-    private Video video;
-
-    @Column(name = "time")
-    private LocalTime time;
+    @JoinColumn(name = "individual_video_id")
+    private IndividualVideo individualVideo;
 
     @Column(name = "file_path")
     private String filePath;
 
+    @Column(name = "video_time")
+    private LocalTime videoTime;
 
-
-
-
+    @Builder
+    public SnapshotImage(IndividualVideo individualVideo, String filePath, LocalTime videoTime) {
+        this.individualVideo = individualVideo;
+        this.filePath = filePath;
+        this.videoTime = videoTime;
+    }
 }

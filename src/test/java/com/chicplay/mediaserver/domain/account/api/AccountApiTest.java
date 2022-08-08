@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.account.api;
 
+import com.chicplay.mediaserver.domain.account.domain.AccountBuilder;
 import com.chicplay.mediaserver.domain.account.dto.AccountSignUpRequest;
 import com.chicplay.mediaserver.test.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -14,18 +15,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AccountApiTest extends IntegrationTest {
-
-    private String USER_EMAIL = "test@naver.com";
-    private String USER_NAME = "김철수";
-    private String USER_PASSWORD = "qwer1234";
+public class AccountApiTest extends IntegrationTest {
 
     @Test
-    @DisplayName("[api] signup 성공 테스트")
+    @DisplayName("[AccountApi] signup 성공 테스트")
     public void signup_성공() throws Exception {
 
         //given
-        AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
+        AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME, AccountBuilder.USER_PASSWORD);
 
         //when
         ResultActions resultActions = mvc.perform(post("/api/account")
@@ -36,20 +33,20 @@ class AccountApiTest extends IntegrationTest {
         //then
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("email").value(USER_EMAIL))
-                .andExpect(jsonPath("name").value(USER_NAME))
+                .andExpect(jsonPath("email").value(AccountBuilder.USER_EMAIL))
+                .andExpect(jsonPath("name").value(AccountBuilder.USER_NAME))
                 .andExpect(jsonPath("password").value(notNullValue()))
         ;
     }
 
 
     @Test
-    @DisplayName("[api] signup 시, invalid email로 인한 실패 테스트")
+    @DisplayName("[AccountApi] signup 시, invalid email로 인한 실패 테스트")
     public void signup_이메일_유효하지않은_입력값() throws Exception {
 
         //given
-        String USER_EMAIL = "testnaver.com";
-        AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
+        String USER_INVALID_EMAIL = "testnaver.com";
+        AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_INVALID_EMAIL, AccountBuilder.USER_NAME, AccountBuilder.USER_PASSWORD);
 
         //when
         ResultActions resultActions = mvc.perform(post("/api/account")
@@ -64,11 +61,11 @@ class AccountApiTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("[api] signup 시, email 중복")
+    @DisplayName("[AccountApi] signup 시, email 중복")
     public void signup_이메일_중복() throws Exception {
 
         //given
-        AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(USER_EMAIL, USER_NAME, USER_PASSWORD);
+        AccountSignUpRequest accountSignUpRequest = new AccountSignUpRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME, AccountBuilder.USER_PASSWORD);
 
         //when
         // 첫번째 계정 등록 api

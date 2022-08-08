@@ -1,6 +1,7 @@
 package com.chicplay.mediaserver.domain.account.dao;
 
 import com.chicplay.mediaserver.domain.account.domain.Account;
+import com.chicplay.mediaserver.domain.account.domain.AccountBuilder;
 import com.chicplay.mediaserver.domain.account.domain.Password;
 import com.chicplay.mediaserver.test.RepositoryTest;
 
@@ -16,7 +17,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class AccountRepositoryTest extends RepositoryTest {
+public class AccountRepositoryTest extends RepositoryTest {
 
     @Autowired
     private AccountRepository accountRepository;
@@ -27,19 +28,11 @@ class AccountRepositoryTest extends RepositoryTest {
     public void setUp() {
 
         //given
-        String USER_EMAIL = "test@naver.com";
-        String USER_NAME = "김철수";
-        String USER_PASSWORD = "qwer1234";
-
-        account = Account.builder()
-                .email(USER_EMAIL).name(USER_NAME)
-                .password(Password.builder().password(USER_PASSWORD).build())
-                .build();
-
+        account = AccountBuilder.build();
     }
 
     @Test
-    @DisplayName("[account repository] save 성공 테스트")
+    @DisplayName("[AccountRepository] save 성공 테스트")
     public void save_성공() {
 
         // when
@@ -54,7 +47,7 @@ class AccountRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    @DisplayName("[account repository] findByEmail 성공 테스트")
+    @DisplayName("[AccountRepository] findByEmail 성공 테스트")
     public void findByEmail_성공() {
 
         // given
@@ -69,7 +62,7 @@ class AccountRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    @DisplayName("[account repository] existsByEmail_존재하는경우_true")
+    @DisplayName("[AccountRepository] existsByEmail_존재하는경우_true")
     public void existsByEmail_존재하는경우_true() {
 
         // given
@@ -83,7 +76,7 @@ class AccountRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    @DisplayName("[account repository] existsByEmail_존재하는경우_false")
+    @DisplayName("[AccountRepository] existsByEmail_존재하는경우_false")
     public void existsByEmail_존재하지않은_경우_false() {
 
         // given
