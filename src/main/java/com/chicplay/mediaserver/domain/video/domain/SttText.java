@@ -33,10 +33,10 @@ public class SttText extends BaseTime {
     private LocalTime startTime;
 
     @Column(name = "duration")
-    private LocalTime duration;
+    private Integer duration;
 
     @Builder
-    public SttText(Video video, String text, LocalTime startTime, LocalTime duration) {
+    public SttText(Video video, String text, LocalTime startTime, Integer duration) {
         this.video = video;
         this.text = text;
         this.startTime = startTime;

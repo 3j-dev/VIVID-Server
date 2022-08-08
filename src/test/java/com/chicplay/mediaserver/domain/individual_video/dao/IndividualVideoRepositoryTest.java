@@ -11,6 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,7 +31,7 @@ class IndividualVideoRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    @DisplayName("[IndividualVideoRepositoryTest] save 성공 테스트")
+    @DisplayName("[IndividualVideoRepository] save 성공 테스트")
     public void save_성공(){
 
         //when
@@ -39,7 +41,8 @@ class IndividualVideoRepositoryTest extends RepositoryTest {
         assertThat(savedIndividualVideo.getId()).isNotNull();
         assertThat(savedIndividualVideo.getVideo().getId()).isEqualTo(individualVideo.getVideo().getId());
         assertThat(savedIndividualVideo.getAccount().getId()).isEqualTo(individualVideo.getAccount().getId());
-
+        assertThat(savedIndividualVideo.getCreatedDate()).isBeforeOrEqualTo(LocalDateTime.now());
+        assertThat(savedIndividualVideo.getUpdatedDate()).isBeforeOrEqualTo(LocalDateTime.now());
     }
 
 }

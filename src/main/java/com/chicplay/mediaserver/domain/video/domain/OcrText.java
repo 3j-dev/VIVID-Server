@@ -30,10 +30,10 @@ public class OcrText extends BaseTime {
     private LocalTime startTime;
 
     @Column(name = "duration")
-    private LocalTime duration;
+    private Integer duration;
 
     @Builder
-    public OcrText(Video video, String text, LocalTime startTime, LocalTime duration) {
+    public OcrText(Video video, String text, LocalTime startTime, Integer duration) {
         this.video = video;
         this.text = text;
         this.startTime = startTime;

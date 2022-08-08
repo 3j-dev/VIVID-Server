@@ -35,7 +35,6 @@ public class AccountApiTest extends IntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("email").value(AccountBuilder.USER_EMAIL))
                 .andExpect(jsonPath("name").value(AccountBuilder.USER_NAME))
-                .andExpect(jsonPath("password").value(notNullValue()))
         ;
     }
 
