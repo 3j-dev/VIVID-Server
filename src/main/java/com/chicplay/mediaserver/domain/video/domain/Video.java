@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.video.domain;
 
+import com.chicplay.mediaserver.domain.account.domain.Account;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.*;
@@ -24,6 +25,10 @@ public class Video extends BaseTime{
 
     @OneToMany(mappedBy = "video",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IndividualVideo> individualVideos = new ArrayList<>();
+
+//    @ManyToOne
+//    @JoinColumn(name = "course_id")
+//    private Course course;
 
     @Column(name="file_path", nullable = false)
     private String filePath;
