@@ -1,6 +1,8 @@
-package com.chicplay.mediaserver.domain.video.domain;
+package com.chicplay.mediaserver.domain.course.domain;
 
 import com.chicplay.mediaserver.domain.account.domain.Account;
+import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
+import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,9 +26,8 @@ public class Course extends BaseTime {
     @Column(name = "course_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
+    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Video> videos = new ArrayList<>();
 
     @Column(name="name")
     private String name;

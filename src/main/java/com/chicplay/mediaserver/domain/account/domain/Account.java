@@ -1,6 +1,8 @@
 package com.chicplay.mediaserver.domain.account.domain;
 
+import com.chicplay.mediaserver.domain.course.domain.CourseAccount;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
+import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -28,6 +30,9 @@ public class Account extends BaseTime {
 
     @OneToMany(mappedBy = "account",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IndividualVideo> individualVideos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course_account",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourseAccount> courseAccounts = new ArrayList<>();
 
     @Email
     @Column(name = "email", nullable = false, unique = true)
