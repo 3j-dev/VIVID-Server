@@ -31,7 +31,7 @@ public class Account extends BaseTime {
     @OneToMany(mappedBy = "account",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IndividualVideo> individualVideos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "course_account",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseAccount> courseAccounts = new ArrayList<>();
 
     @Email
