@@ -21,3 +21,5 @@ jobs:
           aws_region: ap-northeast-2
           function_name: test01
           source: ./lambda/test01.py
+
+          arn:aws:lambda:ap-northeast-2:027681067461:function:test01
