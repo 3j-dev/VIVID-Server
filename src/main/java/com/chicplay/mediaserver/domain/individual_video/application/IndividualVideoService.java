@@ -1,4 +1,4 @@
-package com.chicplay.mediaserver.domain.individual_video.service;
+package com.chicplay.mediaserver.domain.individual_video.application;
 
 import com.chicplay.mediaserver.domain.account.domain.Account;
 import com.chicplay.mediaserver.domain.account.dto.AccountSignUpRequest;

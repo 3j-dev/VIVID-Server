@@ -1,6 +1,7 @@
 package com.chicplay.mediaserver.domain.individual_video.dao;
 
 import com.chicplay.mediaserver.domain.individual_video.domain.*;
+import com.chicplay.mediaserver.test.IntegrationTest;
 import com.chicplay.mediaserver.test.RepositoryTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,16 +13,13 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TextMemoStateRedisRepositoryTest extends RepositoryTest {
+class TextMemoStateRedisRepositoryTest extends IntegrationTest {
 
     @Autowired
     private TextMemoStateRedisRepository textMemoStateRedisRepository;
 
     @Autowired
     private IndividualVideoRepository individualVideoRepository;
-
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
 
     private IndividualVideo individualVideo;
 

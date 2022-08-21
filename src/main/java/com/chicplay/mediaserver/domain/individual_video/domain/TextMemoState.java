@@ -21,8 +21,7 @@ import java.util.UUID;
 public class TextMemoState {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Column(name = "individual_video_id")
     protected UUID individualVideoId;

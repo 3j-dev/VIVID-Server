@@ -1,9 +1,7 @@
 package com.chicplay.mediaserver.domain.individual_video.api;
 
-import com.chicplay.mediaserver.domain.account.dto.AccountSignUpRequest;
-import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateSaveRequest;
-import com.chicplay.mediaserver.domain.individual_video.service.IndividualVideoService;
+import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

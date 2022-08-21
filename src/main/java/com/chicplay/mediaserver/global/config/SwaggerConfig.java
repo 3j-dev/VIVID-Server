@@ -18,6 +18,7 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI springShopOpenAPI() {
-        return new OpenAPI().info(new Info().title("ChicPlay API").description("Chicplay API 명세서").version("v0.0.1"));
+        return new OpenAPI().info(new Info().title("VIVID API").description("VIVID API 명세서").version("v0.0.1"));
+
     }
 }

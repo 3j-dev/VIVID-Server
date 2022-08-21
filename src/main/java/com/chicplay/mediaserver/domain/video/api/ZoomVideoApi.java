@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +24,33 @@ public class ZoomVideoApi {
     @Operation(summary = "zoom video 업로드 메소드", description = "zoom video를 s3에 업로드하는 메소드 입니다..")
     @ApiResponse(responseCode = "200", description = "zoom video 업로드 완료 후, 상태 코드 200을 반환합니다.")
     public void uploadVideosFromZoom() throws IOException {
+
+        // s3로 업로드
+        s3Service.uploadRawVideoToS3(FILE_URL);
+    }
+
+    @GetMapping("/api/zoom/videos")
+    @Operation(summary = "zoom video 목록 조회 메소드", description = "zoom video를 s3에 업로드하는 메소드 입니다..")
+    @ApiResponse(responseCode = "200", description = "zoom video 업로드 완료 후, 상태 코드 200을 반환합니다.")
+    public void getVideosFromZoom() throws IOException {
+
+        // s3로 업로드
+        s3Service.uploadRawVideoToS3(FILE_URL);
+    }
+
+    @GetMapping("/api/zoom/video")
+    @Operation(summary = "zoom video 단일 조회", description = "zoom video를 s3에 업로드하는 메소드 입니다..")
+    @ApiResponse(responseCode = "200", description = "zoom video 업로드 완료 후, 상태 코드 200을 반환합니다.")
+    public void getVideoFromZoom() throws IOException {
+
+        // s3로 업로드
+        s3Service.uploadRawVideoToS3(FILE_URL);
+    }
+
+    @GetMapping("/api/zoom/account")
+    @Operation(summary = "zoom account login 메소드", description = "zoom video를 s3에 업로드하는 메소드 입니다..")
+    @ApiResponse(responseCode = "200", description = "zoom video 업로드 완료 후, 상태 코드 200을 반환합니다.")
+    public void loginFromZoom() throws IOException {
 
         // s3로 업로드
         s3Service.uploadRawVideoToS3(FILE_URL);
