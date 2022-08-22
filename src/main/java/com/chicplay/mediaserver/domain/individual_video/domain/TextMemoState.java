@@ -37,7 +37,8 @@ public class TextMemoState {
     private LocalDateTime createdDate;
 
     @Builder
-    public TextMemoState(UUID individualVideoId, String stateJson, LocalTime videoTime) {
+    public TextMemoState(String id, UUID individualVideoId, String stateJson, LocalTime videoTime) {
+        this.id = id;
         this.individualVideoId = individualVideoId;
         this.stateJson = stateJson;
         this.videoTime = videoTime;

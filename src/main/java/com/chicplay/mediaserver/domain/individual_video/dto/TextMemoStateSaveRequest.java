@@ -23,6 +23,7 @@ public class TextMemoStateSaveRequest {
     @NotBlank
     private String videoTime;
 
+
     @Builder
     public TextMemoStateSaveRequest(String individualVideoId, String stateJson, String videoTime) {
         this.individualVideoId = individualVideoId;
@@ -35,8 +36,8 @@ public class TextMemoStateSaveRequest {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
         return TextMemoState.builder()
+                .id(String.valueOf(UUID.randomUUID()))
                 .individualVideoId(UUID.randomUUID())
-                //.individualVideoId(UUID.fromString(individualVideoId))
                 .stateJson(stateJson)
                 .videoTime(LocalTime.parse(videoTime,formatter)).build();
     }
