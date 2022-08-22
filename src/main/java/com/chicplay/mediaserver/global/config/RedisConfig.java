@@ -76,7 +76,7 @@ public class RedisConfig {
                                 .fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair
-                                .fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper()))
+                                .fromSerializer(new StringRedisSerializer())
                 )
                 .entryTtl(Duration.ofMillis(10L));
 

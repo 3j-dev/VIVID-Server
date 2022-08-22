@@ -35,12 +35,14 @@ public class IndividualVideoService {
     private final ObjectMapper objectMapper;
 
 
+    // textMemoState 객체 하나 저장 메소드
     @Transactional
     public TextMemoState saveTextMemoState (final TextMemoStateSaveRequest dto){
 
         return textMemoStateRedisRepository.save(dto.toEntity());
     }
 
+    // textMemoState 객체 리스트 저장 메소드
     public void saveTextMemoStates (List<TextMemoStateSaveRequest> textMemoStates){
 
         RedisSerializer keySerializer = redisTemplate.getStringSerializer();
