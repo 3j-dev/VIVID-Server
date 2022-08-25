@@ -2,21 +2,19 @@ package com.chicplay.mediaserver.domain.individual_video.dao;
 
 import com.chicplay.mediaserver.domain.individual_video.domain.*;
 import com.chicplay.mediaserver.test.IntegrationTest;
-import com.chicplay.mediaserver.test.RepositoryTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TextMemoStateRedisRepositoryTest extends IntegrationTest {
+class TextMemoStateRepositoryTest extends IntegrationTest {
 
     @Autowired
-    private TextMemoStateRedisRepository textMemoStateRedisRepository;
+    private TextMemoStateRepository textMemoStateRepository;
 
     @Autowired
     private IndividualVideoRepository individualVideoRepository;
@@ -38,7 +36,7 @@ class TextMemoStateRedisRepositoryTest extends IntegrationTest {
     public void save_성공(){
 
         //when
-        TextMemoState savedTextMemoSate = textMemoStateRedisRepository.save(textMemoState);
+        TextMemoState savedTextMemoSate = textMemoStateRepository.save(textMemoState);
 
         //then
         assertThat(savedTextMemoSate.getId()).isNotNull();
