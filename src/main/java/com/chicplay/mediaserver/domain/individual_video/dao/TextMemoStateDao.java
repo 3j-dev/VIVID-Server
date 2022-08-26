@@ -37,7 +37,6 @@ public class TextMemoStateDao {
     }
 
 
-
     // textMemoState를 save 합니다.
     // 이때, textMemoState를 latest 버전을 업데이트하고,
     // history 버전을 add한다.
@@ -55,7 +54,7 @@ public class TextMemoStateDao {
             for(String key : map.keySet()) {
 
                 // state latest version add
-                connection.hashCommands().hSet(keySerializer.serialize(defaultStateKey + "_latest:"),
+                connection.hashCommands().hSet(keySerializer.serialize(defaultStateKey + "_latest"),
                         valueSerializer.serialize(key),valueSerializer.serialize(map.get(key)));
 
                 // state history version add

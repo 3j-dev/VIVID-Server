@@ -37,7 +37,7 @@ public class TextMemoStateSaveRequest {
 
         return TextMemoState.builder()
                 .id(String.valueOf(UUID.randomUUID()))
-                .individualVideoId(UUID.randomUUID())
+                .individualVideoId(UUID.fromString(individualVideoId))
                 .stateJson(stateJson)
                 .videoTime(LocalTime.parse(videoTime,formatter)).build();
     }
