@@ -1,8 +1,6 @@
 package com.chicplay.mediaserver.domain.individual_video.domain;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,12 +18,12 @@ import java.util.UUID;
 
 @Getter
 @RedisHash(value = "text_memo_state")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamoDBTable(tableName = "text_memo_state")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TextMemoState {
 
     @Id
-    @DynamoDBHashKey
+    @DynamoDBHashKey(attributeName = "id")
     private String id;
 
     @DynamoDBAttribute
@@ -37,11 +35,13 @@ public class TextMemoState {
     private String stateJson;
 
     @DynamoDBAttribute
+    @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
     @Column(name = "video_time")
     private LocalTime videoTime;
 
     @DynamoDBAttribute
     @CreatedDate
+    @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdDate;
 

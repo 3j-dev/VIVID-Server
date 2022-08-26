@@ -2,7 +2,6 @@ package com.chicplay.mediaserver.domain.individual_video.application;
 
 import com.chicplay.mediaserver.domain.individual_video.dao.TextMemoStateRepository;
 import com.chicplay.mediaserver.domain.individual_video.dao.TextMemoStateDao;
-import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateSaveRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,17 +22,22 @@ public class IndividualVideoService {
 
     // redis에 textMemoState 객체 하나 저장 메소드
     @Transactional
-    public void saveTextMemoStateToRedis(final TextMemoStateSaveRequest dto){
+    public void saveTextMemoStateToRedis(final TextMemoStateSaveRequest textMemoState){
 
-        textMemoStateDao.save(dto.toEntity());
+        textMemoStateDao.saveToRedis(textMemoState.toEntity());
     }
 
     // redis에 textMemoState 객체 리스트 저장 메소드
     public void saveTextMemoStatesToRedis(List<TextMemoStateSaveRequest> textMemoStates){
 
-        textMemoStateDao.saveList(textMemoStates);
+        textMemoStateDao.saveListToRedis(textMemoStates);
     }
 
+    // dynamo db에 textMemoState문 insert
+    public void saveTextMemoStateToDynamoDb(TextMemoStateSaveRequest textMemoState){
+
+        textMemoStateDao.saveToDynamo(textMemoState.toEntity());
+    }
 
 
 

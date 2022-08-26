@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.individual_video.dao;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateSaveRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,14 +24,17 @@ public class TextMemoStateDao {
 
     private final ObjectMapper objectMapper;
 
+    private final DynamoDBMapper dynamoDBMapper;
+
     private final RedisSerializer keySerializer;
 
     private final RedisSerializer valueSerializer;
 
-    public TextMemoStateDao(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper) {
+    public TextMemoStateDao(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper, DynamoDBMapper dynamoDBMapper) {
 
         this.redisTemplate = redisTemplate;
         this.objectMapper = objectMapper;
+        this.dynamoDBMapper = dynamoDBMapper;
 
         this.keySerializer = this.redisTemplate.getStringSerializer();
         this.valueSerializer = this.redisTemplate.getValueSerializer();
@@ -40,7 +44,7 @@ public class TextMemoStateDao {
     // textMemoState를 save 합니다.
     // 이때, textMemoState를 latest 버전을 업데이트하고,
     // history 버전을 add한다.
-    public void save(TextMemoState textMemoState) {
+    public TextMemoState saveToRedis(TextMemoState textMemoState) {
         redisTemplate.executePipelined((RedisCallback<Object>)connection -> {
 
             Map<String,Object> map = objectMapper.convertValue(textMemoState, Map.class);
@@ -64,11 +68,13 @@ public class TextMemoStateDao {
 
             return null;
         });
+
+        return textMemoState;
     }
 
 
     // textMemoState 리스트 저장
-    public void saveList(List<TextMemoStateSaveRequest> textMemoStates){
+    public void saveListToRedis(List<TextMemoStateSaveRequest> textMemoStates){
 
         // redis pipeline
         redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
@@ -90,6 +96,11 @@ public class TextMemoStateDao {
             });
             return null;
         });
+    }
+
+    public TextMemoState saveToDynamo(TextMemoState textMemoState) {
+        dynamoDBMapper.save(textMemoState);
+        return textMemoState;
     }
 
 

@@ -22,16 +22,23 @@ public class IndividualVideoApi {
 
     // redis 캐시에 단일 메모 스테이트를 저장하는 메소드
     @PostMapping("/cache/text-memo-state")
-    public void saveTextMemoState(@RequestBody @Valid final TextMemoStateSaveRequest dto){
+    public void saveTextMemoStateToCache(@RequestBody @Valid final TextMemoStateSaveRequest dto){
 
         individualVideoService.saveTextMemoStateToRedis(dto);
     }
 
     // redis 캐시에 텍스트 메모 스테이트 리스트를 저장하는 메소드
     @PostMapping("/cache/text-memo-states")
-    public void saveTextMemoStates(@RequestBody @Valid final List<TextMemoStateSaveRequest> textMemoStates) {
+    public void saveTextMemoStatesToCache(@RequestBody @Valid final List<TextMemoStateSaveRequest> textMemoStates) {
 
         individualVideoService.saveTextMemoStatesToRedis(textMemoStates);
+    }
+
+    // dynamoDB에 state문 저장 메소드
+    @PostMapping("/text-memo-states")
+    public void saveTextMemoStatesToDynamoDb(@RequestBody @Valid final TextMemoStateSaveRequest dto){
+
+        individualVideoService.saveTextMemoStateToDynamoDb(dto);
     }
 
 }
