@@ -43,6 +43,6 @@ class TextMemoStateRepositoryTest extends IntegrationTest {
         assertThat(savedTextMemoSate.getIndividualVideoId()).isEqualTo(individualVideo.getId());
         assertThat(savedTextMemoSate.getStateJson()).isEqualTo(textMemoState.getStateJson());
         assertThat(savedTextMemoSate.getVideoTime()).isEqualTo(textMemoState.getVideoTime());
-        assertThat(savedTextMemoSate.getCreatedDate()).isBeforeOrEqualTo(LocalDateTime.now());
+        assertThat(savedTextMemoSate.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
     }
 }

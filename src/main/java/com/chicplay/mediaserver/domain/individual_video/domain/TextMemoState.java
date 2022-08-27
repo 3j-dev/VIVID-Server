@@ -5,12 +5,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.redis.core.RedisHash;
 
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -18,7 +15,6 @@ import java.util.UUID;
 
 @Getter
 @RedisHash(value = "text_memo_state")
-@DynamoDBTable(tableName = "text_memo_state")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TextMemoState {
 
@@ -40,17 +36,16 @@ public class TextMemoState {
     private LocalTime videoTime;
 
     @DynamoDBAttribute
-    @CreatedDate
     @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
     @Builder
-    public TextMemoState(String id, UUID individualVideoId, String stateJson, LocalTime videoTime) {
+    public TextMemoState(String id, UUID individualVideoId, String stateJson, LocalTime videoTime, LocalDateTime createdAt) {
         this.id = id;
         this.individualVideoId = individualVideoId;
         this.stateJson = stateJson;
         this.videoTime = videoTime;
-        this.createdDate = LocalDateTime.now();
+        this.createdAt = createdAt;
     }
 }

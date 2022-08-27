@@ -1,10 +1,12 @@
 package com.chicplay.mediaserver.domain.individual_video.dao;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
-import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateSaveRequest;
+import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -74,7 +76,7 @@ public class TextMemoStateDao {
 
 
     // textMemoState 리스트 저장
-    public void saveListToRedis(List<TextMemoStateSaveRequest> textMemoStates){
+    public void saveListToRedis(List<TextMemoStateRedisSaveRequest> textMemoStates){
 
         // redis pipeline
         redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
@@ -99,9 +101,25 @@ public class TextMemoStateDao {
     }
 
     public TextMemoState saveToDynamo(TextMemoState textMemoState) {
+
         dynamoDBMapper.save(textMemoState);
+
         return textMemoState;
     }
+
+    public TextMemoState updateToDynamo(String id, TextMemoState textMemoState){
+
+        dynamoDBMapper.save(textMemoState,
+                new DynamoDBSaveExpression().withExpectedEntry(
+                        "id", new ExpectedAttributeValue(
+                                new AttributeValue().withS(textMemoState.getId())
+                        )
+                )
+        );
+
+        return textMemoState;
+    }
+
 
 
 }

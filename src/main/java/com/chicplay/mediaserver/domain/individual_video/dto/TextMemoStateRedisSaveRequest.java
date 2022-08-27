@@ -6,13 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
-public class TextMemoStateSaveRequest {
+public class TextMemoStateRedisSaveRequest {
 
     @NotBlank
     protected String individualVideoId;
@@ -25,7 +26,7 @@ public class TextMemoStateSaveRequest {
 
 
     @Builder
-    public TextMemoStateSaveRequest(String individualVideoId, String stateJson, String videoTime) {
+    public TextMemoStateRedisSaveRequest(String individualVideoId, String stateJson, String videoTime) {
         this.individualVideoId = individualVideoId;
         this.stateJson = stateJson;
         this.videoTime = videoTime;
@@ -39,6 +40,8 @@ public class TextMemoStateSaveRequest {
                 .id(String.valueOf(UUID.randomUUID()))
                 .individualVideoId(UUID.fromString(individualVideoId))
                 .stateJson(stateJson)
-                .videoTime(LocalTime.parse(videoTime,formatter)).build();
+                .videoTime(LocalTime.parse(videoTime,formatter))
+                .createdAt(LocalDateTime.now())
+                .build();
     }
 }
