@@ -37,7 +37,7 @@ public class IndividualVideoService {
     // dynamo db에 textMemoState문 insert
     public void saveTextMemoStateToDynamoDb(TextMemoStateDynamoSaveRequest textMemoState){
 
-        textMemoStateDao.saveToDynamo(textMemoState.toEntity());
+        textMemoStateDao.saveToDynamo(textMemoState.toLatestEntity());
     }
 
 

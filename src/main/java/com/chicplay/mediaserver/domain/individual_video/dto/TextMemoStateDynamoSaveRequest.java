@@ -1,6 +1,8 @@
 package com.chicplay.mediaserver.domain.individual_video.dto;
 
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
+import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateHistory;
+import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,26 +30,47 @@ public class TextMemoStateDynamoSaveRequest {
     private String videoTime;
 
     @NotBlank
-    private String createAt;
+    private String createdAt;
 
 
     @Builder
-    public TextMemoStateDynamoSaveRequest(String individualVideoId, String stateJson, String videoTime) {
+    public TextMemoStateDynamoSaveRequest(String individualVideoId, String stateJson, String videoTime, String createdAt) {
         this.individualVideoId = individualVideoId;
         this.stateJson = stateJson;
         this.videoTime = videoTime;
+        this.createdAt = createdAt;
     }
 
-    public TextMemoState toEntity() {
+//    public T toEntity() {
+//
+//        return (T)TextMemoState.builder()
+//                .id(id)
+//                .individualVideoId(UUID.fromString(individualVideoId))
+//                .stateJson(stateJson)
+//                .videoTime(LocalTime.parse(videoTime,DateTimeFormatter.ofPattern("HH:mm:ss")))
+//                .createdAt(LocalDateTime.parse(createdAt))
+//                .build();
+//    }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+    public TextMemoStateLatest toLatestEntity() {
 
-        return TextMemoState.builder()
+        return TextMemoStateLatest.builder()
                 .id(id)
                 .individualVideoId(UUID.fromString(individualVideoId))
                 .stateJson(stateJson)
-                .videoTime(LocalTime.parse(videoTime,formatter))
-                .createdAt(LocalDateTime.parse(createAt))
+                .videoTime(LocalTime.parse(videoTime, DateTimeFormatter.ofPattern("HH:mm:ss")))
+                .createdAt(LocalDateTime.parse(createdAt))
+                .build();
+    }
+
+    public TextMemoStateHistory toHistoryEntity() {
+
+        return TextMemoStateHistory.builder()
+                .id(id)
+                .individualVideoId(UUID.fromString(individualVideoId))
+                .stateJson(stateJson)
+                .videoTime(LocalTime.parse(videoTime,DateTimeFormatter.ofPattern("HH:mm:ss")))
+                .createdAt(LocalDateTime.parse(createdAt))
                 .build();
     }
 }

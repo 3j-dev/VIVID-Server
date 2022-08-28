@@ -34,14 +34,12 @@ public class TextMemoStateRedisSaveRequest {
 
     public TextMemoState toEntity() {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-
         return TextMemoState.builder()
-                .id(String.valueOf(UUID.randomUUID()))
                 .individualVideoId(UUID.fromString(individualVideoId))
                 .stateJson(stateJson)
-                .videoTime(LocalTime.parse(videoTime,formatter))
+                .videoTime(LocalTime.parse(videoTime,DateTimeFormatter.ofPattern("HH:mm:ss")))
                 .createdAt(LocalDateTime.now())
                 .build();
+
     }
 }

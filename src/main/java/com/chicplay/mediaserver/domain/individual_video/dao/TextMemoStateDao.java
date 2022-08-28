@@ -5,6 +5,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
+import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.RedisCallback;
@@ -102,6 +103,7 @@ public class TextMemoStateDao {
 
     public TextMemoState saveToDynamo(TextMemoState textMemoState) {
 
+        // 타입 변화가 일어나기 때문에,,!
         dynamoDBMapper.save(textMemoState);
 
         return textMemoState;
