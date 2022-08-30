@@ -103,7 +103,6 @@ public class TextMemoStateDao {
 
     public TextMemoState saveToDynamo(TextMemoState textMemoState) {
 
-        // 타입 변화가 일어나기 때문에,,!
         dynamoDBMapper.save(textMemoState);
 
         return textMemoState;

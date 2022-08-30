@@ -21,10 +21,14 @@ import java.util.UUID;
 @SuperBuilder
 public class TextMemoState {
 
+    // 다이노모 디비의 id 칼럼는 상속 받은 TexMemoStateHistory, Latest 클래스에 정의,
+    // 때문에 DynamoDBIgnore
     @Id
     @DynamoDBIgnore
     private String id;
 
+    // 다이노모 디비의 individualVideoId 칼럼는 상속 받은 TexMemoStateHistory, Latest 클래스에 정의,
+    // 때문에 DynamoDBIgnore
     @DynamoDBIgnore
     @Column(name = "individual_video_id")
     private UUID individualVideoId;

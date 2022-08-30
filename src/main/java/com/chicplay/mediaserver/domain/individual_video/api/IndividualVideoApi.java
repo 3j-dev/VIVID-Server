@@ -35,11 +35,18 @@ public class IndividualVideoApi {
         individualVideoService.saveTextMemoStatesToRedis(textMemoStates);
     }
 
-    // dynamoDB에 state문 저장 메소드
-    @PostMapping("/text-memo-states")
-    public void saveTextMemoStatesToDynamoDb(@RequestBody @Valid final TextMemoStateDynamoSaveRequest dto){
+    // dynamoDB에 state latest문 저장 메소드
+    @PostMapping("/text-memo-states-latest")
+    public void saveTextMemoStatesLatestToDynamoDb(@RequestBody @Valid final TextMemoStateDynamoSaveRequest dto){
 
-        individualVideoService.saveTextMemoStateToDynamoDb(dto);
+        individualVideoService.saveTextMemoStateLatestToDynamoDb(dto);
+    }
+
+    // dynamoDB에 state latest문 저장 메소드
+    @PostMapping("/text-memo-states-history")
+    public void saveTextMemoStatesHistoryToDynamoDb(@RequestBody @Valid final TextMemoStateDynamoSaveRequest dto){
+
+        individualVideoService.saveTextMemoStateHistoryToDynamoDb(dto);
     }
 
 }

@@ -26,7 +26,6 @@ public class TextMemoStateLatest extends TextMemoState{
     @Column(name = "individual_video_id")
     private UUID individualVideoId;
 
-
     public TextMemoStateLatest(String id, UUID individualVideoId, String stateJson, LocalTime videoTime, LocalDateTime createdAt) {
         super(id, individualVideoId,  stateJson, videoTime, createdAt);
         this.individualVideoId = individualVideoId;

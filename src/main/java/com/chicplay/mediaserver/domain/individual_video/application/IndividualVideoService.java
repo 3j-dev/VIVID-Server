@@ -34,11 +34,17 @@ public class IndividualVideoService {
         textMemoStateDao.saveListToRedis(textMemoStates);
     }
 
-    // dynamo db에 textMemoState문 insert
-    public void saveTextMemoStateToDynamoDb(TextMemoStateDynamoSaveRequest textMemoState){
+    // dynamo db에 textMemoStateLatest문 insert
+    public void saveTextMemoStateLatestToDynamoDb(TextMemoStateDynamoSaveRequest textMemoState){
 
         textMemoStateDao.saveToDynamo(textMemoState.toLatestEntity());
     }
+
+    // dynamo db에 textMemoStateHistroy문 insert
+    public void saveTextMemoStateHistoryToDynamoDb(TextMemoStateDynamoSaveRequest textMemoState){
+        textMemoStateDao.saveToDynamo(textMemoState.toHistoryEntity());
+    }
+
 
 
 
