@@ -1,7 +1,5 @@
 package com.chicplay.mediaserver.domain.individual_video.api;
 
-import com.amazonaws.services.dynamodbv2.xspec.L;
-import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateDynamoSaveRequest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
@@ -27,9 +25,11 @@ public class IndividualVideoApi {
 
         individualVideoService.saveTextMemoStateToRedis(dto);
     }
-    @GetMapping("/cache/text-memo-state")
+
+    // redis 캐시로 부터 text memo state latest get
+    @GetMapping("/cache/text-memo-state-latest")
     public TextMemoStateLatest getTextMemoStateFromCache(@RequestBody HashMap<String, String> request ){
-        return individualVideoService.getTextMemoStateFromRedis(request.get("id"));
+        return individualVideoService.getTextMemoStateLatestFromRedis(request.get("individualVideoId"));
     }
 
 
@@ -40,14 +40,21 @@ public class IndividualVideoApi {
         individualVideoService.saveTextMemoStatesToRedis(textMemoStates);
     }
 
-    // dynamoDB에 text state latest문 저장 메소드
-    @PostMapping("/text-memo-states-latest")
-    public void saveTextMemoStatesLatestToDynamoDb(@RequestBody @Valid final TextMemoStateDynamoSaveRequest textMemoState){
 
-        individualVideoService.saveTextMemoStateLatestToDynamoDb(textMemoState);
+//    @PostMapping("/text-memo-states-latest")
+//    public void saveTextMemoStatesLatestToDynamoDb(@RequestBody @Valid final TextMemoStateDynamoSaveRequest textMemoState){
+//
+//        individualVideoService.saveTextMemoStateLatestToDynamoDb(textMemoState);
+//    }
+
+    // dynamoDB에 text state latest문 저장 메소드
+    @PostMapping("/text-memo-state-latest")
+    public void saveTextMemoStatesLatestToDynamoDb(@RequestBody HashMap<String, String> request ){
+
+        individualVideoService.saveTextMemoStateLatestToDynamoDb(request.get("individualVideoId"));
     }
 
-    // dynamoDB에 text state history문 저장 메소드
+    // dynamoDB에 text state history문 저장 메소드.
     @PostMapping("/text-memo-states-history")
     public void saveTextMemoStatesHistoryToDynamoDb(@RequestBody @Valid final List<TextMemoStateDynamoSaveRequest> textMemoStates){
 

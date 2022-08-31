@@ -2,7 +2,6 @@ package com.chicplay.mediaserver.domain.individual_video.application;
 
 import com.chicplay.mediaserver.domain.individual_video.dao.TextMemoStateRepository;
 import com.chicplay.mediaserver.domain.individual_video.dao.TextMemoStateDao;
-import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateDynamoSaveRequest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
@@ -31,9 +30,21 @@ public class IndividualVideoService {
     }
 
     @Transactional
-    public TextMemoStateLatest getTextMemoStateFromRedis(String id){
+    public TextMemoStateLatest getTextMemoStateLatestFromRedis(String individualVideoId){
 
-        return textMemoStateDao.findTextMemoStateFromRedis(id);
+        return textMemoStateDao.findTextMemoStateLatestFromRedis(individualVideoId);
+    }
+
+
+    // redis의 state latest 다이나모 db에 저장.
+    @Transactional
+    public void saveTextMemoStateLatestToDynamoDb(String individualVideoId){
+
+        // 요청된 individualVideoId의 state latest를 redis에서 가져온다.
+        TextMemoStateLatest textMemoStateLatest = textMemoStateDao.findTextMemoStateLatestFromRedis(individualVideoId);
+
+        // 해당 state를 저장한다.
+        textMemoStateDao.saveToDynamo(textMemoStateLatest);
     }
 
     // redis에 textMemoState 객체 리스트 저장 메소드
@@ -42,11 +53,7 @@ public class IndividualVideoService {
         textMemoStateDao.saveListToRedis(textMemoStates);
     }
 
-    // dynamo db에 textMemoStateLatest문 insert
-    public void saveTextMemoStateLatestToDynamoDb(TextMemoStateDynamoSaveRequest textMemoState){
 
-        textMemoStateDao.saveToDynamo(textMemoState.toLatestEntity());
-    }
 
     // dynamo db에 textMemoStateHistroy문 insert
     public void saveTextMemoStateHistoryToDynamoDb(List<TextMemoStateDynamoSaveRequest> textMemoStates){

@@ -114,9 +114,11 @@ public class TextMemoStateDao {
     }
 
     // videoId를 통해서 state latest get
-    public TextMemoStateLatest findTextMemoStateFromRedis(String individualVideoId){
+    public TextMemoStateLatest findTextMemoStateLatestFromRedis(String individualVideoId){
+
         TextMemoStateLatest textMemoStateLatest = objectMapper.convertValue(redisTemplate.opsForHash()
                 .entries(getDefaultStateKey(individualVideoId) + "_latest"), TextMemoStateLatest.class);
+
         return textMemoStateLatest;
     }
 

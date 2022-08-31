@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,6 +48,7 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
         assertThat(textMemoStateLatest.getStateJson()).isEqualTo(requestDto.getStateJson());
         assertThat(textMemoStateLatest.getIndividualVideoId()).isEqualTo(UUID.fromString(requestDto.getIndividualVideoId()));
     }
+
     @Test
     @DisplayName("[TextMemoStateDaoTest] textMemoState 레디스 save 테스트")
     public void text_memo_state_redis_save_test() {
@@ -61,7 +61,7 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
 
         // when
         TextMemoState textMemoState = textMemoStateDao.saveToRedis(redisSaveRequest.toEntity());
-        TextMemoStateLatest savedTextMemoState= textMemoStateDao.findTextMemoStateFromRedis(textMemoState.getIndividualVideoId().toString());
+        TextMemoStateLatest savedTextMemoState= textMemoStateDao.findTextMemoStateLatestFromRedis(textMemoState.getIndividualVideoId().toString());
 
         //then
         assertThat(savedTextMemoState.getId()).isEqualTo(textMemoState.getId());
