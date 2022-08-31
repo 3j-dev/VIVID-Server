@@ -5,8 +5,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
@@ -17,6 +19,7 @@ import java.util.UUID;
 
 @SuperBuilder
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamoDBTable(tableName = "text_memo_state_latest")
 public class TextMemoStateLatest extends TextMemoState{
 

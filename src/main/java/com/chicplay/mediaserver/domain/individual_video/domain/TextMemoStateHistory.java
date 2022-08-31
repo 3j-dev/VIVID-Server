@@ -2,7 +2,9 @@ package com.chicplay.mediaserver.domain.individual_video.domain;
 
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
@@ -13,6 +15,7 @@ import java.util.UUID;
 
 @SuperBuilder
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamoDBTable(tableName = "text_memo_state_history")
 public class TextMemoStateHistory extends TextMemoState{
 

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -24,6 +25,7 @@ public class TextMemoState {
     // 다이노모 디비의 id 칼럼는 상속 받은 TexMemoStateHistory, Latest 클래스에 정의,
     // 때문에 DynamoDBIgnore
     @Id
+    @Indexed
     @DynamoDBIgnore
     private String id;
 
@@ -47,8 +49,7 @@ public class TextMemoState {
     @Column(name = "created_at", updatable = false)
     protected LocalDateTime createdAt;
 
-    //@Builder
-    public TextMemoState(String id, UUID individualVideoId, String stateJson, LocalTime videoTime, LocalDateTime createdAt) {
+    public TextMemoState(String id,UUID individualVideoId, String stateJson, LocalTime videoTime, LocalDateTime createdAt) {
         this.id = id;
         this.individualVideoId = individualVideoId;
         this.stateJson = stateJson;

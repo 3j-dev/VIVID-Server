@@ -2,6 +2,8 @@ package com.chicplay.mediaserver.domain.individual_video.application;
 
 import com.chicplay.mediaserver.domain.individual_video.dao.TextMemoStateRepository;
 import com.chicplay.mediaserver.domain.individual_video.dao.TextMemoStateDao;
+import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
+import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateDynamoSaveRequest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -28,6 +30,12 @@ public class IndividualVideoService {
         textMemoStateDao.saveToRedis(textMemoState.toEntity());
     }
 
+    @Transactional
+    public TextMemoStateLatest getTextMemoStateFromRedis(String id){
+
+        return textMemoStateDao.findTextMemoStateFromRedis(id);
+    }
+
     // redis에 textMemoState 객체 리스트 저장 메소드
     public void saveTextMemoStatesToRedis(List<TextMemoStateRedisSaveRequest> textMemoStates){
 
@@ -41,8 +49,9 @@ public class IndividualVideoService {
     }
 
     // dynamo db에 textMemoStateHistroy문 insert
-    public void saveTextMemoStateHistoryToDynamoDb(TextMemoStateDynamoSaveRequest textMemoState){
-        textMemoStateDao.saveToDynamo(textMemoState.toHistoryEntity());
+    public void saveTextMemoStateHistoryToDynamoDb(List<TextMemoStateDynamoSaveRequest> textMemoStates){
+
+        textMemoStateDao.saveListToDynamo(textMemoStates);
     }
 
 

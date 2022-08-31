@@ -15,6 +15,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class TextMemoStateRedisSaveRequest {
 
+    private String id;
+
     @NotBlank
     protected String individualVideoId;
 
@@ -35,6 +37,7 @@ public class TextMemoStateRedisSaveRequest {
     public TextMemoState toEntity() {
 
         return TextMemoState.builder()
+                .id(UUID.randomUUID().toString())
                 .individualVideoId(UUID.fromString(individualVideoId))
                 .stateJson(stateJson)
                 .videoTime(LocalTime.parse(videoTime,DateTimeFormatter.ofPattern("HH:mm:ss")))

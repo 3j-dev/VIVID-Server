@@ -41,17 +41,6 @@ public class TextMemoStateDynamoSaveRequest {
         this.createdAt = createdAt;
     }
 
-//    public T toEntity() {
-//
-//        return (T)TextMemoState.builder()
-//                .id(id)
-//                .individualVideoId(UUID.fromString(individualVideoId))
-//                .stateJson(stateJson)
-//                .videoTime(LocalTime.parse(videoTime,DateTimeFormatter.ofPattern("HH:mm:ss")))
-//                .createdAt(LocalDateTime.parse(createdAt))
-//                .build();
-//    }
-
     public TextMemoStateLatest toLatestEntity() {
 
         return TextMemoStateLatest.builder()
