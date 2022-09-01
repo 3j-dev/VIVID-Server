@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.individual_video.api;
 
+import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateHistory;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateDynamoSaveRequest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
@@ -40,25 +41,39 @@ public class IndividualVideoApi {
         individualVideoService.saveTextMemoStatesToRedis(textMemoStates);
     }
 
-
-//    @PostMapping("/text-memo-states-latest")
-//    public void saveTextMemoStatesLatestToDynamoDb(@RequestBody @Valid final TextMemoStateDynamoSaveRequest textMemoState){
-//
-//        individualVideoService.saveTextMemoStateLatestToDynamoDb(textMemoState);
-//    }
-
     // dynamoDB에 text state latest문 저장 메소드
     @PostMapping("/text-memo-state-latest")
-    public void saveTextMemoStatesLatestToDynamoDb(@RequestBody HashMap<String, String> request ){
+    public void saveTextMemoStatesLatestToDynamoDb(@RequestBody @Valid HashMap<String, String> request){
 
         individualVideoService.saveTextMemoStateLatestToDynamoDb(request.get("individualVideoId"));
     }
 
     // dynamoDB에 text state history문 저장 메소드.
-    @PostMapping("/text-memo-states-history")
-    public void saveTextMemoStatesHistoryToDynamoDb(@RequestBody @Valid final List<TextMemoStateDynamoSaveRequest> textMemoStates){
+    @PostMapping("/text-memo-state-history")
+    public void saveTextMemoStatesHistoryToDynamoDb(@RequestBody @Valid HashMap<String, String> request ){
 
-        individualVideoService.saveTextMemoStateHistoryToDynamoDb(textMemoStates);
+        individualVideoService.saveTextMemoStateHistoryToDynamoDb(request.get("individualVideoId"));
     }
+
+    @GetMapping("/text-memo-state-history-test")
+    public HashMap<String, String> saveTextMemoStatesHistoryToDynamoDbtest(@RequestBody @Valid HashMap<String, String> request ){
+
+        List<TextMemoStateHistory> individualVideoId = individualVideoService.test(request.get("individualVideoId"));
+
+        HashMap<String, String> map = new HashMap<>();
+
+        individualVideoId.forEach(t->{
+            map.put(t.getId(),t.getStateJson());
+        });
+        return map;
+    }
+
+
+//    // dynamoDB에 text state history문 저장 메소드.
+//    @PostMapping("/text-memo-states-history")
+//    public void saveTextMemoStatesHistoryToDynamoDb(@RequestBody @Valid final List<TextMemoStateDynamoSaveRequest> textMemoStates){
+//
+//        individualVideoService.saveTextMemoStateHistoryToDynamoDb(textMemoStates);
+//    }
 
 }

@@ -25,8 +25,7 @@ public class TextMemoStateLatest extends TextMemoState{
 
 
     // latest state에서는 indivualVideoId가 uuid가 된다.
-    @DynamoDBHashKey(attributeName = "individualVideoId")
-    @Column(name = "individual_video_id")
+    @DynamoDBHashKey(attributeName = "individual_video_id")
     private UUID individualVideoId;
 
     public TextMemoStateLatest(String id, UUID individualVideoId, String stateJson, LocalTime videoTime, LocalDateTime createdAt) {

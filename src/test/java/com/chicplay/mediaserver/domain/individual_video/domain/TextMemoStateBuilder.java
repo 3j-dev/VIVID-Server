@@ -1,8 +1,12 @@
 package com.chicplay.mediaserver.domain.individual_video.domain;
 
+import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateDynamoSaveRequest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class TextMemoStateBuilder {
 
@@ -13,7 +17,7 @@ public class TextMemoStateBuilder {
     public static String VIDEO_TIME = "01:01:01";
 
 
-    public static TextMemoStateRedisSaveRequest saveRequestBuilder() {
+    public static TextMemoStateRedisSaveRequest redisSaveRequestBuilder() {
 
         TextMemoStateRedisSaveRequest textMemoStateRedisSaveRequest = TextMemoStateRedisSaveRequest.builder()
                 .individualVideoId(INDIVIDUAL_VIDEO_ID)
@@ -22,6 +26,25 @@ public class TextMemoStateBuilder {
                 .build();
 
         return textMemoStateRedisSaveRequest;
+    }
+
+    public static TextMemoStateDynamoSaveRequest dynamoSaveRequestBuilder() {
+
+        TextMemoStateDynamoSaveRequest textMemoStateDynamoSaveRequest = TextMemoStateDynamoSaveRequest.builder()
+                .id(UUID.randomUUID().toString())
+                .individualVideoId(INDIVIDUAL_VIDEO_ID)
+                .videoTime(VIDEO_TIME)
+                .stateJson(STATE_JSON )
+                .createdAt(LocalDateTime.now().toString())
+                .build();
+
+        return textMemoStateDynamoSaveRequest;
+    }
+
+    public static Map<String,String> individualVideoIdMapBuilder(){
+        Map<String, String> request = new HashMap<>();
+        request.put("individualVideoId", TextMemoStateBuilder.INDIVIDUAL_VIDEO_ID);
+        return request;
     }
 
 

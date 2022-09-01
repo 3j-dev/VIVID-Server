@@ -34,7 +34,8 @@ public class TextMemoStateDynamoSaveRequest {
 
 
     @Builder
-    public TextMemoStateDynamoSaveRequest(String individualVideoId, String stateJson, String videoTime, String createdAt) {
+    public TextMemoStateDynamoSaveRequest(String id, String individualVideoId, String stateJson, String videoTime, String createdAt) {
+        this.id = id;
         this.individualVideoId = individualVideoId;
         this.stateJson = stateJson;
         this.videoTime = videoTime;

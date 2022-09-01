@@ -5,6 +5,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
@@ -15,17 +16,17 @@ import java.util.UUID;
 
 @SuperBuilder
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor()
 @DynamoDBTable(tableName = "text_memo_state_history")
 public class TextMemoStateHistory extends TextMemoState{
 
     // state history entity는 dynamoDB에 자동생성된 uuid로 들어가게 된다.
-    @DynamoDBHashKey(attributeName = "id")
-    @Column(name = "id")
+
+    @DynamoDBRangeKey(attributeName="id")
     private String id;
 
-    @DynamoDBAttribute
-    @Column(name = "individual_video_id")
+    @DynamoDBHashKey(attributeName = "individual_video_id")
     private UUID individualVideoId;
 
     public TextMemoStateHistory(String id, UUID individualVideoId, String stateJson, LocalTime videoTime, LocalDateTime createdAt) {
