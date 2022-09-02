@@ -54,26 +54,4 @@ public class IndividualVideoApi {
 
         individualVideoService.saveTextMemoStateHistoryToDynamoDb(request.get("individualVideoId"));
     }
-
-    @GetMapping("/text-memo-state-history-test")
-    public HashMap<String, String> saveTextMemoStatesHistoryToDynamoDbtest(@RequestBody @Valid HashMap<String, String> request ){
-
-        List<TextMemoStateHistory> individualVideoId = individualVideoService.test(request.get("individualVideoId"));
-
-        HashMap<String, String> map = new HashMap<>();
-
-        individualVideoId.forEach(t->{
-            map.put(t.getId(),t.getStateJson());
-        });
-        return map;
-    }
-
-
-//    // dynamoDB에 text state history문 저장 메소드.
-//    @PostMapping("/text-memo-states-history")
-//    public void saveTextMemoStatesHistoryToDynamoDb(@RequestBody @Valid final List<TextMemoStateDynamoSaveRequest> textMemoStates){
-//
-//        individualVideoService.saveTextMemoStateHistoryToDynamoDb(textMemoStates);
-//    }
-
 }

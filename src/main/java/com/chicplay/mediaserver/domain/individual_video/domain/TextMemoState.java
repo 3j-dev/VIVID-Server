@@ -14,7 +14,7 @@ import java.time.LocalTime;
 import java.util.UUID;
 
 @Getter
-@Setter
+@Setter         // used in com.amazonaws.services.dynamodbv2
 @RedisHash(value = "text_memo_state")
 @DynamoDBDocument
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

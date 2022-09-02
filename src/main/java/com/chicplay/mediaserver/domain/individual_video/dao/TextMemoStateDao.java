@@ -4,19 +4,14 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateHistory;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
-import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateHistoryGetResponse;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -42,21 +37,18 @@ public class TextMemoStateDao {
 
     private final DynamoDBMapper dynamoDBMapper;
 
-    private final AmazonDynamoDB amazonDynamoDb;
-
     private final RedisSerializer keySerializer;
 
     private final RedisSerializer valueSerializer;
 
 
     public TextMemoStateDao(TextMemoStateRepository textMemoStateRepository, RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper,
-                            DynamoDBMapper dynamoDBMapper, AmazonDynamoDB amazonDynamoDb) {
+                            DynamoDBMapper dynamoDBMapper) {
 
         this.textMemoStateRepository = textMemoStateRepository;
         this.redisTemplate = redisTemplate;
         this.objectMapper = objectMapper;
         this.dynamoDBMapper = dynamoDBMapper;
-        this.amazonDynamoDb = amazonDynamoDb;
 
         this.keySerializer = this.redisTemplate.getStringSerializer();
         this.valueSerializer = this.redisTemplate.getValueSerializer();
@@ -136,7 +128,7 @@ public class TextMemoStateDao {
     }
 
     // key_history를 통해 레디스에서 find and 객체 list return
-    public List<TextMemoStateHistory> findTextMemoStateHistoryFromRedis(String individualVideoId) {
+    public List<TextMemoStateHistory> getTextMemoStateHistoryFromRedis(String individualVideoId) {
 
         List<TextMemoStateHistory> list = new ArrayList<>();
 
@@ -172,16 +164,14 @@ public class TextMemoStateDao {
     // 다이노모db에 history save
     public void saveHistoryListToDynamo(List<TextMemoStateHistory> textMemoStateHistoryList) {
 
-        //dynamoDBMapper.batchSave(textMemoStateHistoryList);
-        textMemoStateHistoryList.forEach(t ->{
-            dynamoDBMapper.save(t);
-        });
+        dynamoDBMapper.batchSave(textMemoStateHistoryList);
     }
 
     // 다이노모db에서 latest get
     public TextMemoStateLatest getLatestFromDynamo(String individualVideoId) {
 
-        TextMemoStateLatest textMemoStateLatest = dynamoDBMapper.load(TextMemoStateLatest.class, individualVideoId);
+        TextMemoStateLatest textMemoStateLatest = dynamoDBMapper.load(TextMemoStateLatest.class, UUID.fromString(individualVideoId));
+
         return textMemoStateLatest;
     }
 
@@ -191,34 +181,13 @@ public class TextMemoStateDao {
         Map<String, AttributeValue> map = new HashMap<String, AttributeValue>();
         map.put(":val", new AttributeValue().withS(individualVideoId));
 
-        // db mapper을 이용하지 않는 코드
-//
-//        ScanRequest scanRequest = new ScanRequest()
-//                .withTableName("text_memo_state_history")
-//                .withFilterExpression("individual_video_id = :val")
-//                .withProjectionExpression("id")
-//                .withExpressionAttributeValues(map);
-//
-//        ScanResult result = amazonDynamoDb.scan(scanRequest);
-//
-//        for (Map<String, AttributeValue> item : result.getItems()) {
-//            log.info(item.toString());
-//        }
-
         DynamoDBQueryExpression<TextMemoStateHistory> queryExpression = new DynamoDBQueryExpression<TextMemoStateHistory>()
                 .withKeyConditionExpression("individual_video_id = :val")
                 .withExpressionAttributeValues(map);
 
         List<TextMemoStateHistory> scanResult = dynamoDBMapper.query(TextMemoStateHistory.class, queryExpression);
 
-//        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
-//                .withFilterExpression("individual_video_id = :val").withExpressionAttributeValues(map);
-//
-//        List<TextMemoStateHistoryGetResponse> scanResult = dynamoDBMapper.scan(TextMemoStateHistoryGetResponse.class, scanExpression);
-
-        log.info(String.valueOf(scanResult.size()));
-
-        return null;
+        return scanResult;
     }
 
     public TextMemoState updateToDynamo(String id, TextMemoState textMemoState) {
@@ -230,7 +199,6 @@ public class TextMemoStateDao {
                         )
                 )
         );
-
         return textMemoState;
     }
 

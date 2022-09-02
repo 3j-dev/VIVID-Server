@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 
 class TextMemoStateDaoTest extends ContainerBaseTest {
 
@@ -38,8 +39,7 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
     @BeforeEach
     void setUp() {
 
-        // dynamoDB table 생성
-        // test container 기반,
+        // test container 기반, dynamoDB table 생성
 
         CreateTableRequest createTextMemoStateLatestTableRequest = dynamoDBMapper.generateCreateTableRequest(TextMemoStateLatest.class)
                 .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L));
@@ -54,27 +54,29 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
     }
 
     @Test
-    @DisplayName("[TextMemoStateDaoTest] textMemoState_latestState_변환")
-    public void textMemoState_latestState_변환() {
+    @DisplayName("[TextMemoStateDaoTest] textMemoState_latestState_객체_change")
+    public void textMemoState_latestState_객체_change() {
 
         // given
-        TextMemoStateDynamoSaveRequest requestDto = TextMemoStateBuilder.dynamoSaveRequestBuilder();
+        String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
+        TextMemoStateDynamoSaveRequest textMemoStateDynamoSaveRequest = TextMemoStateBuilder.dynamoSaveRequestBuilder(individualVideoId);
 
         // when
-        TextMemoState textMemoStateLatest = requestDto.toLatestEntity();
+        TextMemoState textMemoStateLatest = textMemoStateDynamoSaveRequest.toLatestEntity();
 
         //then
         assertThat(textMemoStateLatest.getClass()).isEqualTo(TextMemoStateLatest.class);
-        assertThat(textMemoStateLatest.getStateJson()).isEqualTo(requestDto.getStateJson());
-        assertThat(textMemoStateLatest.getIndividualVideoId()).isEqualTo(UUID.fromString(requestDto.getIndividualVideoId()));
+        assertThat(textMemoStateLatest.getStateJson()).isEqualTo(textMemoStateDynamoSaveRequest.getStateJson());
+        assertThat(textMemoStateLatest.getIndividualVideoId()).isEqualTo(UUID.fromString(textMemoStateDynamoSaveRequest.getIndividualVideoId()));
     }
 
     @Test
-    @DisplayName("[TextMemoStateDaoTest] textMemoState_레디스_저장")
-    public void textMemoState_레디스_저장() {
+    @DisplayName("[TextMemoStateDaoTest] textMemoState_레디스_save")
+    public void textMemoState_레디스_save() {
 
         // given
-        TextMemoStateRedisSaveRequest redisSaveRequest = TextMemoStateBuilder.redisSaveRequestBuilder();
+        String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
+        TextMemoStateRedisSaveRequest redisSaveRequest = TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId);
 
         // when
 
@@ -92,12 +94,13 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
     }
 
     @Test
-    @DisplayName("[TextMemoStateDaoTest] textMemoStateHistory_레디스_반환")
-    public void textMemoStateHistory_레디스_반환() {
+    @DisplayName("[TextMemoStateDaoTest] textMemoStateHistory_레디스_get")
+    public void textMemoStateHistory_레디스_get() {
 
         // given
-        Map<String, String> request = TextMemoStateBuilder.individualVideoIdMapBuilder();
-        TextMemoStateRedisSaveRequest redisSaveRequest = TextMemoStateBuilder.redisSaveRequestBuilder();
+        String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
+        Map<String, String> request = TextMemoStateBuilder.individualVideoIdMapBuilder(individualVideoId);
+        TextMemoStateRedisSaveRequest redisSaveRequest = TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId);
 
         // when
         // state 두개 저장.
@@ -105,7 +108,7 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
         TextMemoState textMemoState2 = textMemoStateDao.saveToRedis(redisSaveRequest.toEntity());
 
         // then
-        List<TextMemoStateHistory> stateHistoryList = textMemoStateDao.findTextMemoStateHistoryFromRedis(request.get("individualVideoId"));
+        List<TextMemoStateHistory> stateHistoryList = textMemoStateDao.getTextMemoStateHistoryFromRedis(individualVideoId);
         assertThat(stateHistoryList.size()).isEqualTo(2);
         assertThat(stateHistoryList.get(0).getId()).isNotNull();
         assertThat(stateHistoryList.get(1).getId()).isNotNull();
@@ -115,17 +118,37 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
     }
 
     @Test
-    @DisplayName("[TextMemoStateDaoTest] textMemoStateHistoryList_다이나모_저장")
-    public void textMemoStateHistoryList_다이나모_저장하고_조회() {
+    @DisplayName("[TextMemoStateDaoTest] textMemoStateLatest_다이나모_get")
+    public void textMemoStateLatest_다이나모_get() {
 
         // given
-        TextMemoStateDynamoSaveRequest textMemoStateDynamoSaveRequest = TextMemoStateBuilder.dynamoSaveRequestBuilder();
+        String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
+        TextMemoStateDynamoSaveRequest textMemoStateDynamoSaveRequest = TextMemoStateBuilder.dynamoSaveRequestBuilder(individualVideoId);
 
-        // history list 만들기
-        TextMemoStateHistory textMemoStateHistory = textMemoStateDynamoSaveRequest.toHistoryEntity();
-        TextMemoStateHistory textMemoStateHistory2 = textMemoStateDynamoSaveRequest.toHistoryEntity();
+        // when
+        textMemoStateDao.saveLatestToDynamo(textMemoStateDynamoSaveRequest.toLatestEntity());
+        TextMemoStateLatest textMemoStateLatest = textMemoStateDao.getLatestFromDynamo(textMemoStateDynamoSaveRequest.getIndividualVideoId());
+
+        // then
+        assertThat(textMemoStateLatest.getIndividualVideoId().toString()).isEqualTo(textMemoStateDynamoSaveRequest.getIndividualVideoId());
+        assertThat(textMemoStateLatest.getStateJson()).isEqualTo(textMemoStateDynamoSaveRequest.getStateJson());
+    }
+
+    @Test
+    @DisplayName("[TextMemoStateDaoTest] textMemoStateHistoryList_다이나모_save_and_get")
+    public void textMemoStateHistoryList_다이나모_save_and_get() {
+
+        // given
+        String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
+
+        // textMemoState 두개 저장
+        TextMemoStateDynamoSaveRequest textMemoStateDynamoSaveRequest1 = TextMemoStateBuilder.dynamoSaveRequestBuilder(individualVideoId);
+        TextMemoStateDynamoSaveRequest textMemoStateDynamoSaveRequest2 = TextMemoStateBuilder.dynamoSaveRequestBuilder(individualVideoId);
+
+        // input list 만들기
+        TextMemoStateHistory textMemoStateHistory = textMemoStateDynamoSaveRequest1.toHistoryEntity();
+        TextMemoStateHistory textMemoStateHistory2 = textMemoStateDynamoSaveRequest2.toHistoryEntity();
         List<TextMemoStateHistory> list = new ArrayList<>();
-
         list.add(textMemoStateHistory);
         list.add(textMemoStateHistory2);
 
@@ -133,10 +156,28 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
 
         // 리스트 저장 후,
         textMemoStateDao.saveHistoryListToDynamo(list);
-        List<TextMemoStateHistory> historyListFromDynamo = textMemoStateDao.getHistoryListFromDynamo(TextMemoStateBuilder.INDIVIDUAL_VIDEO_ID);
+        List<TextMemoStateHistory> historyListFromDynamo = textMemoStateDao.getHistoryListFromDynamo(individualVideoId);
 
         // then
-        assertThat(historyListFromDynamo.size()).isEqualTo(2);
+        assertThat(historyListFromDynamo.size()).isEqualTo(list.size());  //객체 두개 저장.
+        assertThat(historyListFromDynamo.get(0).getIndividualVideoId().toString()).isEqualTo(individualVideoId);
+        assertThat(historyListFromDynamo.get(1).getIndividualVideoId().toString()).isEqualTo(individualVideoId);
+    }
 
+    @Test
+    @DisplayName("[TextMemoStateDaoTest] textMemoStateLatest_다이나모_hashKey_update")
+    public void textMemoStateLatest_다이나모_hashKey_update() {
+
+        // given
+        String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
+        TextMemoStateDynamoSaveRequest textMemoStateDynamoSaveRequest = TextMemoStateBuilder.dynamoSaveRequestBuilder(individualVideoId);
+
+        // when
+        textMemoStateDao.saveLatestToDynamo(textMemoStateDynamoSaveRequest.toLatestEntity());
+        TextMemoStateLatest textMemoStateLatest = textMemoStateDao.getLatestFromDynamo(textMemoStateDynamoSaveRequest.getIndividualVideoId());
+
+        // then
+        assertThat(textMemoStateLatest.getIndividualVideoId().toString()).isEqualTo(textMemoStateDynamoSaveRequest.getIndividualVideoId());
+        assertThat(textMemoStateLatest.getStateJson()).isEqualTo(textMemoStateDynamoSaveRequest.getStateJson());
     }
 }

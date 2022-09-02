@@ -10,6 +10,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
+import com.chicplay.mediaserver.global.util.BaseDateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -60,12 +61,12 @@ public class DynamoDbConfig {
 
         @Override
         public String convert(LocalDateTime object) {
-            return object.toString();
+            return BaseDateTimeFormatter.getLocalDateTimeFormatter().format(object);
         }
 
         @Override
         public LocalDateTime unconvert(String object) {
-            return LocalDateTime.parse(object, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
+            return LocalDateTime.parse(object, BaseDateTimeFormatter.getLocalDateTimeFormatter());
         }
     }
 
@@ -73,12 +74,12 @@ public class DynamoDbConfig {
 
         @Override
         public String convert(LocalTime object) {
-            return object.toString();
+            return BaseDateTimeFormatter.getLocalTimeFormatter().format(object);
         }
 
         @Override
         public LocalTime unconvert(String object) {
-            return LocalTime.parse(object, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            return LocalTime.parse(object, BaseDateTimeFormatter.getLocalTimeFormatter());
         }
     }
 }

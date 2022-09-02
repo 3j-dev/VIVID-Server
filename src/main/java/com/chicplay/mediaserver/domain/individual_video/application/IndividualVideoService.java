@@ -59,20 +59,12 @@ public class IndividualVideoService {
     @Transactional
     public void saveTextMemoStateHistoryToDynamoDb(String individualVideoId){
 
-        // text_memo_state를 redis에서 find
-        List<TextMemoStateHistory> historyListFromRedis = textMemoStateDao.findTextMemoStateHistoryFromRedis(individualVideoId);
+        // text_memo_state_history를 redis에서 get
+        List<TextMemoStateHistory> historyListFromRedis = textMemoStateDao.getTextMemoStateHistoryFromRedis(individualVideoId);
 
+        // get된 text_memo_state_history 다이나모db에 save
         textMemoStateDao.saveHistoryListToDynamo(historyListFromRedis);
     }
-
-    @Transactional
-    public List<TextMemoStateHistory> test(String individualVideoId){
-
-        List<TextMemoStateHistory> historyListFromDynamo = textMemoStateDao.getHistoryListFromDynamo(individualVideoId);
-        return historyListFromDynamo;
-    }
-
-
 
 
 }

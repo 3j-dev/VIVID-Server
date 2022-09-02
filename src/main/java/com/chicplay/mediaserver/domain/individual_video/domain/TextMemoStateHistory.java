@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @SuperBuilder
 @Getter
-@Setter
+@Setter         // used in com.amazonaws.services.dynamodbv2
 @NoArgsConstructor()
 @DynamoDBTable(tableName = "text_memo_state_history")
 public class TextMemoStateHistory extends TextMemoState{

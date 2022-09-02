@@ -45,11 +45,12 @@ class IndividualVideoApiTest extends ContainerBaseTest {
     }
 
     @Test
-    @DisplayName("[IndividualVideoApi] textMemoStateLatest_레디스_저장")
+    @DisplayName("[IndividualVideoApi] textMemoStateLatest_레디스_save")
     public void textMemoStateLatest_레디스_저장() throws Exception {
 
         //given
-        TextMemoStateRedisSaveRequest textMemoStateRedisSaveRequest = TextMemoStateBuilder.redisSaveRequestBuilder();
+        String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
+        TextMemoStateRedisSaveRequest textMemoStateRedisSaveRequest = TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId);
 
         // when
         ResultActions resultActions = mvc.perform(post("/api/individuals-videos/cache/text-memo-state")
@@ -61,17 +62,18 @@ class IndividualVideoApiTest extends ContainerBaseTest {
     }
 
     @Test
-    @DisplayName("[IndividualVideoApi] textMemoStateLatest_레디스에서_다이나모_저장")
+    @DisplayName("[IndividualVideoApi] textMemoStateLatest_레디스에서_다이나모_save")
     public void textMemoStateLatest_레디스에서_다이나모_저장() throws Exception {
 
         //given
-        Map<String, String> request = TextMemoStateBuilder.individualVideoIdMapBuilder();
+        String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
+        Map<String, String> request = TextMemoStateBuilder.individualVideoIdMapBuilder(individualVideoId);
 
         //when
         // 우선, latest state save
         mvc.perform(post("/api/individuals-videos/cache/text-memo-state")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TextMemoStateBuilder.redisSaveRequestBuilder())));
+                .content(objectMapper.writeValueAsString(TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId))));
 
         ResultActions resultActions = mvc.perform(post("/api/individuals-videos/text-memo-state-latest")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -83,21 +85,22 @@ class IndividualVideoApiTest extends ContainerBaseTest {
     }
 
     @Test
-    @DisplayName("[IndividualVideoApi] textMemoStateHistory_레디스에서_다이나모_저장")
+    @DisplayName("[IndividualVideoApi] textMemoStateHistory_레디스에서_다이나모_save")
     public void textMemoStateHistory_레디스에서_다이나모_저장() throws Exception {
 
         //given
-        Map<String, String> request = TextMemoStateBuilder.individualVideoIdMapBuilder();
+        String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
+        Map<String, String> request = TextMemoStateBuilder.individualVideoIdMapBuilder(individualVideoId);
 
         //when
         // redis에 state 두번 save
         mvc.perform(post("/api/individuals-videos/cache/text-memo-state")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TextMemoStateBuilder.redisSaveRequestBuilder())));
+                .content(objectMapper.writeValueAsString(TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId))));
 
         mvc.perform(post("/api/individuals-videos/cache/text-memo-state")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TextMemoStateBuilder.redisSaveRequestBuilder())));
+                .content(objectMapper.writeValueAsString(TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId))));
 
         ResultActions resultActions = mvc.perform(post("/api/individuals-videos/text-memo-state-history")
                         .contentType(MediaType.APPLICATION_JSON)

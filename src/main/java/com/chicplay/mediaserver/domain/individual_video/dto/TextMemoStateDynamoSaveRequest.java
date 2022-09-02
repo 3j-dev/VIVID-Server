@@ -3,6 +3,7 @@ package com.chicplay.mediaserver.domain.individual_video.dto;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateHistory;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
+import com.chicplay.mediaserver.global.util.BaseDateTimeFormatter;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,8 +49,8 @@ public class TextMemoStateDynamoSaveRequest {
                 .id(id)
                 .individualVideoId(UUID.fromString(individualVideoId))
                 .stateJson(stateJson)
-                .videoTime(LocalTime.parse(videoTime, DateTimeFormatter.ofPattern("HH:mm:ss")))
-                .createdAt(LocalDateTime.parse(createdAt))
+                .videoTime(LocalTime.parse(videoTime, BaseDateTimeFormatter.getLocalTimeFormatter()))
+                .createdAt(LocalDateTime.parse(createdAt, BaseDateTimeFormatter.getLocalDateTimeFormatter()))
                 .build();
     }
 
@@ -59,8 +60,8 @@ public class TextMemoStateDynamoSaveRequest {
                 .id(id)
                 .individualVideoId(UUID.fromString(individualVideoId))
                 .stateJson(stateJson)
-                .videoTime(LocalTime.parse(videoTime,DateTimeFormatter.ofPattern("HH:mm:ss")))
-                .createdAt(LocalDateTime.parse(createdAt))
+                .videoTime(LocalTime.parse(videoTime,BaseDateTimeFormatter.getLocalTimeFormatter()))
+                .createdAt(LocalDateTime.parse(createdAt,BaseDateTimeFormatter.getLocalDateTimeFormatter()))
                 .build();
     }
 }
