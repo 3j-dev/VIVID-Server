@@ -71,8 +71,8 @@ public class TextMemoStateDao {
 
             String defaultStateKey = getDefaultStateKey(textMemoState.getIndividualVideoId().toString());
 
-            // text_memo_state set 형식에 key값 추가.
-            connection.sAdd(keySerializer.serialize(defaultStateKey), valueSerializer.serialize(textMemoState.getId()));
+            // text_memo_state set 형식에 history의 key 추가.
+            connection.sAdd(keySerializer.serialize(defaultStateKey), valueSerializer.serialize(defaultStateKey + "_history:" + textMemoState.getId()));
 
             // 각각의 객체들 redis에 hash 타입으로 set
             for (String key : map.keySet()) {
@@ -93,38 +93,25 @@ public class TextMemoStateDao {
     }
 
 
-    // textMemoState 리스트 저장
-    public void saveListToRedis(List<TextMemoStateRedisSaveRequest> textMemoStates) {
-
-        // redis pipeline
-        redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
-            textMemoStates.forEach(textMemoState -> {
-
-                TextMemoState textMemoStateEntity = textMemoState.toEntity();
-
-                Map<String, Object> map = objectMapper.convertValue(textMemoStateEntity, Map.class);
-
-                // text_memo_state set 형식에 key값 추가.
-                connection.sAdd(keySerializer.serialize(TEXT_MEMO_STATE_KEY),
-                        valueSerializer.serialize(textMemoStateEntity.getId()));
-
-                // 각각의 객체들 redis에 hash 타입으로 set
-                for (String key : map.keySet()) {
-                    connection.hashCommands().hSet(keySerializer.serialize(TEXT_MEMO_STATE_KEY + ":" + textMemoStateEntity.getId()),
-                            valueSerializer.serialize(key), valueSerializer.serialize(map.get(key)));
-                }
-            });
-            return null;
-        });
-    }
-
     // videoId를 통해서 state latest get
     public TextMemoStateLatest findTextMemoStateLatestFromRedis(String individualVideoId) {
 
-        TextMemoStateLatest textMemoStateLatest = objectMapper.convertValue(redisTemplate.opsForHash()
-                .entries(getDefaultStateKey(individualVideoId) + "_latest"), TextMemoStateLatest.class);
+        // redis에서 text state latest get
+        Map<Object, Object> map = redisTemplate.opsForHash().entries(getDefaultStateKey(individualVideoId) + "_latest");
+
+        if(map.isEmpty())
+            return null;
+
+        TextMemoStateLatest textMemoStateLatest = objectMapper.convertValue(map, TextMemoStateLatest.class);
+
 
         return textMemoStateLatest;
+    }
+
+    // videoId를 통해서 state latest delete
+    public void deleteTextMemoStateLatestFromRedis(String individualVideoId) {
+
+        redisTemplate.delete(getDefaultStateKey(individualVideoId) + "_latest");
     }
 
     // key_history를 통해 레디스에서 find and 객체 list return
@@ -132,27 +119,42 @@ public class TextMemoStateDao {
 
         List<TextMemoStateHistory> list = new ArrayList<>();
 
-        // redis pipeline
+        Set<Object> members = redisTemplate.opsForSet().members(getDefaultStateKey(individualVideoId));
+
         redisTemplate.execute((RedisCallback<List<String>>) connection -> {
 
-
-            // macth된 key 값 검색
-            ScanOptions options = ScanOptions.scanOptions().match(getDefaultStateKey(individualVideoId) + "_history*")
-                    .count(100L).build();
-            Cursor cursor = connection.scan(options);
-
-            while (cursor.hasNext()) {
+            members.forEach(key ->{
 
                 TextMemoStateHistory textMemoStateHistory = objectMapper.convertValue(redisTemplate.opsForHash()
-                        .entries(new String((byte[]) cursor.next())), TextMemoStateHistory.class);
+                        .entries(key.toString()), TextMemoStateHistory.class);
 
                 list.add(textMemoStateHistory);
+            });
 
-            }
             return null;
         });
 
         return list;
+    }
+
+    public void deleteTextMemoStateHistoryFromRedis(String individualVideoId) {
+
+        String key = getDefaultStateKey(individualVideoId);
+
+        Set<Object> members = redisTemplate.opsForSet().members(key);
+
+        redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+
+            // history set delete
+            connection.del(keySerializer.serialize(key));
+
+            // 모든 history 삭제
+            members.forEach(state ->{
+                connection.del(keySerializer.serialize(state));
+            });
+
+            return null;
+        });
     }
 
     // 다이노모db에 latest save
@@ -190,16 +192,68 @@ public class TextMemoStateDao {
         return scanResult;
     }
 
-    public TextMemoState updateToDynamo(String id, TextMemoState textMemoState) {
+    /*
+    *
+    *
+    *
+    old version
+    *
+    *
+    *
+     */
 
-        dynamoDBMapper.save(textMemoState,
-                new DynamoDBSaveExpression().withExpectedEntry(
-                        "id", new ExpectedAttributeValue(
-                                new AttributeValue().withS(textMemoState.getId())
-                        )
-                )
-        );
-        return textMemoState;
+    // textMemoState 리스트 저장
+    // redis pipeline을 통해 다양한 코드 삽입.
+    public void saveListToRedis(List<TextMemoStateRedisSaveRequest> textMemoStates) {
+
+        // redis pipeline
+        redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+            textMemoStates.forEach(textMemoState -> {
+
+                TextMemoState textMemoStateEntity = textMemoState.toEntity();
+
+                Map<String, Object> map = objectMapper.convertValue(textMemoStateEntity, Map.class);
+
+                // text_memo_state set 형식에 key값 추가.
+                connection.sAdd(keySerializer.serialize(TEXT_MEMO_STATE_KEY),
+                        valueSerializer.serialize(textMemoStateEntity.getId()));
+
+                // 각각의 객체들 redis에 hash 타입으로 set
+                for (String key : map.keySet()) {
+                    connection.hashCommands().hSet(keySerializer.serialize(TEXT_MEMO_STATE_KEY + ":" + textMemoStateEntity.getId()),
+                            valueSerializer.serialize(key), valueSerializer.serialize(map.get(key)));
+                }
+            });
+            return null;
+        });
+    }
+
+    // key 값 매칭을 통해 scan 하는 코드
+    public List<TextMemoStateHistory> getTextMemoStateHistoryFromRedisVer2(String individualVideoId) {
+
+        List<TextMemoStateHistory> list = new ArrayList<>();
+
+        // redis pipeline
+        redisTemplate.execute((RedisCallback<List<String>>) connection -> {
+
+
+            // macth된 key 값 검색
+            ScanOptions options = ScanOptions.scanOptions().match(getDefaultStateKey(individualVideoId) + "_history*")
+                    .count(100L).build();
+            Cursor cursor = connection.scan(options);
+
+            while (cursor.hasNext()) {
+
+                TextMemoStateHistory textMemoStateHistory = objectMapper.convertValue(redisTemplate.opsForHash()
+                        .entries(new String((byte[]) cursor.next())), TextMemoStateHistory.class);
+
+                list.add(textMemoStateHistory);
+
+            }
+            return null;
+        });
+
+        return list;
     }
 
 

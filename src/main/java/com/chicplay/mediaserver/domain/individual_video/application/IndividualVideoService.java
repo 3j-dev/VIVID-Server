@@ -32,11 +32,18 @@ public class IndividualVideoService {
     @Transactional
     public TextMemoStateLatest getTextMemoStateLatestFromRedis(String individualVideoId){
 
-        return textMemoStateDao.findTextMemoStateLatestFromRedis(individualVideoId);
+        // redis return 값이 null 일 경우, dynamoDB에서 get
+        TextMemoStateLatest textMemoStateLatest = Optional
+                .ofNullable(textMemoStateDao.findTextMemoStateLatestFromRedis(individualVideoId))
+                .orElse(textMemoStateDao.getLatestFromDynamo(individualVideoId));
+
+        //TextMemoStateLatest textMemoStateLatest = textMemoStateDao.findTextMemoStateLatestFromRedis(individualVideoId);
+
+        return textMemoStateLatest;
     }
 
-
-    // redis의 state latest 다이나모 db에 저장.
+    // dynamo db에 textMemoStateLatest문 insert
+    // save시 redis에서 delete
     @Transactional
     public void saveTextMemoStateLatestToDynamoDb(String individualVideoId){
 
@@ -45,17 +52,13 @@ public class IndividualVideoService {
 
         // 해당 state를 저장한다.
         textMemoStateDao.saveLatestToDynamo(textMemoStateLatest);
+
+        // redis에서 삭제
+        textMemoStateDao.deleteTextMemoStateLatestFromRedis(individualVideoId);
     }
-
-    // redis에 textMemoState 객체 리스트 저장 메소드
-    public void saveTextMemoStatesToRedis(List<TextMemoStateRedisSaveRequest> textMemoStates){
-
-        textMemoStateDao.saveListToRedis(textMemoStates);
-    }
-
-
 
     // dynamo db에 textMemoStateHistory문 insert
+    // save시 redis에서 delete
     @Transactional
     public void saveTextMemoStateHistoryToDynamoDb(String individualVideoId){
 
@@ -64,7 +67,20 @@ public class IndividualVideoService {
 
         // get된 text_memo_state_history 다이나모db에 save
         textMemoStateDao.saveHistoryListToDynamo(historyListFromRedis);
+
+        // redis에서 삭제
+        textMemoStateDao.deleteTextMemoStateHistoryFromRedis(individualVideoId);
     }
+
+    /*
+    old version
+     */
+
+    // redis에 textMemoState 객체 리스트 저장 메소드
+//    public void saveTextMemoStatesToRedis(List<TextMemoStateRedisSaveRequest> textMemoStates){
+//
+//        textMemoStateDao.saveListToRedis(textMemoStates);
+//    }
 
 
 }

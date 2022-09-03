@@ -6,9 +6,11 @@ import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateBuilder;
+import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateHistory;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
 import com.chicplay.mediaserver.test.ContainerBaseTest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,8 +21,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class IndividualVideoApiTest extends ContainerBaseTest {
@@ -36,17 +40,24 @@ class IndividualVideoApiTest extends ContainerBaseTest {
     @BeforeEach
     void setUp() {
 
-        // dynamoDB table 생성
-        // test container 기반,
-        CreateTableRequest createTableRequest = dynamoDBMapper.generateCreateTableRequest(TextMemoStateLatest.class)
+        // test container 기반, dynamoDB table 생성
+
+        CreateTableRequest createTextMemoStateLatestTableRequest = dynamoDBMapper.generateCreateTableRequest(TextMemoStateLatest.class)
                 .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L));
 
-        TableUtils.createTableIfNotExists(amazonDynamoDb, createTableRequest);
+
+        CreateTableRequest createTextMemoStateHistoryTableRequest = dynamoDBMapper.generateCreateTableRequest(TextMemoStateHistory.class)
+                .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L));
+
+
+        TableUtils.createTableIfNotExists(amazonDynamoDb, createTextMemoStateLatestTableRequest);
+        TableUtils.createTableIfNotExists(amazonDynamoDb, createTextMemoStateHistoryTableRequest);
+
     }
 
     @Test
     @DisplayName("[IndividualVideoApi] textMemoStateLatest_레디스_save")
-    public void textMemoStateLatest_레디스_저장() throws Exception {
+    public void textMemoStateLatest_레디스_save() throws Exception {
 
         //given
         String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
@@ -63,7 +74,7 @@ class IndividualVideoApiTest extends ContainerBaseTest {
 
     @Test
     @DisplayName("[IndividualVideoApi] textMemoStateLatest_레디스에서_다이나모_save")
-    public void textMemoStateLatest_레디스에서_다이나모_저장() throws Exception {
+    public void textMemoStateLatest_레디스에서_다이나모_save() throws Exception {
 
         //given
         String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
@@ -86,7 +97,7 @@ class IndividualVideoApiTest extends ContainerBaseTest {
 
     @Test
     @DisplayName("[IndividualVideoApi] textMemoStateHistory_레디스에서_다이나모_save")
-    public void textMemoStateHistory_레디스에서_다이나모_저장() throws Exception {
+    public void textMemoStateHistory_레디스에서_다이나모_save() throws Exception {
 
         //given
         String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
@@ -111,6 +122,38 @@ class IndividualVideoApiTest extends ContainerBaseTest {
         resultActions.andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("[IndividualVideoApi] textMemoStateLatest_레디스_get_return_null_and_다이노모_get()")
+    public void textMemoStateLatest_레디스_get_return_null_and_다이노모_get() throws Exception {
+
+        //given
+        String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
+        Map<String, String> request = TextMemoStateBuilder.individualVideoIdMapBuilder(individualVideoId);
+
+        //when
+
+        // redis에 저장
+        mvc.perform(post("/api/individuals-videos/cache/text-memo-state")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId))));
+
+        // 다이나모에 save
+        // 다이나모에 save되면 redis가 null이 된다.
+        mvc.perform(post("/api/individuals-videos/text-memo-state-latest")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // redis에서 get latest
+        ResultActions resultActions = mvc.perform(get("/api/individuals-videos/cache/text-memo-state-latest")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        //then
+        resultActions
+                .andExpect(jsonPath("individualVideoId").value(individualVideoId));
+
+
+    }
 
 
 }

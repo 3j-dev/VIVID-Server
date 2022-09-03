@@ -1,8 +1,6 @@
 package com.chicplay.mediaserver.domain.individual_video.api;
 
-import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateHistory;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
-import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateDynamoSaveRequest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
 import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +18,8 @@ public class IndividualVideoApi {
 
     private final IndividualVideoService individualVideoService;
 
-    // redis 캐시에 단일 메모 스테이트를 저장하는 메소드
+    // redis cache에 state save 메소드
+    // save할 때는 latest, history의 구분 없이 input을 받고, dao 파트에서 나눠서 저장한다.
     @PostMapping("/cache/text-memo-state")
     public void saveTextMemoStateToCache(@RequestBody @Valid final TextMemoStateRedisSaveRequest dto){
 
@@ -28,22 +27,27 @@ public class IndividualVideoApi {
     }
 
     // redis 캐시로 부터 text memo state latest get
+    // redis에 데이터가 없다면(만료됐다면) dynamoDB에서 get한다.
     @GetMapping("/cache/text-memo-state-latest")
     public TextMemoStateLatest getTextMemoStateFromCache(@RequestBody HashMap<String, String> request ){
         return individualVideoService.getTextMemoStateLatestFromRedis(request.get("individualVideoId"));
     }
 
 
-    // redis 캐시에 텍스트 메모 스테이트 리스트를 저장하는 메소드
-    @PostMapping("/cache/text-memo-states")
-    public void saveTextMemoStatesToCache(@RequestBody @Valid final List<TextMemoStateRedisSaveRequest> textMemoStates) {
+    // dynamodb에 latest,history 모두 save
+    @PostMapping("/text-memo-states")
+    public void saveTextMemoStatesToDynamoDb(@RequestBody @Valid HashMap<String, String> request ){
 
-        individualVideoService.saveTextMemoStatesToRedis(textMemoStates);
+        // latest save
+        individualVideoService.saveTextMemoStateLatestToDynamoDb(request.get("individualVideoId"));
+
+        // history save
+        individualVideoService.saveTextMemoStateHistoryToDynamoDb(request.get("individualVideoId"));
     }
 
     // dynamoDB에 text state latest문 저장 메소드
     @PostMapping("/text-memo-state-latest")
-    public void saveTextMemoStatesLatestToDynamoDb(@RequestBody @Valid HashMap<String, String> request){
+    public void saveTextMemoStateLatestToDynamoDb(@RequestBody @Valid HashMap<String, String> request){
 
         individualVideoService.saveTextMemoStateLatestToDynamoDb(request.get("individualVideoId"));
     }
@@ -54,4 +58,16 @@ public class IndividualVideoApi {
 
         individualVideoService.saveTextMemoStateHistoryToDynamoDb(request.get("individualVideoId"));
     }
+
+
+    /*
+    old version
+     */
+
+    // redis 캐시에 텍스트 메모 스테이트 리스트를 저장하는 메소드
+//    @PostMapping("/cache/text-memo-states")
+//    public void saveTextMemoStatesToCache(@RequestBody @Valid final List<TextMemoStateRedisSaveRequest> textMemoStates) {
+//
+//        individualVideoService.saveTextMemoStatesToRedis(textMemoStates);
+//    }
 }

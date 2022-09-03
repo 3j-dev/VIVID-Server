@@ -99,7 +99,6 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
 
         // given
         String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
-        Map<String, String> request = TextMemoStateBuilder.individualVideoIdMapBuilder(individualVideoId);
         TextMemoStateRedisSaveRequest redisSaveRequest = TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId);
 
         // when
@@ -170,14 +169,23 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
 
         // given
         String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
+
+        // update하기 위해 request 두개 생성.
         TextMemoStateDynamoSaveRequest textMemoStateDynamoSaveRequest = TextMemoStateBuilder.dynamoSaveRequestBuilder(individualVideoId);
+        TextMemoStateDynamoSaveRequest updatedTextMemoStateDynamoSaveRequest = TextMemoStateBuilder.dynamoSaveRequestBuilder(individualVideoId);
 
         // when
+
+        // 처음 저장에 대한 latest state get
         textMemoStateDao.saveLatestToDynamo(textMemoStateDynamoSaveRequest.toLatestEntity());
         TextMemoStateLatest textMemoStateLatest = textMemoStateDao.getLatestFromDynamo(textMemoStateDynamoSaveRequest.getIndividualVideoId());
 
+        // updated latest state
+        // 똑같은 pk에 save하면 update 된다.
+        textMemoStateDao.saveLatestToDynamo(updatedTextMemoStateDynamoSaveRequest.toLatestEntity());
+        TextMemoStateLatest updatedTextMemoStateLatest = textMemoStateDao.getLatestFromDynamo(textMemoStateDynamoSaveRequest.getIndividualVideoId());
+
         // then
-        assertThat(textMemoStateLatest.getIndividualVideoId().toString()).isEqualTo(textMemoStateDynamoSaveRequest.getIndividualVideoId());
-        assertThat(textMemoStateLatest.getStateJson()).isEqualTo(textMemoStateDynamoSaveRequest.getStateJson());
+        assertThat(textMemoStateLatest.getCreatedAt()).isNotEqualTo(updatedTextMemoStateLatest.getCreatedAt());
     }
 }
