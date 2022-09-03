@@ -96,8 +96,8 @@ class IndividualVideoApiTest extends ContainerBaseTest {
     }
 
     @Test
-    @DisplayName("[IndividualVideoApi] textMemoStateHistory_레디스에서_다이나모_save")
-    public void textMemoStateHistory_레디스에서_다이나모_save() throws Exception {
+    @DisplayName("[IndividualVideoApi] textMemoStateHistoryList_레디스에서_다이나모_save")
+    public void textMemoStateHistoryList_레디스에서_다이나모_save() throws Exception {
 
         //given
         String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();

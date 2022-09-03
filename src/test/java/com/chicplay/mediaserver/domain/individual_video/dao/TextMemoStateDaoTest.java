@@ -19,11 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
 
 class TextMemoStateDaoTest extends ContainerBaseTest {
 
@@ -84,7 +82,7 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
         TextMemoState textMemoState = textMemoStateDao.saveToRedis(redisSaveRequest.toEntity());
 
         // individualVideoId를 통한 검색.
-        TextMemoStateLatest savedTextMemoState= textMemoStateDao.findTextMemoStateLatestFromRedis(textMemoState.getIndividualVideoId().toString());
+        TextMemoStateLatest savedTextMemoState= textMemoStateDao.getTextMemoStateLatestFromRedis(textMemoState.getIndividualVideoId().toString());
 
         //then
         assertThat(savedTextMemoState.getId()).isEqualTo(textMemoState.getId());

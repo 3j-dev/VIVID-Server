@@ -1,11 +1,8 @@
 package com.chicplay.mediaserver.domain.individual_video.dao;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateHistory;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
@@ -94,11 +91,12 @@ public class TextMemoStateDao {
 
 
     // videoId를 통해서 state latest get
-    public TextMemoStateLatest findTextMemoStateLatestFromRedis(String individualVideoId) {
+    public TextMemoStateLatest getTextMemoStateLatestFromRedis(String individualVideoId) {
 
         // redis에서 text state latest get
         Map<Object, Object> map = redisTemplate.opsForHash().entries(getDefaultStateKey(individualVideoId) + "_latest");
 
+        // 없을 경우 null 리턴
         if(map.isEmpty())
             return null;
 

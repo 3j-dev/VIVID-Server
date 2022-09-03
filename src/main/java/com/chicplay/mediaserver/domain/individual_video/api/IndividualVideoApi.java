@@ -1,8 +1,10 @@
 package com.chicplay.mediaserver.domain.individual_video.api;
 
+import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateHistory;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
 import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
+import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -21,22 +23,14 @@ public class IndividualVideoApi {
     // redis cache에 state save 메소드
     // save할 때는 latest, history의 구분 없이 input을 받고, dao 파트에서 나눠서 저장한다.
     @PostMapping("/cache/text-memo-state")
-    public void saveTextMemoStateToCache(@RequestBody @Valid final TextMemoStateRedisSaveRequest dto){
+    public void saveTextMemoStateToCache(@RequestBody @Valid final TextMemoStateRedisSaveRequest dto) {
 
         individualVideoService.saveTextMemoStateToRedis(dto);
     }
 
-    // redis 캐시로 부터 text memo state latest get
-    // redis에 데이터가 없다면(만료됐다면) dynamoDB에서 get한다.
-    @GetMapping("/cache/text-memo-state-latest")
-    public TextMemoStateLatest getTextMemoStateFromCache(@RequestBody HashMap<String, String> request ){
-        return individualVideoService.getTextMemoStateLatestFromRedis(request.get("individualVideoId"));
-    }
-
-
     // dynamodb에 latest,history 모두 save
     @PostMapping("/text-memo-states")
-    public void saveTextMemoStatesToDynamoDb(@RequestBody @Valid HashMap<String, String> request ){
+    public void saveTextMemoStatesToDynamoDb(@RequestBody @Valid HashMap<String, String> request) {
 
         // latest save
         individualVideoService.saveTextMemoStateLatestToDynamoDb(request.get("individualVideoId"));
@@ -47,18 +41,43 @@ public class IndividualVideoApi {
 
     // dynamoDB에 text state latest문 저장 메소드
     @PostMapping("/text-memo-state-latest")
-    public void saveTextMemoStateLatestToDynamoDb(@RequestBody @Valid HashMap<String, String> request){
+    public void saveTextMemoStateLatestToDynamoDb(@RequestBody @Valid HashMap<String, String> request) {
 
         individualVideoService.saveTextMemoStateLatestToDynamoDb(request.get("individualVideoId"));
     }
 
     // dynamoDB에 text state history문 저장 메소드.
     @PostMapping("/text-memo-state-history")
-    public void saveTextMemoStatesHistoryToDynamoDb(@RequestBody @Valid HashMap<String, String> request ){
+    public void saveTextMemoStatesHistoryToDynamoDb(@RequestBody @Valid HashMap<String, String> request) {
 
         individualVideoService.saveTextMemoStateHistoryToDynamoDb(request.get("individualVideoId"));
     }
 
+    // redis 캐시로 부터 text memo state latest get
+    // redis에 데이터가 없다면(만료됐다면) dynamoDB에서 get한다.
+    @GetMapping("/cache/text-memo-state-latest")
+    public TextMemoStateResponse getTextMemoStateFromCache(@RequestBody HashMap<String, String> request) {
+
+        TextMemoStateLatest textMemoStateLatest = individualVideoService.getTextMemoStateLatestFromRedis(request.get("individualVideoId"));
+
+        return TextMemoStateResponse.builder().textMemoState(textMemoStateLatest).build();
+    }
+
+    // redis 캐시로 부터 text memo state latest get
+    // redis에 데이터가 없다면(만료됐다면) dynamoDB에서 get한다.
+    @GetMapping("/text-memo-state-history")
+    public List<TextMemoStateResponse> getTextMemoStateHistoryFromDynamoDb(@RequestBody HashMap<String, String> request) {
+
+        List<TextMemoStateHistory> textMemoStateHistoryList = individualVideoService.getTextMemoStateHistoryFromDynamoDb(request.get("individualVideoId"));
+
+        // dto로 객체 변환
+        List<TextMemoStateResponse> textMemoStateResponseList = new ArrayList<>();
+        textMemoStateHistoryList.forEach(textMemoStateHistory -> {
+            textMemoStateResponseList.add(TextMemoStateResponse.builder().textMemoState(textMemoStateHistory).build());
+        });
+
+        return textMemoStateResponseList;
+    }
 
     /*
     old version

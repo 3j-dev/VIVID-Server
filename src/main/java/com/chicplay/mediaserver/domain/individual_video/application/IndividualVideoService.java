@@ -34,12 +34,18 @@ public class IndividualVideoService {
 
         // redis return 값이 null 일 경우, dynamoDB에서 get
         TextMemoStateLatest textMemoStateLatest = Optional
-                .ofNullable(textMemoStateDao.findTextMemoStateLatestFromRedis(individualVideoId))
+                .ofNullable(textMemoStateDao.getTextMemoStateLatestFromRedis(individualVideoId))
                 .orElse(textMemoStateDao.getLatestFromDynamo(individualVideoId));
 
-        //TextMemoStateLatest textMemoStateLatest = textMemoStateDao.findTextMemoStateLatestFromRedis(individualVideoId);
-
         return textMemoStateLatest;
+    }
+
+    @Transactional
+    public List<TextMemoStateHistory> getTextMemoStateHistoryFromDynamoDb(String individualVideoId){
+
+        List<TextMemoStateHistory> historyListFromDynamo = textMemoStateDao.getHistoryListFromDynamo(individualVideoId);
+
+        return historyListFromDynamo;
     }
 
     // dynamo db에 textMemoStateLatest문 insert
@@ -48,7 +54,7 @@ public class IndividualVideoService {
     public void saveTextMemoStateLatestToDynamoDb(String individualVideoId){
 
         // 요청된 individualVideoId의 state latest를 redis에서 가져온다.
-        TextMemoStateLatest textMemoStateLatest = textMemoStateDao.findTextMemoStateLatestFromRedis(individualVideoId);
+        TextMemoStateLatest textMemoStateLatest = textMemoStateDao.getTextMemoStateLatestFromRedis(individualVideoId);
 
         // 해당 state를 저장한다.
         textMemoStateDao.saveLatestToDynamo(textMemoStateLatest);
