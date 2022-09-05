@@ -29,8 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class IndividualVideoApiTest extends ContainerBaseTest {
 
-    private static final String TABLE_NAME = "text_memo_state_latest";
-
     @Autowired
     private DynamoDBMapper dynamoDBMapper;
 
@@ -64,7 +62,7 @@ class IndividualVideoApiTest extends ContainerBaseTest {
         TextMemoStateRedisSaveRequest textMemoStateRedisSaveRequest = TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId);
 
         // when
-        ResultActions resultActions = mvc.perform(post("/api/individuals-videos/cache/text-memo-state")
+        ResultActions resultActions = mvc.perform(post("/api/cache/"+ individualVideoId+"/text-memo-state")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(textMemoStateRedisSaveRequest)));
 
@@ -78,17 +76,15 @@ class IndividualVideoApiTest extends ContainerBaseTest {
 
         //given
         String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
-        Map<String, String> request = TextMemoStateBuilder.individualVideoIdMapBuilder(individualVideoId);
 
         //when
         // 우선, latest state save
-        mvc.perform(post("/api/individuals-videos/cache/text-memo-state")
+        mvc.perform(post("/api/cache/"+ individualVideoId + "/text-memo-state")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId))));
 
-        ResultActions resultActions = mvc.perform(post("/api/individuals-videos/text-memo-state-latest")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+        ResultActions resultActions = mvc.perform(post("/api/"+ individualVideoId+ "/text-memo-state-latest")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
 
         //then
@@ -101,21 +97,19 @@ class IndividualVideoApiTest extends ContainerBaseTest {
 
         //given
         String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
-        Map<String, String> request = TextMemoStateBuilder.individualVideoIdMapBuilder(individualVideoId);
 
         //when
         // redis에 state 두번 save
-        mvc.perform(post("/api/individuals-videos/cache/text-memo-state")
+        mvc.perform(post("/api/cache/"+ individualVideoId+ "/text-memo-state")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId))));
 
-        mvc.perform(post("/api/individuals-videos/cache/text-memo-state")
+        mvc.perform(post("/api/cache/"+ individualVideoId + "/text-memo-state")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId))));
 
-        ResultActions resultActions = mvc.perform(post("/api/individuals-videos/text-memo-state-history")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+        ResultActions resultActions = mvc.perform(post("/api/ "+ individualVideoId+ "/text-memo-state-history")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
 
         //then
@@ -128,25 +122,22 @@ class IndividualVideoApiTest extends ContainerBaseTest {
 
         //given
         String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
-        Map<String, String> request = TextMemoStateBuilder.individualVideoIdMapBuilder(individualVideoId);
 
         //when
 
         // redis에 저장
-        mvc.perform(post("/api/individuals-videos/cache/text-memo-state")
+        mvc.perform(post("/api/cache/"+ individualVideoId + "/text-memo-state")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TextMemoStateBuilder.redisSaveRequestBuilder(individualVideoId))));
 
         // 다이나모에 save
         // 다이나모에 save되면 redis가 null이 된다.
-        mvc.perform(post("/api/individuals-videos/text-memo-state-latest")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)));
+        mvc.perform(post("/api/"+ individualVideoId + "/text-memo-state-latest")
+                .contentType(MediaType.APPLICATION_JSON));
 
         // redis에서 get latest
-        ResultActions resultActions = mvc.perform(get("/api/individuals-videos/cache/text-memo-state-latest")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)));
+        ResultActions resultActions = mvc.perform(get("/api/cache/"+ individualVideoId +"/text-memo-state-latest")
+                .contentType(MediaType.APPLICATION_JSON));
 
         //then
         resultActions
