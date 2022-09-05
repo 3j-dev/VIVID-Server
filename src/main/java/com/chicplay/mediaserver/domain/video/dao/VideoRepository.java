@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface VideoRepository extends JpaRepository<Video, UUID> {
 
+    public String getVideoById(UUID id);
+
 }

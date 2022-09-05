@@ -40,25 +40,8 @@ public class S3Service {
     @Value("${cloud.aws.s3.image.snapshot.bucket}")
     private String imageSnapshotBucket;
 
-
     private final AmazonS3Client amazonS3Client;
 
-    public void uploadRawVideoToS3(String fileUrl) throws IOException {
-
-        URL url = new URL(fileUrl);
-        URLConnection conn =  url.openConnection();
-        InputStream is = conn.getInputStream();
-
-        byte[] f = IOUtils.toByteArray(is);
-        ObjectMetadata metadata = new ObjectMetadata();
-
-        ByteArrayInputStream byteArrayIs = new ByteArrayInputStream(f);
-        metadata.setContentLength(f.length);
-
-        // s3 upload
-        amazonS3Client.putObject(new PutObjectRequest(rawVideoBucket, "test.mp4", byteArrayIs, metadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
-    }
 
     // 스냅샷 이미지를 s3에 업로드하는 메소드
     public SnapshotImageUploadResponse uploadSnapshotImagesToS3(MultipartFile file, String individualVideoId, String videoTime){
@@ -79,11 +62,29 @@ public class S3Service {
             throw new ImageUploadFailedException();
         }
 
+        // responses dto로 변환
         SnapshotImageUploadResponse response = SnapshotImageUploadResponse.builder()
                 .filePath(String.valueOf(amazonS3Client.getUrl(imageSnapshotBucket, objectKey)))
                 .time(videoTime).build();
 
         return response;
+    }
+
+    public void uploadRawVideoToS3(String fileUrl) throws IOException {
+
+        URL url = new URL(fileUrl);
+        URLConnection conn =  url.openConnection();
+        InputStream is = conn.getInputStream();
+
+        byte[] f = IOUtils.toByteArray(is);
+        ObjectMetadata metadata = new ObjectMetadata();
+
+        ByteArrayInputStream byteArrayIs = new ByteArrayInputStream(f);
+        metadata.setContentLength(f.length);
+
+        // s3 upload
+        amazonS3Client.putObject(new PutObjectRequest(rawVideoBucket, "test.mp4", byteArrayIs, metadata)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
 }
