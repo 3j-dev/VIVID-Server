@@ -117,12 +117,14 @@ public class TextMemoStateDao {
 
         List<TextMemoStateHistory> list = new ArrayList<>();
 
-        Set<Object> members = redisTemplate.opsForSet().members(getDefaultStateKey(individualVideoId));
+        // redis의 set 형식에서 멤버들을 꺼내온다.
+        Set<Object> stateHistoryMembers = redisTemplate.opsForSet().members(getDefaultStateKey(individualVideoId));
 
+        // pipeline open
         redisTemplate.execute((RedisCallback<List<String>>) connection -> {
 
-            members.forEach(key ->{
-
+            // 각각의 값들을
+            stateHistoryMembers.forEach(key ->{
                 TextMemoStateHistory textMemoStateHistory = objectMapper.convertValue(redisTemplate.opsForHash()
                         .entries(key.toString()), TextMemoStateHistory.class);
 

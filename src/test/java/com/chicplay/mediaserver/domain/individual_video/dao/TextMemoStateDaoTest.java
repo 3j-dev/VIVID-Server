@@ -163,25 +163,26 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
 
     @Test
     @DisplayName("[TextMemoStateDaoTest] textMemoStateLatest_다이나모_hashKey_update")
-    public void textMemoStateLatest_다이나모_hashKey_update() {
+    public void textMemoStateLatest_다이나모_hashKey_update() throws InterruptedException {
 
         // given
         String individualVideoId = TextMemoStateBuilder.getRandomIndividualVideoId();
 
         // update하기 위해 request 두개 생성.
         TextMemoStateDynamoSaveRequest textMemoStateDynamoSaveRequest = TextMemoStateBuilder.dynamoSaveRequestBuilder(individualVideoId);
+        Thread.sleep(10);
         TextMemoStateDynamoSaveRequest updatedTextMemoStateDynamoSaveRequest = TextMemoStateBuilder.dynamoSaveRequestBuilder(individualVideoId);
 
         // when
 
         // 처음 저장에 대한 latest state get
         textMemoStateDao.saveLatestToDynamo(textMemoStateDynamoSaveRequest.toLatestEntity());
-        TextMemoStateLatest textMemoStateLatest = textMemoStateDao.getLatestFromDynamo(textMemoStateDynamoSaveRequest.getIndividualVideoId());
+        TextMemoStateLatest textMemoStateLatest = textMemoStateDao.getLatestFromDynamo(individualVideoId);
 
         // updated latest state
         // 똑같은 pk에 save하면 update 된다.
         textMemoStateDao.saveLatestToDynamo(updatedTextMemoStateDynamoSaveRequest.toLatestEntity());
-        TextMemoStateLatest updatedTextMemoStateLatest = textMemoStateDao.getLatestFromDynamo(textMemoStateDynamoSaveRequest.getIndividualVideoId());
+        TextMemoStateLatest updatedTextMemoStateLatest = textMemoStateDao.getLatestFromDynamo(individualVideoId);
 
         // then
         assertThat(textMemoStateLatest.getCreatedAt()).isNotEqualTo(updatedTextMemoStateLatest.getCreatedAt());

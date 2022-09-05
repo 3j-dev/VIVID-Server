@@ -29,17 +29,19 @@ public class IndividualVideoService {
         textMemoStateDao.saveToRedis(textMemoState.toEntity());
     }
 
+    // redis로 부터 latest get
     @Transactional
     public TextMemoStateLatest getTextMemoStateLatestFromRedis(String individualVideoId){
 
         // redis return 값이 null 일 경우, dynamoDB에서 get
         TextMemoStateLatest textMemoStateLatest = Optional
                 .ofNullable(textMemoStateDao.getTextMemoStateLatestFromRedis(individualVideoId))
-                .orElse(textMemoStateDao.getLatestFromDynamo(individualVideoId));
+                .orElse(textMemoStateDao.getLatestFromDynamo(individualVideoId));   // null일 경우 dyanamo에서 get
 
         return textMemoStateLatest;
     }
 
+    // dynamoDB에서 history list get
     @Transactional
     public List<TextMemoStateHistory> getTextMemoStateHistoryFromDynamoDb(String individualVideoId){
 

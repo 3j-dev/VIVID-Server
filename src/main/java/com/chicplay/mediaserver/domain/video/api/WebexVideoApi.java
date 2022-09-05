@@ -1,6 +1,6 @@
 package com.chicplay.mediaserver.domain.video.api;
 
-import com.chicplay.mediaserver.domain.video.application.S3Service;
+import com.chicplay.mediaserver.global.infra.storage.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;

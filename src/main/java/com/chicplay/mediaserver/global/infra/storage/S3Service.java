@@ -1,11 +1,12 @@
-package com.chicplay.mediaserver.domain.video.application;
+package com.chicplay.mediaserver.global.infra.storage;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.util.IOUtils;
-import com.chicplay.mediaserver.domain.video.dto.UploadSnapshotImageResponse;
+import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
 import com.chicplay.mediaserver.domain.video.exception.ImageUploadFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -62,39 +60,30 @@ public class S3Service {
                 .withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
-    public List<UploadSnapshotImageResponse> uploadSnapshotImagesToS3(List<MultipartFile> multipartFile, String classParticipantListId){
+    // 스냅샷 이미지를 s3에 업로드하는 메소드
+    public SnapshotImageUploadResponse uploadSnapshotImagesToS3(MultipartFile file, String individualVideoId, String videoTime){
 
-        List<UploadSnapshotImageResponse> fileUrlList = new ArrayList<>();
+        // 디렉토리 이름은 individualVideoId, fileName은 캡처 시간대
+        String objectKey = individualVideoId + '/' + videoTime;
 
-        multipartFile.forEach(file -> {
+        // 메타 데이터 추출
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(file.getSize());
+        objectMetadata.setContentType(file.getContentType());
 
-            // test용, 실제는 매핑 필요.
-            String folderName = UUID.randomUUID().toString();
+        // s3 upload
+        try(InputStream inputStream = file.getInputStream()) {
+             amazonS3Client.putObject(new PutObjectRequest(imageSnapshotBucket, objectKey, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch(IOException e) {
+            throw new ImageUploadFailedException();
+        }
 
-            // fileName은 캡처 시간대
-            String fileName = UUID.randomUUID().toString();
-            //String fileName = file.getName();
+        SnapshotImageUploadResponse response = SnapshotImageUploadResponse.builder()
+                .filePath(String.valueOf(amazonS3Client.getUrl(imageSnapshotBucket, objectKey)))
+                .time(videoTime).build();
 
-            String objectKey = folderName + '/' + fileName;
-
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentLength(file.getSize());
-            objectMetadata.setContentType(file.getContentType());
-
-            try(InputStream inputStream = file.getInputStream()) {
-                amazonS3Client.putObject(new PutObjectRequest(imageSnapshotBucket, objectKey , inputStream, objectMetadata)
-                        .withCannedAcl(CannedAccessControlList.PublicRead));
-            } catch(IOException e) {
-                throw new ImageUploadFailedException();
-            }
-
-            fileUrlList.add(UploadSnapshotImageResponse.builder()
-                    .filePath(String.valueOf(amazonS3Client.getUrl(imageSnapshotBucket,objectKey)))
-                    .time(LocalTime.of(00,1,22,00)).build());
-
-        });
-
-        return fileUrlList;
+        return response;
     }
 
 }

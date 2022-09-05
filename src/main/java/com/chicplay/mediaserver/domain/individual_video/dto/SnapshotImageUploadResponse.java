@@ -1,4 +1,4 @@
-package com.chicplay.mediaserver.domain.video.dto;
+package com.chicplay.mediaserver.domain.individual_video.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -13,12 +13,12 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UploadSnapshotImageResponse {
+public class SnapshotImageUploadResponse {
 
     @Schema(description = "이미지 파일 경로" , example = "test01.aws.com")
     private String filePath;
 
     @Schema(description = "스냅샷 캡처 시간" , example = "00:13:51")
-    private LocalTime time;
+    private String time;
 
 }
