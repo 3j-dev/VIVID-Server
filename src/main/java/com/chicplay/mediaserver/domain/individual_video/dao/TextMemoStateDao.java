@@ -61,6 +61,13 @@ public class TextMemoStateDao {
     // textMemoState를 save 합니다.
     // 이때, textMemoState를 latest 버전을 업데이트하고,
     // history 버전을 add한다.
+
+
+    /**
+     *
+     * @param textMemoState
+     * @return
+     */
     public TextMemoState saveToRedis(TextMemoState textMemoState) {
         redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
 
@@ -91,7 +98,7 @@ public class TextMemoStateDao {
 
 
     // videoId를 통해서 state latest get
-    public TextMemoStateLatest getTextMemoStateLatestFromRedis(String individualVideoId) {
+    public TextMemoStateLatest getLatestFromRedis(String individualVideoId) {
 
         // redis에서 text state latest get
         Map<Object, Object> map = redisTemplate.opsForHash().entries(getDefaultStateKey(individualVideoId) + "_latest");
@@ -107,7 +114,7 @@ public class TextMemoStateDao {
     }
 
     // videoId를 통해서 state latest delete
-    public void deleteTextMemoStateLatestFromRedis(String individualVideoId) {
+    public void deleteLatestFromRedis(String individualVideoId) {
 
         redisTemplate.delete(getDefaultStateKey(individualVideoId) + "_latest");
     }
@@ -137,7 +144,7 @@ public class TextMemoStateDao {
         return list;
     }
 
-    public void deleteTextMemoStateHistoryFromRedis(String individualVideoId) {
+    public void deleteHistoryFromRedis(String individualVideoId) {
 
         String key = getDefaultStateKey(individualVideoId);
 

@@ -4,20 +4,14 @@ import com.chicplay.mediaserver.domain.account.dao.AccountRepository;
 import com.chicplay.mediaserver.domain.account.domain.Account;
 import com.chicplay.mediaserver.domain.account.domain.AccountBuilder;
 import com.chicplay.mediaserver.domain.account.dto.AccountSignUpRequest;
-import com.chicplay.mediaserver.domain.account.dto.AccountSignUpResponse;
 import com.chicplay.mediaserver.domain.account.exception.EmailDuplicateException;
-import com.chicplay.mediaserver.global.exception.ErrorCode;
+import com.chicplay.mediaserver.global.error.exception.ErrorCode;
 import com.chicplay.mediaserver.test.ServiceTest;
-import org.joda.time.LocalTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -27,7 +21,6 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 public class AccountServiceTest extends ServiceTest {

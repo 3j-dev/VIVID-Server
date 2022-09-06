@@ -17,10 +17,13 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AccountRepositoryTest extends RepositoryTest {
+public class AccountDaoTest extends RepositoryTest {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AccountDao accountDao;
 
     private Account account;
 
@@ -66,7 +69,7 @@ public class AccountRepositoryTest extends RepositoryTest {
     public void existsByEmail_존재하는경우_true() {
 
         // given
-        Account savedAccount = accountRepository.save(account);
+        accountRepository.save(account);
 
         // when
         final boolean existsByEmail = accountRepository.existsByEmail(account.getEmail());
@@ -80,7 +83,7 @@ public class AccountRepositoryTest extends RepositoryTest {
     public void existsByEmail_존재하지않은_경우_false() {
 
         // given
-        Account savedAccount = accountRepository.save(account);
+        accountRepository.save(account);
 
         // when
         final boolean existsByEmail = accountRepository.existsByEmail("thisissnotemail@lol.kr");
@@ -88,5 +91,7 @@ public class AccountRepositoryTest extends RepositoryTest {
         // then
         assertThat(existsByEmail).isFalse();
     }
+
+
 
 }

@@ -1,4 +1,4 @@
-package com.chicplay.mediaserver.global.exception;
+package com.chicplay.mediaserver.global.error.exception;
 
 public class BusinessException extends RuntimeException {
 

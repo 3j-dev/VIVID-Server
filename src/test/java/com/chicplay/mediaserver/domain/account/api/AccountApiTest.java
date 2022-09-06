@@ -83,4 +83,5 @@ public class AccountApiTest extends IntegrationTest {
                 .andExpect(status().isBadRequest())
         ;
     }
+
 }

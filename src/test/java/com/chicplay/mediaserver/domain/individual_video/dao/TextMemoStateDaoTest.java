@@ -82,7 +82,7 @@ class TextMemoStateDaoTest extends ContainerBaseTest {
         TextMemoState textMemoState = textMemoStateDao.saveToRedis(redisSaveRequest.toEntity());
 
         // individualVideoId를 통한 검색.
-        TextMemoStateLatest savedTextMemoState= textMemoStateDao.getTextMemoStateLatestFromRedis(textMemoState.getIndividualVideoId().toString());
+        TextMemoStateLatest savedTextMemoState= textMemoStateDao.getLatestFromRedis(textMemoState.getIndividualVideoId().toString());
 
         //then
         assertThat(savedTextMemoState.getId()).isEqualTo(textMemoState.getId());

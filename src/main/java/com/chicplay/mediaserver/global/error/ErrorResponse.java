@@ -1,5 +1,6 @@
-package com.chicplay.mediaserver.global.exception;
+package com.chicplay.mediaserver.global.error;
 
+import com.chicplay.mediaserver.global.error.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,5 +1,8 @@
 package com.chicplay.mediaserver.domain.individual_video.api;
 
+import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
+import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
+import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideosGetResponse;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapShotImageUploadRequest;
 import com.chicplay.mediaserver.global.infra.storage.S3Service;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
@@ -23,6 +26,8 @@ public class IndividualVideoApi {
 
     private final S3Service s3Service;
 
+    private final IndividualVideoService individualVideoService;
+
     @PostMapping(value = "/{individual-video-id}/snapshot",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "이미지 스냅샷 저장 메소드", description = "이미지 스냅샷을 저장하는 메소드입니다.")
@@ -36,4 +41,19 @@ public class IndividualVideoApi {
 
         return s3Service.uploadSnapshotImagesToS3(multipartFile, individualVideoId, request.getVideoTime());
     }
+
+    @GetMapping("")
+    public List<IndividualVideosGetResponse> getList() {
+
+        // get id, id 꺼내오는 방식 협의 필요. 테스팅용
+        String id = "test01";
+
+        // userId를 통해 individualVideoList get
+        List<IndividualVideosGetResponse> individualVideoList = individualVideoService.getListByUser(id);
+
+        return individualVideoList;
+    }
+
+
+
 }

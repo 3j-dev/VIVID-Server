@@ -16,16 +16,12 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TextMemoStateResponse {
 
-    @NotBlank
     private UUID individualVideoId;
 
-    @NotBlank
     private String stateJson;
 
-    @NotBlank
     private LocalTime videoTime;
 
-    @NotBlank
     private LocalDateTime createdAt;
 
     @Builder
