@@ -24,8 +24,6 @@ import java.util.*;
 @Slf4j
 public class TextMemoStateDao {
 
-    private final TextMemoStateRepository textMemoStateRepository;
-
     private final String TEXT_MEMO_STATE_KEY = "text_memo_state";
 
     private final RedisTemplate<String, Object> redisTemplate;
@@ -39,10 +37,9 @@ public class TextMemoStateDao {
     private final RedisSerializer valueSerializer;
 
 
-    public TextMemoStateDao(TextMemoStateRepository textMemoStateRepository, RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper,
+    public TextMemoStateDao(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper,
                             DynamoDBMapper dynamoDBMapper) {
 
-        this.textMemoStateRepository = textMemoStateRepository;
         this.redisTemplate = redisTemplate;
         this.objectMapper = objectMapper;
         this.dynamoDBMapper = dynamoDBMapper;

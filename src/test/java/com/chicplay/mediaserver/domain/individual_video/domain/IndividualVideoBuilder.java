@@ -20,4 +20,12 @@ public class IndividualVideoBuilder {
         return individualVideo;
     }
 
+    public static IndividualVideo build(Account account,Video video) {
+
+        IndividualVideo individualVideo = IndividualVideo.builder()
+                .video(video).account(account).build();
+
+        return individualVideo;
+    }
+
 }

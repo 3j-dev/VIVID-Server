@@ -2,8 +2,10 @@ package com.chicplay.mediaserver.domain.account.dao;
 
 import com.chicplay.mediaserver.domain.account.domain.Account;
 import com.chicplay.mediaserver.domain.account.domain.QAccount;
+import com.chicplay.mediaserver.domain.account.dto.AccountSignUpRequest;
 import com.chicplay.mediaserver.domain.account.exception.AccountNotFoundException;
 import com.chicplay.mediaserver.domain.individual_video.domain.QIndividualVideo;
+import com.chicplay.mediaserver.domain.video.dao.VideoRepository;
 import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.domain.video.exception.VideoNotFoundException;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -23,9 +25,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AccountDao {
 
-    private final AccountRepository accountRepository;
-
     private final JPAQueryFactory query;
+
+
 
     /**
      * uuid를 통해 account return함. 이때 fetch join 이용.
@@ -48,6 +50,7 @@ public class AccountDao {
 
         return account.get();
     }
+
 
 
 }

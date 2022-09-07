@@ -11,4 +11,5 @@ public interface TextMemoStateRepository extends CrudRepository<TextMemoState, S
     Optional<TextMemoState> findById(String id);
 
     Optional<TextMemoState> findTextMemoStateById(String id);
+
 }
