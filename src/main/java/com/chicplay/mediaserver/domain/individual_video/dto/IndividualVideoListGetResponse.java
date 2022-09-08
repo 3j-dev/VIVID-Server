@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
-public class IndividualVideosGetResponse {
+public class IndividualVideoListGetResponse {
 
 
     private UUID individualVideoId;
@@ -18,7 +18,7 @@ public class IndividualVideosGetResponse {
     private LocalDateTime updatedDate;
 
     @Builder
-    public IndividualVideosGetResponse(IndividualVideo individualVideo) {
+    public IndividualVideoListGetResponse(IndividualVideo individualVideo) {
         this.individualVideoId = individualVideo.getId();
         this.updatedDate = individualVideo.getUpdatedDate();
     }

@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,15 +56,11 @@ public class TextMemoStateDao {
         return TEXT_MEMO_STATE_KEY + "_" + individualVideoId;
     }
 
-    // textMemoState를 save 합니다.
-    // 이때, textMemoState를 latest 버전을 업데이트하고,
-    // history 버전을 add한다.
-
 
     /**
-     *
-     * @param textMemoState
-     * @return
+     * textMemoState를 save 합니다.
+     * 이때, textMemoState를 latest 버전을 업데이트하고,
+     * history 버전을 add한다.
      */
     public TextMemoState saveToRedis(TextMemoState textMemoState) {
         redisTemplate.executePipelined((RedisCallback<Object>) connection -> {

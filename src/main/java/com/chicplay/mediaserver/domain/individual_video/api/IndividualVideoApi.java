@@ -1,10 +1,12 @@
 package com.chicplay.mediaserver.domain.individual_video.api;
 
 import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
-import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
-import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideosGetResponse;
+import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoListGetResponse;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapShotImageUploadRequest;
-import com.chicplay.mediaserver.global.infra.storage.S3Service;
+import com.chicplay.mediaserver.domain.video.application.VideoService;
+import com.chicplay.mediaserver.domain.video.domain.Video;
+import com.chicplay.mediaserver.domain.video.dto.VideoFilePathGetResponse;
+import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,17 +18,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.*;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/videos")
+@RequiredArgsConstructor
 public class IndividualVideoApi {
 
-    private final S3Service s3Service;
+    private final AwsS3Service awsS3Service;
 
     private final IndividualVideoService individualVideoService;
+
+    private final VideoService videoService;
 
     @PostMapping(value = "/{individual-video-id}/snapshot",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,19 +44,34 @@ public class IndividualVideoApi {
             @RequestBody @Valid SnapShotImageUploadRequest request
             ) {
 
-        return s3Service.uploadSnapshotImagesToS3(multipartFile, individualVideoId, request.getVideoTime());
+        return awsS3Service.uploadSnapshotImagesToS3(multipartFile, individualVideoId, request.getVideoTime());
     }
 
+    //
     @GetMapping("")
-    public List<IndividualVideosGetResponse> getList() {
+    public List<IndividualVideoListGetResponse> getList() {
 
         // get id, id 꺼내오는 방식 협의 필요. 테스팅용
         String id = "test01";
 
         // userId를 통해 individualVideoList get
-        List<IndividualVideosGetResponse> individualVideoList = individualVideoService.getListByUser(id);
+        List<IndividualVideoListGetResponse> individualVideoList = individualVideoService.getListByUserId(id);
 
         return individualVideoList;
+    }
+
+    @GetMapping("/{individual-video-id}")
+    public VideoFilePathGetResponse getFilePath(@PathVariable("individual-video-id") String individualVideoId) throws IOException {
+
+        // individualVideo의 원 video get
+        //UUID videoId = individualVideoService.getVideoById(individualVideoId).getId();
+
+        // test
+        //VideoFilePathGetResponse filePath = videoService.getFilePath(videoId.toString());
+        VideoFilePathGetResponse filePath = videoService.getFilePath(individualVideoId);
+
+        return filePath;
+
     }
 
 

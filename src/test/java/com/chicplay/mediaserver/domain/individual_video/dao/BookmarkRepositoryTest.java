@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.individual_video.dao;
 
+import com.chicplay.mediaserver.domain.individual_video.dao.repository.IndividualVideoRepository;
 import com.chicplay.mediaserver.domain.individual_video.domain.*;
 import com.chicplay.mediaserver.test.RepositoryTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class BookmarkRepositoryTest extends RepositoryTest {
 

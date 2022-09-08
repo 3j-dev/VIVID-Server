@@ -1,10 +1,7 @@
 package com.chicplay.mediaserver.global.infra.storage;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
 import com.chicplay.mediaserver.domain.video.exception.ImageUploadFailedException;
@@ -20,12 +17,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class S3Service {
+public class AwsS3Service {
 
     @Value("${cloud.aws.credentials.access-key}")
     private String accessKey;
@@ -37,6 +35,9 @@ public class S3Service {
     @Value("${cloud.aws.s3.test.video.bucket}")
     private String rawVideoBucket;
 
+    @Value("${cloud.aws.s3.service.video.bucket}")
+    private String serviceVideoBucket;
+
     @Value("${cloud.aws.s3.image.snapshot.bucket}")
     private String imageSnapshotBucket;
 
@@ -47,7 +48,7 @@ public class S3Service {
     public SnapshotImageUploadResponse uploadSnapshotImagesToS3(MultipartFile file, String individualVideoId, String videoTime){
 
         // 디렉토리 이름은 individualVideoId, fileName은 캡처 시간대
-        String objectKey = individualVideoId + '/' + videoTime;
+        String snapshotImageKey = individualVideoId + '/' + videoTime;
 
         // 메타 데이터 추출
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -56,7 +57,7 @@ public class S3Service {
 
         // s3 upload
         try(InputStream inputStream = file.getInputStream()) {
-             amazonS3Client.putObject(new PutObjectRequest(imageSnapshotBucket, objectKey, inputStream, objectMetadata)
+             amazonS3Client.putObject(new PutObjectRequest(imageSnapshotBucket, snapshotImageKey, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch(IOException e) {
             throw new ImageUploadFailedException();
@@ -64,10 +65,53 @@ public class S3Service {
 
         // responses dto로 변환
         SnapshotImageUploadResponse response = SnapshotImageUploadResponse.builder()
-                .filePath(String.valueOf(amazonS3Client.getUrl(imageSnapshotBucket, objectKey)))
+                .filePath(String.valueOf(amazonS3Client.getUrl(imageSnapshotBucket, snapshotImageKey)))
                 .time(videoTime).build();
 
         return response;
+    }
+
+    // video의 m3u8 파일 path get
+    public String getVideoFilePath(String videoId) throws IOException {
+
+        // video key
+        String s3VideoKey = videoId + "/Default/HLS/" + videoId + ".m3u8";
+        URL videoFileUrl = amazonS3Client.getUrl(serviceVideoBucket, s3VideoKey);
+
+        return videoFileUrl.toString();
+    }
+
+
+    // video의 visualIndex 이미지 파일 path list get
+    public List<String> getVisualIndexImages(String videoId) throws IOException {
+
+        List<String> keys = new ArrayList<>();
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest().withBucketName(serviceVideoBucket);
+        listObjectsRequest.setPrefix(videoId + "/Default/Thumbnails/");
+        listObjectsRequest.setDelimiter("/");
+
+        ObjectListing objects = amazonS3Client.listObjects(listObjectsRequest);
+
+        while (true) {
+            List<S3ObjectSummary> objectSummaries = objects.getObjectSummaries();
+
+            // size 0일 경우
+            if (objectSummaries.size() < 1) {
+                break;
+            }
+
+            for (S3ObjectSummary item : objectSummaries) {
+                if (!item.getKey().endsWith("/"))
+                    keys.add(item.getKey());
+            }
+
+            objects = amazonS3Client.listNextBatchOfObjects(objects);
+        }
+        keys.forEach(t->{
+            log.info(t.toString());
+        });
+
+        return keys;
     }
 
     public void uploadRawVideoToS3(String fileUrl) throws IOException {

@@ -1,4 +1,4 @@
-package com.chicplay.mediaserver.domain.individual_video.dao;
+package com.chicplay.mediaserver.domain.individual_video.dao.repository;
 
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;

@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.individual_video.dao;
 
+import com.chicplay.mediaserver.domain.individual_video.dao.repository.IndividualVideoRepository;
 import com.chicplay.mediaserver.domain.individual_video.domain.DrawingMemo;
 import com.chicplay.mediaserver.domain.individual_video.domain.DrawingMemoBuilder;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DrawingMemoRepositoryTest extends RepositoryTest {
 
