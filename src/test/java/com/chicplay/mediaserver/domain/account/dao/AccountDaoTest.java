@@ -34,23 +34,7 @@ public class AccountDaoTest extends IntegrationTest {
     @DisplayName("[AccountDaoTest] account_find_by_id")
     public void account_find_by_id() {
 
-        // given
-        Account account = AccountBuilder.build();
-        accountRepository.save(account);
-        Video video1 = VideoBuilder.build(account);
-        Video video2 = VideoBuilder.build(account);
-        IndividualVideo individualVideo1 = IndividualVideoBuilder.build(account,video1);
-        IndividualVideo individualVideo2 = IndividualVideoBuilder.build(account,video2);
 
-        //when
-        accountRepository.save(account);
-        Account savedAccount = accountDao.findById(account.getId());
-        Video savedVideo = videoRepository.findById(video1.getId()).get();
-
-        //then
-        assertThat(savedAccount.getId()).isEqualTo(account.getId());
-        assertThat(savedAccount.getIndividualVideos().size()).isEqualTo(2);
-        assertThat(savedVideo.getId()).isEqualTo(video1.getId());
     }
 
 

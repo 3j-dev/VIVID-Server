@@ -2,6 +2,8 @@ package com.chicplay.mediaserver.domain.account.api;
 
 import com.chicplay.mediaserver.domain.account.domain.AccountBuilder;
 import com.chicplay.mediaserver.domain.account.dto.AccountSignUpRequest;
+import com.chicplay.mediaserver.domain.account.exception.EmailDuplicateException;
+import com.chicplay.mediaserver.global.error.exception.ErrorCode;
 import com.chicplay.mediaserver.test.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -81,6 +83,7 @@ public class AccountApiTest extends IntegrationTest {
         //then
         resultActions
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("code").value(ErrorCode.EMAIL_DUPLICATION.getCode()))
         ;
     }
 

@@ -33,12 +33,10 @@ public class AccountService {
             throw new EmailDuplicateException();
 
         // save account
-        //Account savedAccount = accountRepository.save(dto.toEntity());
         Account account = dto.toEntity();
 
         // save 개인 영상 스페이스
         VideoSpace videoSpace = VideoSpace.builder().name("개인 영상").description(account.getName() + "님의 개인 영상 그룹 입니다.").build();
-        //VideoSpace savedVideoSpace = videoSpaceRepository.save(videoSpace);
 
         // 개인 영상 스페이스 - account 매핑 테이블 생성
         VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().account(account).videoSpace(videoSpace).build();

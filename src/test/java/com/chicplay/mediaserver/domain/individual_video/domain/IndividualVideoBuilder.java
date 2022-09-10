@@ -15,7 +15,7 @@ public class IndividualVideoBuilder {
         Account account = AccountBuilder.build();
 
         IndividualVideo individualVideo = IndividualVideo.builder()
-                .video(video).account(account).build();
+                .video(video).build();
 
         return individualVideo;
     }
@@ -23,7 +23,7 @@ public class IndividualVideoBuilder {
     public static IndividualVideo build(Account account,Video video) {
 
         IndividualVideo individualVideo = IndividualVideo.builder()
-                .video(video).account(account).build();
+                .video(video).build();
 
         return individualVideo;
     }
