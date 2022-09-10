@@ -23,7 +23,7 @@ public class VideoService {
 
     public String getVisualIndexFilePath(UUID videoId){
 
-        Video video = videoDao.findById(videoId);
+        //Video video = videoDao.findById(videoId);
 
         return null;
     }

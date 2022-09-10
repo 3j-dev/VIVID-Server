@@ -17,10 +17,10 @@ public class VideoDao {
     private final VideoRepository videoRepository;
 
     // uuid를 통해 video return
-    public Video findById(final UUID id) {
+    public Video findById(final Long id) {
 
         Optional<Video> video = videoRepository.findById(id);
-        video.orElseThrow(() -> new VideoNotFoundException(id));
+        video.orElseThrow(() -> new VideoNotFoundException(id.toString()));
         return video.get();
     }
 

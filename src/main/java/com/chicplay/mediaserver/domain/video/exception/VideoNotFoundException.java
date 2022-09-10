@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class VideoNotFoundException extends EntityNotFoundException {
 
-    public VideoNotFoundException(UUID id) {
+    public VideoNotFoundException(String id) {
         super(id.toString() + " is not found");
     }
 }

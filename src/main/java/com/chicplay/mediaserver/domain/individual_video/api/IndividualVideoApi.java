@@ -47,7 +47,6 @@ public class IndividualVideoApi {
         return individualVideoService.uploadSnapshotImage(multipartFile, individualVideoId, request.getVideoTime());
     }
 
-    //
 //    @GetMapping("")
 //    public List<IndividualVideoListGetResponse> getList() {
 //

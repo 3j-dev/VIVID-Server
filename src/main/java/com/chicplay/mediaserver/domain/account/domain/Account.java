@@ -1,6 +1,6 @@
 package com.chicplay.mediaserver.domain.account.domain;
 
-import com.chicplay.mediaserver.domain.video_group.domain.VideoGroupParticipant;
+import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -23,7 +23,7 @@ public class Account extends BaseTime {
     private UUID id;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<VideoGroupParticipant> videoGroupParticipants = new ArrayList<>();
+    private List<VideoSpaceParticipant> videoSpaceParticipants = new ArrayList<>();
 
     @Email
     @Column(name = "email", nullable = false, unique = true)
@@ -45,4 +45,5 @@ public class Account extends BaseTime {
         this.password = password;
         this.name = name;
     }
+
 }

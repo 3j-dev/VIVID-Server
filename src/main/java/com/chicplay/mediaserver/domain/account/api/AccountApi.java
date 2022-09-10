@@ -6,6 +6,7 @@ import com.chicplay.mediaserver.domain.account.dto.AccountSignUpRequest;
 import com.chicplay.mediaserver.domain.account.dto.AccountSignUpResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,8 +23,8 @@ public class AccountApi {
     @PostMapping("/api/account")
     public AccountSignUpResponse signUp(@RequestBody @Valid final AccountSignUpRequest accountSignUpRequest){
 
-        Account account = accountService.signUp(accountSignUpRequest);
+        AccountSignUpResponse accountSignUpResponse = accountService.signUp(accountSignUpRequest);
 
-        return new AccountSignUpResponse(account);
+        return accountSignUpResponse;
     }
 }

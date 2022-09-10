@@ -1,6 +1,6 @@
 package com.chicplay.mediaserver.domain.individual_video.domain;
 
-import com.chicplay.mediaserver.domain.video_group.domain.VideoGroupParticipant;
+import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
 import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.AccessLevel;
@@ -28,8 +28,8 @@ public class IndividualVideo extends BaseTime {
     private Video video;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "video_group_participant_id")
-    private VideoGroupParticipant videoGroupParticipant;
+    @JoinColumn(name = "video_space_participant_id")
+    private VideoSpaceParticipant videoSpaceParticipant;
 
     @Builder
     public IndividualVideo(Video video) {

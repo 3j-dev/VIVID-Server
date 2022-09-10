@@ -38,7 +38,7 @@ public class IndividualVideoService {
         Optional<IndividualVideo> individualVideo = individualVideoRepository.findById(UUID.fromString(individualVideoId));
 
         // not found exception
-        individualVideo.orElseThrow(() -> new VideoNotFoundException(UUID.fromString(individualVideoId)));
+        individualVideo.orElseThrow(() -> new VideoNotFoundException(individualVideoId));
 
         return individualVideo.get().getVideo();
     }
