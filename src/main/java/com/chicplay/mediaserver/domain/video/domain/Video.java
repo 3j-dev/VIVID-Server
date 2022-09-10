@@ -1,11 +1,9 @@
 package com.chicplay.mediaserver.domain.video.domain;
 
-import com.chicplay.mediaserver.domain.account.domain.Account;
-import com.chicplay.mediaserver.domain.course.domain.Course;
+import com.chicplay.mediaserver.domain.video_group.domain.VideoGroup;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,14 +17,14 @@ import java.util.UUID;
 public class Video extends BaseTime{
 
 
-    @Id @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name="uuid2", strategy = "uuid2")
-    @Column(name = "video_id", columnDefinition = "BINARY(16)")
-    private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "video_id", updatable = false)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "video_group_id")
+    private VideoGroup videoGroup;
 
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IndividualVideo> individualVideos = new ArrayList<>();

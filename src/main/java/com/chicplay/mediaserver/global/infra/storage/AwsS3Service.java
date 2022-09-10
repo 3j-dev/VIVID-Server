@@ -45,7 +45,7 @@ public class AwsS3Service {
 
 
     // 스냅샷 이미지를 s3에 업로드하는 메소드
-    public SnapshotImageUploadResponse uploadSnapshotImagesToS3(MultipartFile file, String individualVideoId, String videoTime){
+    public String uploadSnapshotImagesToS3(MultipartFile file, String individualVideoId, String videoTime){
 
         // 디렉토리 이름은 individualVideoId, fileName은 캡처 시간대
         String snapshotImageKey = individualVideoId + '/' + videoTime;
@@ -63,12 +63,10 @@ public class AwsS3Service {
             throw new ImageUploadFailedException();
         }
 
-        // responses dto로 변환
-        SnapshotImageUploadResponse response = SnapshotImageUploadResponse.builder()
-                .filePath(String.valueOf(amazonS3Client.getUrl(imageSnapshotBucket, snapshotImageKey)))
-                .time(videoTime).build();
+        // file path get
+        String snapshotImageFilePath = String.valueOf(amazonS3Client.getUrl(imageSnapshotBucket, snapshotImageKey));
 
-        return response;
+        return snapshotImageFilePath;
     }
 
     // video의 m3u8 파일 path get
@@ -101,15 +99,14 @@ public class AwsS3Service {
             }
 
             for (S3ObjectSummary item : objectSummaries) {
+
+                // 디렉터리가 아니라면
                 if (!item.getKey().endsWith("/"))
                     keys.add(item.getKey());
             }
 
             objects = amazonS3Client.listNextBatchOfObjects(objects);
         }
-        keys.forEach(t->{
-            log.info(t.toString());
-        });
 
         return keys;
     }

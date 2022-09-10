@@ -5,6 +5,7 @@ import com.chicplay.mediaserver.domain.account.exception.AccountNotFoundExceptio
 import com.chicplay.mediaserver.domain.individual_video.dao.repository.IndividualVideoRepository;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoListGetResponse;
+import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
 import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.domain.video.exception.VideoNotFoundException;
 import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,18 +44,31 @@ public class IndividualVideoService {
     }
 
     // user의 individualVideo 리스트를 불러온다.
-    public List<IndividualVideoListGetResponse> getListByUserId(String id) {
+//    public List<IndividualVideoListGetResponse> getListByUserId(String id) {
+//
+//        // user id를 통해 individualVideoList를 불러온다.
+//        List<IndividualVideo> individualVideoList = accountDao.findById(UUID.fromString(id)).getIndividualVideos();
+//
+//        // response dto로 변환
+//        ArrayList<IndividualVideoListGetResponse> individualVideoListGetRespons = new ArrayList<>();
+//        individualVideoList.forEach(individualVideo -> {
+//            individualVideoListGetRespons.add(IndividualVideoListGetResponse.builder().individualVideo(individualVideo).build());
+//        });
+//
+//        return individualVideoListGetRespons;
+//    }
 
-        // user id를 통해 individualVideoList를 불러온다.
-        List<IndividualVideo> individualVideoList = accountDao.findById(UUID.fromString(id)).getIndividualVideos();
+    public SnapshotImageUploadResponse uploadSnapshotImage(MultipartFile file, String individualVideoId, String videoTime){
 
-        // response dto로 변환
-        ArrayList<IndividualVideoListGetResponse> individualVideoListGetRespons = new ArrayList<>();
-        individualVideoList.forEach(individualVideo -> {
-            individualVideoListGetRespons.add(IndividualVideoListGetResponse.builder().individualVideo(individualVideo).build());
-        });
+        // image upload, upload된 image file path get
+        String snapshotImageFilePath = awsS3Service.uploadSnapshotImagesToS3(file, individualVideoId, videoTime);
 
-        return individualVideoListGetRespons;
+        // responses dto로 변환
+        SnapshotImageUploadResponse response = SnapshotImageUploadResponse.builder()
+                .filePath(snapshotImageFilePath)
+                .time(videoTime).build();
+
+        return response;
     }
 
 }

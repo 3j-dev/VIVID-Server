@@ -27,8 +27,6 @@ public class AccountDao {
 
     private final JPAQueryFactory query;
 
-
-
     /**
      * uuid를 통해 account return함. 이때 fetch join 이용.
      *
@@ -40,7 +38,7 @@ public class AccountDao {
         // fetch join + queryDLS를 통한 get
         Optional<Account> account = Optional.ofNullable(query.select(QAccount.account)
                 .from(QAccount.account)
-                .leftJoin(QAccount.account.individualVideos, QIndividualVideo.individualVideo)
+                //s.leftJoin(QAccount.account.individualVideos, QIndividualVideo.individualVideo)
                 .fetchJoin()
                 .where(QAccount.account.id.eq(id))
                 .distinct().fetchOne());

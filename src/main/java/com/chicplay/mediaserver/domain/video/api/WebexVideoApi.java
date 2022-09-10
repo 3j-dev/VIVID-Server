@@ -19,7 +19,6 @@ public class WebexVideoApi {
 
     private final AwsS3Service awsS3Service;
 
-
     @PostMapping("/api/webex/video")
     @Operation(summary = "webex video 업로드 메소드", description = "webex video를 s3에 업로드하는 메소드 입니다.")
     @ApiResponse(responseCode = "200", description = "webex video 업로드 완료 후, 상태 코드 200을 반환합니다.")

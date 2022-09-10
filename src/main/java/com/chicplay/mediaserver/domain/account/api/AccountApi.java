@@ -20,9 +20,9 @@ public class AccountApi {
     private final AccountService accountService;
 
     @PostMapping("/api/account")
-    public AccountSignUpResponse signUp(@RequestBody @Valid final AccountSignUpRequest dto){
+    public AccountSignUpResponse signUp(@RequestBody @Valid final AccountSignUpRequest accountSignUpRequest){
 
-        Account account = accountService.signUp(dto);
+        Account account = accountService.signUp(accountSignUpRequest);
 
         return new AccountSignUpResponse(account);
     }

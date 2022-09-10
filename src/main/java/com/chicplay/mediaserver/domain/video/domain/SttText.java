@@ -17,10 +17,10 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SttText extends BaseTime {
 
-    @Id @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name="uuid2", strategy = "uuid2")
-    @Column(name = "stt_text_id", columnDefinition = "BINARY(16)")
-    private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "stt_text_id", updatable = false)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "video_id")
