@@ -19,8 +19,12 @@ public class VideoDao {
     // uuid를 통해 video return
     public Video findById(final Long id) {
 
+        // find
         Optional<Video> video = videoRepository.findById(id);
+
+        // not found exception
         video.orElseThrow(() -> new VideoNotFoundException(id.toString()));
+
         return video.get();
     }
 

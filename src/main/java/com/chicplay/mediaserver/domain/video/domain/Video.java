@@ -28,24 +28,29 @@ public class Video extends BaseTime{
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IndividualVideo> individualVideos = new ArrayList<>();
 
-    @Column(name="file_path", nullable = false)
-    private String filePath;
+    @Column(name="title", nullable = false)
+    private String title;
 
-    @Column(name="uploader_id", nullable = false)
+    @Column(name="description")
+    private String description;
+
+    @Column(name="uploader_id")
     private String uploaderId;
 
-    @Column(name="chatting_json_file_path")
-    private String chattingJsonFilePath;
+    @Column(name = "is_uploaded")
+    private boolean isUploaded;
 
-    @Column(name="video_indexing_image_file_path")
-    private String videoIndexingImageFilePath;
+    public void changeIsUploaded(boolean isUploaded) {
+        this.isUploaded = isUploaded;
+    }
 
 
     @Builder
-    public Video(String filePath, String uploaderId, String chattingJsonFilePath, String videoIndexingImageFilePath) {
-        this.filePath = filePath;
+    public Video(VideoSpace videoSpace, String title, String description,String uploaderId) {
+        this.videoSpace = videoSpace;
+        this.title = title;
+        this.description = description;
         this.uploaderId = uploaderId;
-        this.chattingJsonFilePath = chattingJsonFilePath;
-        this.videoIndexingImageFilePath = videoIndexingImageFilePath;
+        this.isUploaded = false;
     }
 }

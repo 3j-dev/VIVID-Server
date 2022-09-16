@@ -4,6 +4,8 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
+import com.chicplay.mediaserver.domain.video.dto.VideoSaveRequest;
+import com.chicplay.mediaserver.domain.video.dto.VideoSaveResponse;
 import com.chicplay.mediaserver.domain.video.exception.ImageUploadFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +34,7 @@ public class AwsS3Service {
     @Value("${cloud.aws.region.static}")
     private String region;
 
-    @Value("${cloud.aws.s3.test.video.bucket}")
+    @Value("${cloud.aws.s3.raw.video.bucket}")
     private String rawVideoBucket;
 
     @Value("${cloud.aws.s3.service.video.bucket}")
@@ -42,6 +44,25 @@ public class AwsS3Service {
     private String imageSnapshotBucket;
 
     private final AmazonS3Client amazonS3Client;
+
+    // multipartFile을 통해 video s3에 업로드
+    public VideoSaveResponse uploadVideoToS3(MultipartFile file, Long videoId) {
+
+        // 메타 데이터 추출
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(file.getSize());
+        objectMetadata.setContentType(file.getContentType());
+
+        // s3 upload
+        try(InputStream inputStream = file.getInputStream()) {
+            amazonS3Client.putObject(new PutObjectRequest(rawVideoBucket, videoId.toString(), inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch(IOException e) {
+            throw new ImageUploadFailedException();
+        }
+
+        return VideoSaveResponse.builder().id(videoId).build();
+    }
 
 
     // 스냅샷 이미지를 s3에 업로드하는 메소드
