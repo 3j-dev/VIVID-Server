@@ -28,9 +28,11 @@ public class AccountService {
 
     private final AccountDao accountDao;
 
-    public Account findByEmail(String email) {
+    public Account findByEmail() {
 
-        Account account = accountDao.findByEmail(email);
+        String testEmail = "jsb100800@naver.com";
+
+        Account account = accountDao.findByEmail(testEmail);
 
         return account;
     }

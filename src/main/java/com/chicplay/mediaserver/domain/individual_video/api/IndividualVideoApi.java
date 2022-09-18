@@ -1,10 +1,10 @@
 package com.chicplay.mediaserver.domain.individual_video.api;
 
 import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
-import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoListGetResponse;
+import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoGetResponse;
+import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideosGetRequest;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapShotImageUploadRequest;
 import com.chicplay.mediaserver.domain.video.application.VideoService;
-import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.domain.video.dto.VideoFilePathGetResponse;
 import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
@@ -19,11 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/videos")
+@RequestMapping
 @RequiredArgsConstructor
 public class IndividualVideoApi {
 
@@ -33,7 +33,7 @@ public class IndividualVideoApi {
 
     private final VideoService videoService;
 
-    @PostMapping(value = "/{individual-video-id}/snapshot",
+    @PostMapping(value = "/api/videos/{individual-video-id}/snapshot",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "이미지 스냅샷 저장 메소드", description = "이미지 스냅샷을 저장하는 메소드입니다.")
     @ApiResponse(responseCode = "200", description = "이미지 업로드 완료 후, 각각 이미지의 url을 json 형식으로 반환합니다.")
@@ -47,19 +47,16 @@ public class IndividualVideoApi {
         return individualVideoService.uploadSnapshotImage(multipartFile, individualVideoId, request.getVideoTime());
     }
 
-//    @GetMapping("")
-//    public List<IndividualVideoListGetResponse> getList() {
-//
-//        // get id, id 꺼내오는 방식 협의 필요. 테스팅용
-//        String id = "test01";
-//
-//        // userId를 통해 individualVideoList get
-//        List<IndividualVideoListGetResponse> individualVideoList = individualVideoService.getListByUserId(id);
-//
-//        return individualVideoList;
-//    }
+    @Operation(summary = "individual videos list get api", description = "video space participant id를 이용하여 individual video id list를 get 하는 api입니다")
+    @GetMapping("/api/videos")
+    public List<IndividualVideoGetResponse> read(@RequestBody @Valid IndividualVideosGetRequest individualVideosGetRequest) {
 
-    @GetMapping("/{individual-video-id}")
+        List<IndividualVideoGetResponse> individualVideoGetResponse = individualVideoService.getByVideoSpaceParticipantId(individualVideosGetRequest.getVideoSpaceParticipantId());
+
+        return individualVideoGetResponse;
+    }
+
+    @GetMapping("/api/videos/{individual-video-id}")
     public VideoFilePathGetResponse getFilePath(@PathVariable("individual-video-id") String individualVideoId) throws IOException {
 
         // individualVideo의 원 video get

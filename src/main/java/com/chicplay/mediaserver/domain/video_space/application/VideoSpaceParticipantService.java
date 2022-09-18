@@ -32,7 +32,7 @@ public class VideoSpaceParticipantService {
     public VideoSpaceParticipantSaveResponse save(VideoSpaceParticipantSaveRequest videoSpaceParticipantSaveRequest) {
 
         // account get by email
-        Account account = accountService.findByEmail(videoSpaceParticipantSaveRequest.getAccountEmail());
+        Account account = accountService.findByEmail();
 
         // video space get by videoId
         VideoSpace videoSpace = videoSpaceService.findById(videoSpaceParticipantSaveRequest.getVideoSpaceId());
@@ -49,10 +49,7 @@ public class VideoSpaceParticipantService {
         return videoSpaceParticipantSaveResponse;
     }
 
-    // signup 이후의 save
-    public VideoSpaceParticipant saveAfterAccountSaved(VideoSpaceParticipant videoSpaceParticipant) {
-        return videoSpaceParticipantRepository.save(videoSpaceParticipant);
-    }
+
 
 
 }

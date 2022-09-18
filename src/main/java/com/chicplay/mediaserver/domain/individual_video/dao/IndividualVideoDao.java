@@ -1,6 +1,8 @@
 package com.chicplay.mediaserver.domain.individual_video.dao;
 
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
+import com.chicplay.mediaserver.domain.individual_video.domain.QIndividualVideo;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.type.UUIDBinaryType;
@@ -24,6 +26,8 @@ import java.util.UUID;
 public class IndividualVideoDao {
 
     private final JdbcTemplate jdbcTemplate;
+
+    private final JPAQueryFactory query;
 
     /**
      * uuid 방식이기 때문에 bluk insert 직접 구현 불필요

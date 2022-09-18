@@ -13,16 +13,11 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class VideoSpaceParticipantSaveRequest {
 
-    @NotBlank
-    @Email(message = "이메일을 양식을 지켜주세요.")
-    private String accountEmail;
-
     @NotNull
     private Long videoSpaceId;
 
     @Builder
-    public VideoSpaceParticipantSaveRequest(String accountEmail, Long videoSpaceId) {
-        this.accountEmail = accountEmail;
+    public VideoSpaceParticipantSaveRequest(Long videoSpaceId) {
         this.videoSpaceId = videoSpaceId;
     }
 }
