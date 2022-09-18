@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "video_space_participant")
@@ -29,8 +31,8 @@ public class VideoSpaceParticipant extends BaseTime {
     @JoinColumn(name = "video_space_id")
     private VideoSpace videoSpace;
 
-    @OneToOne(mappedBy = "videoSpaceParticipant")
-    private IndividualVideo individualVideo;
+    @OneToMany(mappedBy = "videoSpaceParticipant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<IndividualVideo> individualVideos = new ArrayList<>();
 
     @Builder
     public VideoSpaceParticipant(Account account, VideoSpace videoSpace) {

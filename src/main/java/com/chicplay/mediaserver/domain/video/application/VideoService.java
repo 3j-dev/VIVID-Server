@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.video.application;
 
+import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
 import com.chicplay.mediaserver.domain.video.dao.VideoDao;
 import com.chicplay.mediaserver.domain.video.dao.VideoRepository;
 import com.chicplay.mediaserver.domain.video.domain.Video;
@@ -32,11 +33,13 @@ public class VideoService {
 
     private final VideoSpaceService videoSpaceService;
 
+    private final IndividualVideoService individualVideoService;
+
     private final AwsS3Service awsS3Service;
 
     public VideoSaveResponse upload(MultipartFile multipartFile, VideoSaveRequest videoSaveRequest) {
 
-        // 해당 video의 find
+        // 해당 video의 video space find
         VideoSpace videoSpace = videoSpaceService.findById(videoSaveRequest.getVideoSpaceId());
 
         // 객체 저장
@@ -44,6 +47,9 @@ public class VideoService {
 
         // aws upload
         VideoSaveResponse videoSaveResponse = awsS3Service.uploadVideoToS3(multipartFile, savedVideo.getId());
+
+        // space 모든 참가자들에 대해 각각의 individual videos 생성
+        individualVideoService.createAfterVideoSaved(savedVideo,videoSpace);
 
         return videoSaveResponse;
     }

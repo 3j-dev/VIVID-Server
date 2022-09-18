@@ -18,7 +18,8 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class IndividualVideo extends BaseTime {
 
-    @Id @GeneratedValue(generator = "uuid2")
+    @Id
+    @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")
     @Column(name = "individual_video_id", columnDefinition = "BINARY(16)")
     private UUID id;
@@ -27,13 +28,14 @@ public class IndividualVideo extends BaseTime {
     @JoinColumn(name = "video_id")
     private Video video;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "video_space_participant_id")
     private VideoSpaceParticipant videoSpaceParticipant;
 
     @Builder
-    public IndividualVideo(Video video) {
+    public IndividualVideo(Video video, VideoSpaceParticipant videoSpaceParticipant) {
         changeVideo(video);
+        changeVideoSpaceParticipant(videoSpaceParticipant);
     }
 
     // 연관 관계 편의 메소드
@@ -47,5 +49,17 @@ public class IndividualVideo extends BaseTime {
         this.video = video;
         this.video.getIndividualVideos().add(this);
     }
+
+    // 연관 관계 편의 메소드
+    public void changeVideoSpaceParticipant(VideoSpaceParticipant videoSpaceParticipant) {
+
+        if(this.videoSpaceParticipant != null){
+            this.videoSpaceParticipant.getIndividualVideos().remove(this);
+        }
+
+        this.videoSpaceParticipant = videoSpaceParticipant;
+        this.videoSpaceParticipant.getIndividualVideos().add(this);
+    }
+
 
 }

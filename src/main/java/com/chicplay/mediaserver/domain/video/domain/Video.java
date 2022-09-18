@@ -53,4 +53,17 @@ public class Video extends BaseTime{
         this.uploaderId = uploaderId;
         this.isUploaded = false;
     }
+
+    // 연관 관계 편의 메소드
+    public void changeVideo(VideoSpace videoSpace){
+
+        // 기존의 비디오 관계가 있다면,
+        if(this.videoSpace != null){
+            this.videoSpace.getVideos().remove(this);
+        }
+
+        this.videoSpace = videoSpace;
+        this.videoSpace.getVideos().add(this);
+
+    }
 }
