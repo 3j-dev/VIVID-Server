@@ -91,10 +91,10 @@ public class AwsS3Service {
     }
 
     // video의 m3u8 파일 path get
-    public String getVideoFilePath(String videoId) throws IOException {
+    public String getVideoFilePath(Long videoId) throws IOException {
 
         // video key
-        String s3VideoKey = videoId + "/Default/HLS/" + videoId + ".m3u8";
+        String s3VideoKey = videoId + "/Default/HLS/" + videoId.toString() + ".m3u8";
         URL videoFileUrl = amazonS3Client.getUrl(serviceVideoBucket, s3VideoKey);
 
         return videoFileUrl.toString();
@@ -102,7 +102,7 @@ public class AwsS3Service {
 
 
     // video의 visualIndex 이미지 파일 path list get
-    public List<String> getVisualIndexImages(String videoId) throws IOException {
+    public List<String> getVisualIndexImages(Long videoId) throws IOException {
 
         List<String> keys = new ArrayList<>();
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest().withBucketName(serviceVideoBucket);
@@ -123,7 +123,8 @@ public class AwsS3Service {
 
                 // 디렉터리가 아니라면
                 if (!item.getKey().endsWith("/"))
-                    keys.add(item.getKey());
+
+                    keys.add(amazonS3Client.getUrl(serviceVideoBucket, item.getKey()).toString());
             }
 
             objects = amazonS3Client.listNextBatchOfObjects(objects);

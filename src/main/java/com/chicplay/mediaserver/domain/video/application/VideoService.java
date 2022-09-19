@@ -4,7 +4,7 @@ import com.chicplay.mediaserver.domain.individual_video.application.IndividualVi
 import com.chicplay.mediaserver.domain.video.dao.VideoDao;
 import com.chicplay.mediaserver.domain.video.dao.VideoRepository;
 import com.chicplay.mediaserver.domain.video.domain.Video;
-import com.chicplay.mediaserver.domain.video.dto.VideoFilePathGetResponse;
+import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoDetailsGetResponse;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveRequest;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveResponse;
 import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceService;
@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -71,7 +70,7 @@ public class VideoService {
         return null;
     }
 
-    public VideoFilePathGetResponse getFilePath(String videoId) throws IOException {
+    public IndividualVideoDetailsGetResponse getFilePath(Long videoId) throws IOException {
 
         // video file path get
         String videoFilePath = awsS3Service.getVideoFilePath(videoId);
@@ -79,12 +78,12 @@ public class VideoService {
         // visual index file path list get
         List<String> visualIndexImageFilePathList = awsS3Service.getVisualIndexImages(videoId);
 
-        VideoFilePathGetResponse videoFilePathGetResponse = VideoFilePathGetResponse.builder()
+        IndividualVideoDetailsGetResponse individualVideoDetailsGetResponse = IndividualVideoDetailsGetResponse.builder()
                 .videoFilePath(videoFilePath)
                 .visualIndexImageFilePathList(visualIndexImageFilePathList)
                 .build();
 
-        return videoFilePathGetResponse;
+        return individualVideoDetailsGetResponse;
     }
 
 

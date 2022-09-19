@@ -23,7 +23,7 @@ public class VideoSpaceApi {
     private final VideoSpaceService videoSpaceService;
 
     @Operation(summary = "video space list get api", description = "로그인한 account의 video space list를 get api 입니다.")
-    @GetMapping("/api/video-space-participant")
+    @GetMapping("/api/video-space")
     public List<VideoSpaceGetResponse> getByAccount() {
 
         List<VideoSpaceGetResponse> videoSpaceReadRespons = videoSpaceService.read();

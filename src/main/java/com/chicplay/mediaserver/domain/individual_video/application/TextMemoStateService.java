@@ -53,6 +53,16 @@ public class TextMemoStateService {
         return textMemoStateResponseList;
     }
 
+    public void saveAllToDynamoDb(String individualVideoId) {
+
+        // latest save
+        saveLatestToDynamoDb(individualVideoId);
+
+        // history save
+        saveHistoryToDynamoDb(individualVideoId);
+
+    }
+
     // dynamo db에 textMemoStateLatest문 insert
     // save시 redis에서 delete
     public void saveLatestToDynamoDb(String individualVideoId){

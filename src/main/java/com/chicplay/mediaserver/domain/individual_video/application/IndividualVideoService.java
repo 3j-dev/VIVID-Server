@@ -4,6 +4,7 @@ import com.chicplay.mediaserver.domain.account.application.AccountService;
 import com.chicplay.mediaserver.domain.individual_video.dao.IndividualVideoDao;
 import com.chicplay.mediaserver.domain.individual_video.dao.repository.IndividualVideoRepository;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
+import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoDetailsGetResponse;
 import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoGetResponse;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
 import com.chicplay.mediaserver.domain.individual_video.exception.IndividualVideoNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,15 +42,28 @@ public class IndividualVideoService {
 
     private final AwsS3Service awsS3Service;
 
-    public Video getVideoById(String individualVideoId) {
+    public IndividualVideoDetailsGetResponse getById(String individualVideoId) throws IOException {
 
-        // individualVideoId를 통해 video id get
+        // individualVideoId를 통해 individualVideo get
         Optional<IndividualVideo> individualVideo = individualVideoRepository.findById(UUID.fromString(individualVideoId));
 
         // not found exception
-        individualVideo.orElseThrow(() -> new VideoNotFoundException(individualVideoId));
+        individualVideo.orElseThrow(() -> new IndividualVideoNotFoundException(individualVideoId));
 
-        return individualVideo.get().getVideo();
+        // video file path get
+        String videoFilePath = awsS3Service.getVideoFilePath(individualVideo.get().getVideo().getId());
+
+        // visualIndexImageList생성
+        List<String> visualIndexImages = awsS3Service.getVisualIndexImages(individualVideo.get().getVideo().getId());
+
+        // response dto 생성
+        IndividualVideoDetailsGetResponse individualVideoDetailsGetResponse = IndividualVideoDetailsGetResponse.builder()
+                .individualVideo(individualVideo.get())
+                .videoFilePath(videoFilePath)
+                .visualIndexImageFilePathList(visualIndexImages)
+                .build();
+
+        return individualVideoDetailsGetResponse;
     }
 
     // video save 된 후, video space의 account 전부에게 individual video 생성

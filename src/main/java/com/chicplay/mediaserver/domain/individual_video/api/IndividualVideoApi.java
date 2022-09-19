@@ -5,7 +5,7 @@ import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoGetRe
 import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideosGetRequest;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapShotImageUploadRequest;
 import com.chicplay.mediaserver.domain.video.application.VideoService;
-import com.chicplay.mediaserver.domain.video.dto.VideoFilePathGetResponse;
+import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoDetailsGetResponse;
 import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,13 +35,13 @@ public class IndividualVideoApi {
 
     @PostMapping(value = "/api/videos/{individual-video-id}/snapshot",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "이미지 스냅샷 저장 메소드", description = "이미지 스냅샷을 저장하는 메소드입니다.")
+    @Operation(summary = "image snapshot save api", description = "이미지 스냅샷을 저장하는 메소드입니다.")
     @ApiResponse(responseCode = "200", description = "이미지 업로드 완료 후, 각각 이미지의 url을 json 형식으로 반환합니다.")
     public SnapshotImageUploadResponse uploadSnapshotImage(
-            @Parameter(description = "multipart/form-data 형식의 이미지를 input으로 받습니다. 이때 key 값은 multipartFile 입니다.")
-            @RequestPart("multipartFile") MultipartFile multipartFile,
-            @PathVariable("individual-video-id") String individualVideoId,
-            @RequestBody @Valid SnapShotImageUploadRequest request
+            @Parameter(description = "multipart/form-data 형식의 이미지를 input으로 받습니다.")
+            @RequestPart("video") MultipartFile multipartFile,
+            @RequestPart("snapshotInfo") @Valid final SnapShotImageUploadRequest request,
+            @PathVariable("individual-video-id") String individualVideoId
             ) {
 
         return individualVideoService.uploadSnapshotImage(multipartFile, individualVideoId, request.getVideoTime());
@@ -49,29 +49,20 @@ public class IndividualVideoApi {
 
     @Operation(summary = "individual videos list get api", description = "video space participant id를 이용하여 individual video id list를 get 하는 api입니다")
     @GetMapping("/api/videos")
-    public List<IndividualVideoGetResponse> read(@RequestBody @Valid IndividualVideosGetRequest individualVideosGetRequest) {
+    public List<IndividualVideoGetResponse> getList(@RequestBody @Valid IndividualVideosGetRequest individualVideosGetRequest) {
 
         List<IndividualVideoGetResponse> individualVideoGetResponse = individualVideoService.getByVideoSpaceParticipantId(individualVideosGetRequest.getVideoSpaceParticipantId());
 
         return individualVideoGetResponse;
     }
 
+    @Operation(summary = "individual video get api", description = "individual video uuid를 통해 individual video detail info, file url, visual index file path를 get하는 api 입니다.")
     @GetMapping("/api/videos/{individual-video-id}")
-    public VideoFilePathGetResponse getFilePath(@PathVariable("individual-video-id") String individualVideoId) throws IOException {
+    public IndividualVideoDetailsGetResponse getDetails(@PathVariable("individual-video-id") String individualVideoId) throws IOException {
 
-        // individualVideo의 원 video get
-        Long videoId = individualVideoService.getVideoById(individualVideoId).getId();
+        IndividualVideoDetailsGetResponse individualVideoDetailsGetResponse = individualVideoService.getById(individualVideoId);
 
-        VideoFilePathGetResponse filePath = videoService.getFilePath(videoId.toString());
-        //VideoFilePathGetResponse filePath = videoService.getFilePath(individualVideoId);
-
-        return filePath;
+        return individualVideoDetailsGetResponse;
     }
-
-    public void addIndividualVideoToAccount(){
-
-    }
-
-
 
 }

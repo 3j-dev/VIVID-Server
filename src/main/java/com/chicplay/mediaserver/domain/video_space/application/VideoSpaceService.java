@@ -9,6 +9,7 @@ import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceGetResponse;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceSaveRequest;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceSaveResponse;
+import com.chicplay.mediaserver.domain.video_space.exception.VideoSpaceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -64,10 +66,13 @@ public class VideoSpaceService {
     public VideoSpace findById(Long id) {
 
         // id를 통해 videoSpace get
-        //Optional<VideoSpace> videoSpace = videoSpaceRepository.findById(id);
-        VideoSpace videoSpace = videoSpaceDao.findById(id);
+        Optional<VideoSpace> videoSpace = videoSpaceRepository.findById(id);
+        //VideoSpace videoSpace = videoSpaceDao.findById(id);
 
-        return videoSpace;
+        // not found exception
+        videoSpace.orElseThrow(() -> new VideoSpaceNotFoundException(id.toString()));
+
+        return videoSpace.get();
     }
 
 
