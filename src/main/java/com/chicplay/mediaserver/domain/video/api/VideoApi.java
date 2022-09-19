@@ -6,6 +6,7 @@ import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveRequest;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -38,8 +39,13 @@ public class VideoApi {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "video 직접 업로드 api", description = "video를 직접 업로드하는 api")
     public VideoSaveResponse upload(
-            @RequestPart("video") MultipartFile multipartFile,
-            @RequestPart("videoInfo") @Valid final VideoSaveRequest videoSaveRequest
+            @RequestPart("video")
+            @Parameter(description = "multipartFile video file")
+            MultipartFile multipartFile,
+
+            @RequestPart("videoInfo")
+            @Parameter(description = "VideoSaveRequest 객체 json input")
+            @Valid final VideoSaveRequest videoSaveRequest
     ) {
 
         VideoSaveResponse videoSaveResponse = videoService.upload(multipartFile, videoSaveRequest);

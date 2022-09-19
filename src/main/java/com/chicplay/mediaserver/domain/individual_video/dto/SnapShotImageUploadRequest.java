@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.individual_video.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor
+@Schema
 public class SnapShotImageUploadRequest {
 
     @NotBlank
@@ -18,4 +20,6 @@ public class SnapShotImageUploadRequest {
     public SnapShotImageUploadRequest(String videoTime) {
         this.videoTime = videoTime;
     }
+
+
 }

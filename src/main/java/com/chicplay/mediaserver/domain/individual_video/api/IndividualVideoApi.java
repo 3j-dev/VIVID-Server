@@ -10,6 +10,9 @@ import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +41,14 @@ public class IndividualVideoApi {
     @Operation(summary = "image snapshot save api", description = "이미지 스냅샷을 저장하는 메소드입니다.")
     @ApiResponse(responseCode = "200", description = "이미지 업로드 완료 후, 각각 이미지의 url을 json 형식으로 반환합니다.")
     public SnapshotImageUploadResponse uploadSnapshotImage(
-            @Parameter(description = "multipart/form-data 형식의 이미지를 input으로 받습니다.")
-            @RequestPart("video") MultipartFile multipartFile,
-            @RequestPart("snapshotInfo") @Valid final SnapShotImageUploadRequest request,
+            @RequestPart("video")
+            @Parameter(description = "multipartFile image file")
+            MultipartFile multipartFile,
+
+            @RequestPart("snapshotInfo")
+            @Parameter(description = "SnapShotImageUploadRequest 객체 json input")
+            @Valid final SnapShotImageUploadRequest request,
+
             @PathVariable("individual-video-id") String individualVideoId
             ) {
 
