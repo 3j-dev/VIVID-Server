@@ -1,7 +1,7 @@
 package com.chicplay.mediaserver.domain.video_space.application;
 
-import com.chicplay.mediaserver.domain.account.application.AccountService;
-import com.chicplay.mediaserver.domain.account.domain.Account;
+import com.chicplay.mediaserver.domain.user.application.UserService;
+import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceDao;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceRepository;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
@@ -29,17 +29,17 @@ public class VideoSpaceService {
 
     private final VideoSpaceDao videoSpaceDao;
 
-    private final AccountService accountService;
+    private final UserService userService;
 
     // 로그인한 account의 video space, video get list get 메소드
     public List<VideoSpaceGetResponse> read() {
 
         // account get by email
-        Account account = accountService.findByEmail();
+        User user = userService.findByEmail();
 
         List<VideoSpaceGetResponse> videoSpaceReadResponse = new ArrayList<>();
 
-        account.getVideoSpaceParticipants().forEach(videoSpaceParticipant -> {
+        user.getVideoSpaceParticipants().forEach(videoSpaceParticipant -> {
             videoSpaceReadResponse.add(VideoSpaceGetResponse.builder().videoSpaceParticipant(videoSpaceParticipant).build());
         });
 
@@ -51,13 +51,13 @@ public class VideoSpaceService {
     public VideoSpaceSaveResponse save(VideoSpaceSaveRequest videoSpaceSaveRequest) {
 
         // account find
-        Account account = accountService.findByEmail();
+        User user = userService.findByEmail();
 
         // video space 생성
         VideoSpace savedVideoSpace = videoSpaceRepository.save(videoSpaceSaveRequest.toEntity());
 
         // 생성자가 포함된 video space participant create, 연관 관계 매핑에 의해 생성된다.
-        VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().videoSpace(savedVideoSpace).account(account).build();
+        VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().videoSpace(savedVideoSpace).user(user).build();
 
         return VideoSpaceSaveResponse.builder().videoSpace(savedVideoSpace).build();
     }

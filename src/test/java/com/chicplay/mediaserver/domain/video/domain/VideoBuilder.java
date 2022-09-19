@@ -1,8 +1,6 @@
 package com.chicplay.mediaserver.domain.video.domain;
 
-import com.chicplay.mediaserver.domain.account.domain.Account;
-
-import static org.junit.jupiter.api.Assertions.*;
+import com.chicplay.mediaserver.domain.user.domain.User;
 
 public class VideoBuilder {
 
@@ -23,11 +21,11 @@ public class VideoBuilder {
         return video;
     }
 
-    public static Video build(Account account){
+    public static Video build(User user){
 
         Video video = Video.builder()
                 .filePath(VIDEO_FILE_PATH)
-                .uploaderId(account.getEmail())
+                .uploaderId(user.getEmail())
                 .chattingJsonFilePath(VIDEO_CHATTING_JSON_FILE_PATH)
                 .videoIndexingImageFilePath(VIDEO_INDEXING_IMAGE_FILE_PATH)
                 .build();

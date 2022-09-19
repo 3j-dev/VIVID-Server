@@ -1,6 +1,6 @@
 package com.chicplay.mediaserver.domain.individual_video.application;
 
-import com.chicplay.mediaserver.domain.account.application.AccountService;
+import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.individual_video.dao.IndividualVideoDao;
 import com.chicplay.mediaserver.domain.individual_video.dao.repository.IndividualVideoRepository;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
@@ -9,7 +9,6 @@ import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoGetRe
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
 import com.chicplay.mediaserver.domain.individual_video.exception.IndividualVideoNotFoundException;
 import com.chicplay.mediaserver.domain.video.domain.Video;
-import com.chicplay.mediaserver.domain.video.exception.VideoNotFoundException;
 import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceService;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
@@ -32,7 +31,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class IndividualVideoService {
 
-    private final AccountService accountService;
+    private final UserService userService;
 
     private final IndividualVideoRepository individualVideoRepository;
 

@@ -89,11 +89,11 @@ def handler(event, context):
 
                 jobs.append(jobInput)
 
-        # get the account-specific mediaconvert endpoint for this region
+        # get the user-specific mediaconvert endpoint for this region
         mediaconvert_client = boto3.client('mediaconvert', region_name=region)
         endpoints = mediaconvert_client.describe_endpoints()
 
-        # add the account-specific endpoint to the client session
+        # add the user-specific endpoint to the client session
         client = boto3.client('mediaconvert', region_name=region, endpoint_url=endpoints['Endpoints'][0]['Url'],
                               verify=False)
 

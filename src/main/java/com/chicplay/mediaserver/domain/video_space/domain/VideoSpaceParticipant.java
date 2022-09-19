@@ -1,6 +1,6 @@
 package com.chicplay.mediaserver.domain.video_space.domain;
 
-import com.chicplay.mediaserver.domain.account.domain.Account;
+import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.AccessLevel;
@@ -24,8 +24,8 @@ public class VideoSpaceParticipant extends BaseTime {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_id")
-    private Account account;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "video_space_id")
@@ -35,21 +35,21 @@ public class VideoSpaceParticipant extends BaseTime {
     private List<IndividualVideo> individualVideos = new ArrayList<>();
 
     @Builder
-    public VideoSpaceParticipant(Account account, VideoSpace videoSpace) {
-        changeAccount(account);
+    public VideoSpaceParticipant(User user, VideoSpace videoSpace) {
+        changeAccount(user);
         changeVideoSpace(videoSpace);
     }
 
     // 연관 관계 편의 메소드
-    public void changeAccount(Account account) {
+    public void changeAccount(User user) {
 
         // account 관계가 있다면,
-        if(this.account != null){
-            this.account.getVideoSpaceParticipants().remove(this);
+        if(this.user != null){
+            this.user.getVideoSpaceParticipants().remove(this);
         }
 
-        this.account = account;
-        this.account.getVideoSpaceParticipants().add(this);
+        this.user = user;
+        this.user.getVideoSpaceParticipants().add(this);
 
     }
 

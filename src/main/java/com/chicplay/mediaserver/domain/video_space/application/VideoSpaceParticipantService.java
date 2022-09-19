@@ -1,9 +1,8 @@
 package com.chicplay.mediaserver.domain.video_space.application;
 
-import com.chicplay.mediaserver.domain.account.application.AccountService;
-import com.chicplay.mediaserver.domain.account.domain.Account;
+import com.chicplay.mediaserver.domain.user.application.UserService;
+import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
-import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceParticipantRepository;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
@@ -22,7 +21,7 @@ public class VideoSpaceParticipantService {
 
     private final VideoSpaceParticipantRepository videoSpaceParticipantRepository;
 
-    private final AccountService accountService;
+    private final UserService userService;
 
     private final VideoSpaceService videoSpaceService;
 
@@ -32,13 +31,13 @@ public class VideoSpaceParticipantService {
     public VideoSpaceParticipantSaveResponse save(VideoSpaceParticipantSaveRequest videoSpaceParticipantSaveRequest) {
 
         // account get by email
-        Account account = accountService.findByEmail();
+        User user = userService.findByEmail();
 
         // video space get by videoId
         VideoSpace videoSpace = videoSpaceService.findById(videoSpaceParticipantSaveRequest.getVideoSpaceId());
 
         // Video participant save
-        VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().videoSpace(videoSpace).account(account).build();
+        VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().videoSpace(videoSpace).user(user).build();
         VideoSpaceParticipant savedVideoSpaceParticipant = videoSpaceParticipantRepository.save(videoSpaceParticipant);
 
         //individual video save
