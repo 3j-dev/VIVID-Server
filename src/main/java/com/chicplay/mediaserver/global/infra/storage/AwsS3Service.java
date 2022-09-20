@@ -79,7 +79,7 @@ public class AwsS3Service {
         // s3 upload
         try(InputStream inputStream = file.getInputStream()) {
              amazonS3Client.putObject(new PutObjectRequest(imageSnapshotBucket, snapshotImageKey, inputStream, objectMetadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
+                    .withCannedAcl(CannedAccessControlList.Private));
         } catch(IOException e) {
             throw new ImageUploadFailedException();
         }

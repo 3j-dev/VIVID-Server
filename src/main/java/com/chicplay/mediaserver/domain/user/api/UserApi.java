@@ -1,7 +1,7 @@
 package com.chicplay.mediaserver.domain.user.api;
 
 import com.chicplay.mediaserver.domain.user.application.UserService;
-import com.chicplay.mediaserver.domain.user.dto.UserSignUpRequest;
+import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
 import com.chicplay.mediaserver.domain.user.dto.UserSignUpResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +19,16 @@ public class UserApi {
     private final UserService userService;
 
     @PostMapping("/api/account")
-    public UserSignUpResponse signUp(@RequestBody @Valid final UserSignUpRequest userSignUpRequest){
+    public UserSignUpResponse signUp(@RequestBody @Valid final UserLoginRequest userLoginRequest){
 
-        UserSignUpResponse userSignUpResponse = userService.signUp(userSignUpRequest);
+        UserSignUpResponse userSignUpResponse = userService.signUp(userLoginRequest);
 
         return userSignUpResponse;
+    }
+
+    @PostMapping("/api/test")
+    public String test(){
+
+        return "hello_test";
     }
 }

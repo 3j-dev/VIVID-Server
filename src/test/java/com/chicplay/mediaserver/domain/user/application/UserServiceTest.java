@@ -3,7 +3,7 @@ package com.chicplay.mediaserver.domain.user.application;
 import com.chicplay.mediaserver.domain.user.dao.UserRepository;
 import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.user.domain.AccountBuilder;
-import com.chicplay.mediaserver.domain.user.dto.UserSignUpRequest;
+import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
 import com.chicplay.mediaserver.domain.user.exception.EmailDuplicateException;
 import com.chicplay.mediaserver.global.error.exception.ErrorCode;
 import com.chicplay.mediaserver.test.ServiceTest;
@@ -36,12 +36,12 @@ public class UserServiceTest extends ServiceTest {
     public void signup_성공() throws Exception {
 
         //given
-        UserSignUpRequest userSignUpRequest = new UserSignUpRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME, AccountBuilder.USER_PASSWORD);
+        UserLoginRequest userLoginRequest = new UserLoginRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME);
 
-        given(userRepository.save(any())).willReturn(userSignUpRequest.toEntity());
+        given(userRepository.save(any())).willReturn(userLoginRequest.toEntity());
 
         //when
-        User user = userRepository.save(userSignUpRequest.toEntity());
+        User user = userRepository.save(userLoginRequest.toEntity());
 
         //then
         assertThat(user).isNotNull();
@@ -55,12 +55,12 @@ public class UserServiceTest extends ServiceTest {
     public void signUp_이메일_중복() {
 
         //given
-        UserSignUpRequest userSignUpRequest = new UserSignUpRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME, AccountBuilder.USER_PASSWORD);
+        UserLoginRequest userLoginRequest = new UserLoginRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME);
         given(userRepository.existsByEmail(any())).willReturn(true);
 
         //when
         EmailDuplicateException exception = Assertions.assertThrows(EmailDuplicateException.class, () ->{
-            userService.signUp(userSignUpRequest);
+            userService.signUp(userLoginRequest);
         });
 
         //then

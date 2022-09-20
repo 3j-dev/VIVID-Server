@@ -1,7 +1,7 @@
 package com.chicplay.mediaserver.domain.user.api;
 
 import com.chicplay.mediaserver.domain.user.domain.AccountBuilder;
-import com.chicplay.mediaserver.domain.user.dto.UserSignUpRequest;
+import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
 import com.chicplay.mediaserver.global.error.exception.ErrorCode;
 import com.chicplay.mediaserver.test.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -23,12 +23,12 @@ public class UserApiTest extends IntegrationTest {
     public void signup_성공() throws Exception {
 
         //given
-        UserSignUpRequest userSignUpRequest = new UserSignUpRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME, AccountBuilder.USER_PASSWORD);
+        UserLoginRequest userLoginRequest = new UserLoginRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME);
 
         //when
         ResultActions resultActions = mvc.perform(post("/api/account")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userSignUpRequest)))
+                        .content(objectMapper.writeValueAsString(userLoginRequest)))
                 .andDo(print());
 
         //then
@@ -46,12 +46,12 @@ public class UserApiTest extends IntegrationTest {
 
         //given
         String USER_INVALID_EMAIL = "testnaver.com";
-        UserSignUpRequest userSignUpRequest = new UserSignUpRequest(USER_INVALID_EMAIL, AccountBuilder.USER_NAME, AccountBuilder.USER_PASSWORD);
+        UserLoginRequest userLoginRequest = new UserLoginRequest(USER_INVALID_EMAIL, AccountBuilder.USER_NAME);
 
         //when
         ResultActions resultActions = mvc.perform(post("/api/account")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userSignUpRequest)))
+                        .content(objectMapper.writeValueAsString(userLoginRequest)))
                 .andDo(print());
 
         //then
@@ -65,18 +65,18 @@ public class UserApiTest extends IntegrationTest {
     public void signup_이메일_중복() throws Exception {
 
         //given
-        UserSignUpRequest userSignUpRequest = new UserSignUpRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME, AccountBuilder.USER_PASSWORD);
+        UserLoginRequest userLoginRequest = new UserLoginRequest(AccountBuilder.USER_EMAIL, AccountBuilder.USER_NAME);
 
         //when
         // 첫번째 계정 등록 api
         mvc.perform(post("/api/account")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userSignUpRequest)));
+                .content(objectMapper.writeValueAsString(userLoginRequest)));
 
         // 두번째 계정 등록 api
         ResultActions resultActions = mvc.perform(post("/api/account")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userSignUpRequest)))
+                        .content(objectMapper.writeValueAsString(userLoginRequest)))
                 .andDo(print());
 
         //then

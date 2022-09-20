@@ -1,15 +1,20 @@
 package com.chicplay.mediaserver.global.config;
 
 import com.chicplay.mediaserver.domain.user.domain.Role;
+import com.chicplay.mediaserver.global.auth.JwtAuthFilter;
+import com.chicplay.mediaserver.global.auth.JwtProvider;
+import com.chicplay.mediaserver.global.auth.OAuthSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -18,9 +23,16 @@ public class SecurityConfig {
 
     private final OAuth2UserService auth2UserService;
 
+    private final OAuthSuccessHandler oAuthSuccessHandler;
+
+    private final JwtProvider jwtProvider;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.httpBasic().disable()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
@@ -37,8 +49,11 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/")
                 .and()
                 .oauth2Login()
+                .successHandler(oAuthSuccessHandler)
                 .userInfoEndpoint()
                 .userService(auth2UserService);
+
+        http.addFilterBefore(new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

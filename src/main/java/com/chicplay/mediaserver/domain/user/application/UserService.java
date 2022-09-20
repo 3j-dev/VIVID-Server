@@ -3,7 +3,7 @@ package com.chicplay.mediaserver.domain.user.application;
 import com.chicplay.mediaserver.domain.user.dao.UserDao;
 import com.chicplay.mediaserver.domain.user.dao.UserRepository;
 import com.chicplay.mediaserver.domain.user.domain.User;
-import com.chicplay.mediaserver.domain.user.dto.UserSignUpRequest;
+import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
 import com.chicplay.mediaserver.domain.user.dto.UserSignUpResponse;
 import com.chicplay.mediaserver.domain.user.exception.EmailDuplicateException;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
@@ -33,7 +33,14 @@ public class UserService {
         return user;
     }
 
-    public UserSignUpResponse signUp(final UserSignUpRequest dto) {
+    public boolean existsByEmail(String email) {
+
+        boolean existsByEmail = userRepository.existsByEmail(email);
+
+        return existsByEmail;
+    }
+
+    public UserSignUpResponse signUp(final UserLoginRequest dto) {
 
         // 이메일 중복 검사
         if (userRepository.existsByEmail(dto.getEmail()))

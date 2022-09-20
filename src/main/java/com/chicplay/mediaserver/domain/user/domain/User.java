@@ -29,8 +29,8 @@ public class User extends BaseTime {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Embedded
-    private Password password;
+//    @Embedded
+//    private Password password;
 
     @Embedded
     private Institution institution;
