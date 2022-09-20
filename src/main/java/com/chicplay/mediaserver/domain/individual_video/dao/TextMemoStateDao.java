@@ -7,8 +7,10 @@ import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoState;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateHistory;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
+import com.chicplay.mediaserver.global.config.RedisConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,10 +40,10 @@ public class TextMemoStateDao {
     private final RedisSerializer valueSerializer;
 
 
-    public TextMemoStateDao(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper,
+    public TextMemoStateDao(@Qualifier("noteRedisTemplate") RedisTemplate<?, ?> redisTemplate, ObjectMapper objectMapper,
                             DynamoDBMapper dynamoDBMapper) {
 
-        this.redisTemplate = redisTemplate;
+        this.redisTemplate = (RedisTemplate<String, Object>) redisTemplate;
         this.objectMapper = objectMapper;
         this.dynamoDBMapper = dynamoDBMapper;
 
