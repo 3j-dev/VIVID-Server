@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "account")
+@Table(name = "user")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTime {
@@ -29,14 +29,15 @@ public class User extends BaseTime {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-//    @Embedded
-//    private Password password;
-
     @Embedded
     private Institution institution;
 
     @Column(name="name", nullable = false)
     private String name;
+
+
+    @Column(name="picture")
+    private String picture;
 
     @Enumerated(EnumType.STRING)
     @Column(name="role", nullable = false)
@@ -51,10 +52,11 @@ public class User extends BaseTime {
 //    }
 
     @Builder
-    public User(String email,  String name, Role role) {
+    public User(String email,  String name, String picture, Role role) {
         this.email = email;
         this.name = name;
         this.role = role;
+        this.picture = picture;
     }
 
 }

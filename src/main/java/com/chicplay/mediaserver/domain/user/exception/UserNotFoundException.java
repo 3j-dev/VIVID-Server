@@ -10,7 +10,7 @@ public class UserNotFoundException extends EntityNotFoundException {
         super(id.toString() + " is not found");
     }
 
-    public UserNotFoundException(String emial) {
-        super(emial + " is not found");
+    public UserNotFoundException(String email) {
+        super(email + " is not found");
     }
 }

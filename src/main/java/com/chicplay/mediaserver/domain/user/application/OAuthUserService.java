@@ -1,7 +1,8 @@
-package com.chicplay.mediaserver.global.auth;
+package com.chicplay.mediaserver.domain.user.application;
 
-import com.chicplay.mediaserver.domain.user.dao.UserRepository;
-import com.chicplay.mediaserver.domain.user.domain.User;
+import com.chicplay.mediaserver.domain.user.dao.UserAuthTokenDao;
+import com.chicplay.mediaserver.domain.user.dto.OAuthAttributes;
+import com.chicplay.mediaserver.domain.user.domain.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -12,15 +13,16 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 import java.util.Collections;
+import java.util.Map;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final UserRepository userRepository;
-    private final HttpSession httpSession;
+    private final UserAuthTokenDao userAuthTokenDao;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -28,28 +30,31 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
-
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails()
                 .getUserInfoEndpoint()
                 .getUserNameAttributeName();
 
-        OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
+        OAuthAttributes oAuthAttributes = OAuthAttributes.of(oAuth2User.getAttributes(), userNameAttributeName);
 
-        User user = saveOrUpdate(attributes);
-
-        httpSession.setAttribute("user", new SessionUser(user));
+        Map<String, Object> attributeMap = oAuthAttributes.convertToMap();
 
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey())), attributes.getAttributes(), attributes.getNameAttributeKey());
+                Collections.singleton(new SimpleGrantedAuthority(Role.USER.name())),attributeMap,"email");
     }
 
-    // 유저 생성 및 수정 서비스 로직
-    private User saveOrUpdate(OAuthAttributes attributes){
-        User user = userRepository.findByEmail(attributes.getEmail())
-                .orElse(attributes.toEntity());
+    public String getRefreshTokenFromEmail(String email) {
 
-        return userRepository.save(user);
+        String refreshToken = userAuthTokenDao.getRefreshToken(email);
+
+        return refreshToken;
     }
+
+//    // 유저 생성 및 수정 서비스 로직
+//    private User saveOrUpdate(OAuthAttributes attributes){
+//        User user = userRepository.findByEmail(attributes.getEmail())
+//                .orElse(attributes.toEntity());
+//
+//        return userRepository.save(user);
+//    }
 }

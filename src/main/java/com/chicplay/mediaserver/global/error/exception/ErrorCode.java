@@ -16,6 +16,11 @@ public enum ErrorCode {
     // account
     PASSWORD_FAILED_EXCEEDED("A01", "Password attempts exceeded.", 400),
     EMAIL_DUPLICATION("A02", "Email is Duplication",400),
+    TOKEN_EXPIRED("A03", "Token is Expired",400),
+    TOKEN_NOT_SUPPORTED("A04", "Token is Unsupported Token",400),
+    TOKEN_ILLEGAL_STATE("A05", "Token is Illegal State",400),
+    TOKEN_NOT_MATCHED("A05", "Token is Should not be Trusted.",400),
+    REFRESH_TOKEN_NOT_FOUND("A06", "Refreshed Token Not Found.",400),
 
     // video
     IMAGE_UPLOAD_FAILED("V02", "Image upload is failed.",500);

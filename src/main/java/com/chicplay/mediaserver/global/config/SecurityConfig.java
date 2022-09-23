@@ -3,13 +3,12 @@ package com.chicplay.mediaserver.global.config;
 import com.chicplay.mediaserver.domain.user.domain.Role;
 import com.chicplay.mediaserver.global.auth.JwtAuthFilter;
 import com.chicplay.mediaserver.global.auth.JwtProvider;
-import com.chicplay.mediaserver.global.auth.OAuthSuccessHandler;
+import com.chicplay.mediaserver.domain.user.application.OAuthSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -42,16 +41,16 @@ public class SecurityConfig {
                         , "/js/**"
                         , "/h2-console/**"
                 ).permitAll()
-                .antMatchers("/api/**").hasRole(Role.USER.name())
-                .anyRequest().authenticated()
+                .antMatchers("/auth/**", "/oauth2/**").permitAll() // Security 허용 url
+                .antMatchers("/api/**").hasRole(Role.USER.name())   // 모든 api 요청에 대해 user 권한
+                .anyRequest().authenticated()   // 나머지 요청에 대해서 권한이 있어야함
                 .and()
                 .logout()
                 .logoutSuccessUrl("/")
                 .and()
                 .oauth2Login()
                 .successHandler(oAuthSuccessHandler)
-                .userInfoEndpoint()
-                .userService(auth2UserService);
+                .userInfoEndpoint().userService(auth2UserService);
 
         http.addFilterBefore(new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 
