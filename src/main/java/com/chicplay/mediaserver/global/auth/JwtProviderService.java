@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.security.Key;
 import java.util.Base64;
@@ -30,7 +32,7 @@ public class JwtProviderService {
 
     private final long tokenPeriod = 1000L * 60L * 10L;     // 10분
     //private final long tokenPeriod = 1000L;
-    private final long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;      // 3주
+    private final long refreshPeriod = 1000L * 60L * 60L * 24L * 10L;      // 10일
 
     @PostConstruct
     protected void init() {
@@ -71,10 +73,25 @@ public class JwtProviderService {
         }
     }
 
+    public String parseBearerToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
     public String getEmail(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token).getBody().getSubject();
+
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token).getBody().getSubject();
+        } catch (ExpiredJwtException expiredJwtException) {
+
+            return expiredJwtException.getClaims().getSubject();
+        }
     }
 }

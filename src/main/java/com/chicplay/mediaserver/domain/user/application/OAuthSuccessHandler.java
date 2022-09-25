@@ -55,7 +55,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         writeTokenResponse(response, userAuthToken);
 
         // redis - refresh token save
-        userAuthTokenDao.saveRefreshToken(userAuthToken.getToken(), userAuthToken.getRefreshToken());
+        userAuthTokenDao.saveRefreshToken(userAuthToken.getEmail(), userAuthToken.getRefreshToken());
     }
 
     private void writeTokenResponse(HttpServletResponse response, UserAuthToken userAuthToken) throws IOException {
@@ -63,7 +63,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType("text/html;charset=UTF-8");
 
         response.addHeader("Auth", userAuthToken.getToken());
-        response.addHeader("Refresh", userAuthToken.getRefreshToken());
+        //response.addHeader("Refresh", userAuthToken.getRefreshToken());
         response.setContentType("application/json;charset=UTF-8");
 
         PrintWriter writer = response.getWriter();

@@ -10,6 +10,7 @@ import com.chicplay.mediaserver.domain.user.exception.RefreshTokenNotFoundExcept
 import com.chicplay.mediaserver.global.auth.JwtProviderService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -18,11 +19,15 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.net.http.HttpRequest;
 import java.util.Collections;
 import java.util.Map;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -51,7 +56,12 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
                 Collections.singleton(new SimpleGrantedAuthority(Role.USER.name())),attributeMap,"email");
     }
 
-    public UserNewTokenReqeust getNewAccessTokenFromEmail(String email) {
+    // access token re-isuue
+    public UserNewTokenReqeust getNewAccessToken(HttpServletRequest httpRequest) {
+
+        // email from access token
+        String accessToken = jwtProviderService.parseBearerToken(httpRequest);
+        String email = jwtProviderService.getEmail(accessToken);
 
         // get refresh token from redis
         String refreshToken = userAuthTokenDao.getRefreshToken(email);
@@ -70,6 +80,17 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
         }
 
         throw new RefreshTokenNotFoundException();
+    }
+
+    public void removeRefreshTokenByLogout(HttpServletRequest httpRequest) {
+
+        // email from access token
+        String accessToken = jwtProviderService.parseBearerToken(httpRequest);
+        String email = jwtProviderService.getEmail(accessToken);
+
+        // remove refresh token
+        userAuthTokenDao.removeRefreshToken(email);
+
     }
 
 //    // 유저 생성 및 수정 서비스 로직

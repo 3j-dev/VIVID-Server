@@ -35,40 +35,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response,HttpStatus.valueOf(errorCode.getStatus()));
     }
 
-    @ExceptionHandler(SignatureException.class)
-    protected ResponseEntity<ErrorResponse> handleSignatureException(final SignatureException exception) {
-        log.error("SignatureException", exception);
-        final ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_EXPIRED;
-        final ErrorResponse response = ErrorResponse.from(errorCode);
-        return new ResponseEntity<>(response,HttpStatus.valueOf(errorCode.getStatus()));
-    }
-
-    @ExceptionHandler(ExpiredJwtException.class)
-    protected ResponseEntity<ErrorResponse> handleExpiredJwtException(final ExpiredJwtException exception) {
-        log.error("ExpiredJwtException", exception);
-        final ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_NOT_MATCHED;
-        final ErrorResponse response = ErrorResponse.from(errorCode);
-        return new ResponseEntity<>(response,HttpStatus.valueOf(errorCode.getStatus()));
-    }
-
-    @ExceptionHandler(UnsupportedJwtException.class)
-    protected ResponseEntity<ErrorResponse> handleUnsupportedJwtException(final UnsupportedJwtException exception) {
-        log.error("UnsupportedJwtException", exception);
-        final ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_NOT_SUPPORTED;
-        final ErrorResponse response = ErrorResponse.from(errorCode);
-        return new ResponseEntity<>(response,HttpStatus.valueOf(errorCode.getStatus()));
-    }
-
-    @ExceptionHandler(IllegalStateException.class)
-    protected ResponseEntity<ErrorResponse> handleIllegalStateException(final IllegalStateException exception) {
-        log.error("IllegalStateException", exception);
-        final ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_ILLEGAL_STATE;
-        final ErrorResponse response = ErrorResponse.from(errorCode);
-        return new ResponseEntity<>(response,HttpStatus.valueOf(errorCode.getStatus()));
-    }
 
     @ExceptionHandler(RefreshTokenNotFoundException.class)
-    protected ResponseEntity<ErrorResponse> handleRefreshTokenNotFoundException(final IllegalStateException exception) {
+    protected ResponseEntity<ErrorResponse> handleRefreshTokenNotFoundException(final RefreshTokenNotFoundException exception) {
         log.error("RefreshTokenNotFoundException", exception);
         final ErrorCode errorCode = ErrorCode.REFRESH_TOKEN_NOT_FOUND;
         final ErrorResponse response = ErrorResponse.from(errorCode);
@@ -76,7 +45,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RefreshTokenExpiredException.class)
-    protected ResponseEntity<ErrorResponse> handleRefreshTokenExpiredException(final IllegalStateException exception) {
+    protected ResponseEntity<ErrorResponse> handleRefreshTokenExpiredException(final RefreshTokenExpiredException exception) {
         log.error("RefreshTokenExpiredException", exception);
         final ErrorCode errorCode = ErrorCode.REFRESH_TOKEN_EXPIRED;
         final ErrorResponse response = ErrorResponse.from(errorCode);

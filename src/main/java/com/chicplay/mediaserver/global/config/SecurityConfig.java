@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -30,14 +32,25 @@ public class SecurityConfig {
 
 
     @Bean
+    public WebSecurityCustomizer configure() {
+
+        // filter 안타게끔
+        return (web) -> web.ignoring().mvcMatchers(
+                "/auth/token", "/swagger-ui/**"
+        );
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.httpBasic().disable()
                 .csrf().disable()
+                .formLogin().disable() // 로그인 폼 미사용
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .headers().frameOptions().disable()
                 .and()
-                .exceptionHandling().authenticationEntryPoint(new RestAuthenticationEntryPoint()) // 인증,인가가 되지 않은 요청 시 발생
+                .exceptionHandling()
+                .authenticationEntryPoint(new RestAuthenticationEntryPoint()) // 인증,인가가 되지 않은 요청 시 발생시
                 .and()
                 .authorizeRequests()
                 .antMatchers("/"
@@ -46,19 +59,16 @@ public class SecurityConfig {
                         , "/js/**"
                         , "/h2-console/**"
                 ).permitAll()
-                .antMatchers("/api/auth/**", "/oauth2/**").permitAll() // Security 허용 url
+                .antMatchers("/login/**", "/auth/**").permitAll() // Security 허용 url
                 .antMatchers("/api/**").hasRole(Role.USER.name())   // 모든 api 요청에 대해 user 권한
                 .anyRequest().authenticated()   // 나머지 요청에 대해서 권한이 있어야함
                 .and()
-                .logout()
-                .logoutSuccessUrl("/")
-                .and()
                 .oauth2Login()
-                //.loginPage("/login")        // login url
-                .authorizationEndpoint().baseUri("/oauth2/authorization") // 소셜 로그인 url
+                .authorizationEndpoint().baseUri("/login") // 소셜 로그인 url
                 .and()
                 .successHandler(oAuthSuccessHandler)
                 .userInfoEndpoint().userService(auth2UserService);
+
 
         http
                 .addFilterBefore(new JwtAuthFilter(jwtProviderService), UsernamePasswordAuthenticationFilter.class)

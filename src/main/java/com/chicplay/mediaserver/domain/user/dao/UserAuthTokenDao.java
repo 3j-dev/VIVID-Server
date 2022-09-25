@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -23,29 +24,36 @@ public class UserAuthTokenDao {
         this.redisTemplate = (RedisTemplate<String, Object>) redisTemplate;
     }
 
-    // refresh token redis save
-    public void saveRefreshToken(String accessToken, String refreshToken) {
+    // save refresh token redis
+    public void saveRefreshToken(String email, String refreshToken) {
 
         final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
 
-        stringStringValueOperations.set(accessToken, refreshToken);
+        stringStringValueOperations.set(email, refreshToken, 10, TimeUnit.DAYS);
 
     }
 
-
-    // refresh token redis get
-    public String getRefreshToken(String accessToken) {
+    // get refresh token redis
+    public String getRefreshToken(String email) {
 
         final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
 
         // refresh token get from redis
-        Optional<Object> refreshToken = Optional.ofNullable(stringStringValueOperations.get(accessToken));
+        Optional<Object> refreshToken = Optional.ofNullable(stringStringValueOperations.get(email));
 
         // handle not found exception
         refreshToken.orElseThrow(() -> new RefreshTokenNotFoundException());
 
         return (String)refreshToken.get();
 
+    }
+
+    // remove refresh token
+    public void removeRefreshToken(String email) {
+
+        final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
+
+        stringStringValueOperations.set(email, "", 1, TimeUnit.MILLISECONDS);
     }
 
 
