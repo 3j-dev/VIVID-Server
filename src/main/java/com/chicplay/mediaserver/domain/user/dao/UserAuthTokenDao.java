@@ -24,25 +24,27 @@ public class UserAuthTokenDao {
     }
 
     // refresh token redis save
-    public void saveRefreshToken(String email, String refreshToken) {
+    public void saveRefreshToken(String accessToken, String refreshToken) {
 
         final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
 
-        stringStringValueOperations.set(email, refreshToken);
+        stringStringValueOperations.set(accessToken, refreshToken);
 
     }
 
 
     // refresh token redis get
-    public String getRefreshToken(String email) {
+    public String getRefreshToken(String accessToken) {
 
         final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
 
-        Optional<Object> accessToken = Optional.ofNullable(stringStringValueOperations.get(email));
+        // refresh token get from redis
+        Optional<Object> refreshToken = Optional.ofNullable(stringStringValueOperations.get(accessToken));
 
-        accessToken.orElseThrow(() -> new RefreshTokenNotFoundException());
+        // handle not found exception
+        refreshToken.orElseThrow(() -> new RefreshTokenNotFoundException());
 
-        return (String)accessToken.get();
+        return (String)refreshToken.get();
 
     }
 

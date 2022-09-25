@@ -1,8 +1,14 @@
 package com.chicplay.mediaserver.domain.user.application;
 
 import com.chicplay.mediaserver.domain.user.dao.UserAuthTokenDao;
+import com.chicplay.mediaserver.domain.user.domain.UserAuthToken;
 import com.chicplay.mediaserver.domain.user.dto.OAuthAttributes;
 import com.chicplay.mediaserver.domain.user.domain.Role;
+import com.chicplay.mediaserver.domain.user.dto.UserNewTokenReqeust;
+import com.chicplay.mediaserver.domain.user.exception.RefreshTokenExpiredException;
+import com.chicplay.mediaserver.domain.user.exception.RefreshTokenNotFoundException;
+import com.chicplay.mediaserver.global.auth.JwtProviderService;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -24,6 +30,8 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
 
     private final UserAuthTokenDao userAuthTokenDao;
 
+    private final JwtProviderService jwtProviderService;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
@@ -43,11 +51,25 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
                 Collections.singleton(new SimpleGrantedAuthority(Role.USER.name())),attributeMap,"email");
     }
 
-    public String getRefreshTokenFromEmail(String email) {
+    public UserNewTokenReqeust getNewAccessTokenFromEmail(String email) {
 
+        // get refresh token from redis
         String refreshToken = userAuthTokenDao.getRefreshToken(email);
 
-        return refreshToken;
+        try {
+            // 유효한 토큰 일 경우 re-issue access token return
+            if (jwtProviderService.validateToken(refreshToken)) {
+                UserAuthToken userAuthToken = jwtProviderService.generateToken(email, Role.USER.name());
+
+                return UserNewTokenReqeust.builder().accessToken(userAuthToken.getToken()).build();
+            }
+        } catch (ExpiredJwtException expiredJwtException){
+
+            // refresh token 만료 된 경우, logout 시킨다.
+            throw new RefreshTokenExpiredException();
+        }
+
+        throw new RefreshTokenNotFoundException();
     }
 
 //    // 유저 생성 및 수정 서비스 로직

@@ -1,6 +1,8 @@
 package com.chicplay.mediaserver.global.error;
 
 
+import com.chicplay.mediaserver.domain.user.exception.RefreshTokenExpiredException;
+import com.chicplay.mediaserver.domain.user.exception.RefreshTokenNotFoundException;
 import com.chicplay.mediaserver.global.error.exception.BusinessException;
 import com.chicplay.mediaserver.global.error.exception.EntityNotFoundException;
 import com.chicplay.mediaserver.global.error.exception.ErrorCode;
@@ -34,9 +36,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(SignatureException.class)
-    protected ResponseEntity<ErrorResponse> handleExpiredJwtException(final SignatureException exception) {
+    protected ResponseEntity<ErrorResponse> handleSignatureException(final SignatureException exception) {
         log.error("SignatureException", exception);
-        final ErrorCode errorCode = ErrorCode.TOKEN_EXPIRED;
+        final ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_EXPIRED;
         final ErrorResponse response = ErrorResponse.from(errorCode);
         return new ResponseEntity<>(response,HttpStatus.valueOf(errorCode.getStatus()));
     }
@@ -44,23 +46,39 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ExpiredJwtException.class)
     protected ResponseEntity<ErrorResponse> handleExpiredJwtException(final ExpiredJwtException exception) {
         log.error("ExpiredJwtException", exception);
-        final ErrorCode errorCode = ErrorCode.TOKEN_NOT_MATCHED;
+        final ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_NOT_MATCHED;
         final ErrorResponse response = ErrorResponse.from(errorCode);
         return new ResponseEntity<>(response,HttpStatus.valueOf(errorCode.getStatus()));
     }
 
     @ExceptionHandler(UnsupportedJwtException.class)
-    protected ResponseEntity<ErrorResponse> handleExpiredJwtException(final UnsupportedJwtException exception) {
+    protected ResponseEntity<ErrorResponse> handleUnsupportedJwtException(final UnsupportedJwtException exception) {
         log.error("UnsupportedJwtException", exception);
-        final ErrorCode errorCode = ErrorCode.TOKEN_NOT_SUPPORTED;
+        final ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_NOT_SUPPORTED;
         final ErrorResponse response = ErrorResponse.from(errorCode);
         return new ResponseEntity<>(response,HttpStatus.valueOf(errorCode.getStatus()));
     }
 
     @ExceptionHandler(IllegalStateException.class)
-    protected ResponseEntity<ErrorResponse> handleExpiredJwtException(final IllegalStateException exception) {
+    protected ResponseEntity<ErrorResponse> handleIllegalStateException(final IllegalStateException exception) {
         log.error("IllegalStateException", exception);
-        final ErrorCode errorCode = ErrorCode.TOKEN_ILLEGAL_STATE;
+        final ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_ILLEGAL_STATE;
+        final ErrorResponse response = ErrorResponse.from(errorCode);
+        return new ResponseEntity<>(response,HttpStatus.valueOf(errorCode.getStatus()));
+    }
+
+    @ExceptionHandler(RefreshTokenNotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleRefreshTokenNotFoundException(final IllegalStateException exception) {
+        log.error("RefreshTokenNotFoundException", exception);
+        final ErrorCode errorCode = ErrorCode.REFRESH_TOKEN_NOT_FOUND;
+        final ErrorResponse response = ErrorResponse.from(errorCode);
+        return new ResponseEntity<>(response,HttpStatus.valueOf(errorCode.getStatus()));
+    }
+
+    @ExceptionHandler(RefreshTokenExpiredException.class)
+    protected ResponseEntity<ErrorResponse> handleRefreshTokenExpiredException(final IllegalStateException exception) {
+        log.error("RefreshTokenExpiredException", exception);
+        final ErrorCode errorCode = ErrorCode.REFRESH_TOKEN_EXPIRED;
         final ErrorResponse response = ErrorResponse.from(errorCode);
         return new ResponseEntity<>(response,HttpStatus.valueOf(errorCode.getStatus()));
     }

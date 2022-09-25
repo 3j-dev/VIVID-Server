@@ -1,9 +1,11 @@
 package com.chicplay.mediaserver.global.config;
 
 import com.chicplay.mediaserver.domain.user.domain.Role;
+import com.chicplay.mediaserver.global.auth.JwtAuthExceptionFilter;
 import com.chicplay.mediaserver.global.auth.JwtAuthFilter;
-import com.chicplay.mediaserver.global.auth.JwtProvider;
+import com.chicplay.mediaserver.global.auth.JwtProviderService;
 import com.chicplay.mediaserver.domain.user.application.OAuthSuccessHandler;
+import com.chicplay.mediaserver.global.auth.RestAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +26,8 @@ public class SecurityConfig {
 
     private final OAuthSuccessHandler oAuthSuccessHandler;
 
-    private final JwtProvider jwtProvider;
+    private final JwtProviderService jwtProviderService;
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -34,6 +37,8 @@ public class SecurityConfig {
                 .and()
                 .headers().frameOptions().disable()
                 .and()
+                .exceptionHandling().authenticationEntryPoint(new RestAuthenticationEntryPoint()) // 인증,인가가 되지 않은 요청 시 발생
+                .and()
                 .authorizeRequests()
                 .antMatchers("/"
                         , "/css/**"
@@ -41,7 +46,7 @@ public class SecurityConfig {
                         , "/js/**"
                         , "/h2-console/**"
                 ).permitAll()
-                .antMatchers("/auth/**", "/oauth2/**").permitAll() // Security 허용 url
+                .antMatchers("/api/auth/**", "/oauth2/**").permitAll() // Security 허용 url
                 .antMatchers("/api/**").hasRole(Role.USER.name())   // 모든 api 요청에 대해 user 권한
                 .anyRequest().authenticated()   // 나머지 요청에 대해서 권한이 있어야함
                 .and()
@@ -49,10 +54,15 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/")
                 .and()
                 .oauth2Login()
+                //.loginPage("/login")        // login url
+                .authorizationEndpoint().baseUri("/oauth2/authorization") // 소셜 로그인 url
+                .and()
                 .successHandler(oAuthSuccessHandler)
                 .userInfoEndpoint().userService(auth2UserService);
 
-        http.addFilterBefore(new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(new JwtAuthFilter(jwtProviderService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthExceptionFilter(), JwtAuthFilter.class);
 
         return http.build();
     }

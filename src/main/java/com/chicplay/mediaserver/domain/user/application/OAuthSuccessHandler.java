@@ -4,7 +4,7 @@ import com.chicplay.mediaserver.domain.user.dao.UserAuthTokenDao;
 import com.chicplay.mediaserver.domain.user.domain.Role;
 import com.chicplay.mediaserver.domain.user.domain.UserAuthToken;
 import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
-import com.chicplay.mediaserver.global.auth.JwtProvider;
+import com.chicplay.mediaserver.global.auth.JwtProviderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final JwtProvider jwtProvider;
+    private final JwtProviderService jwtProviderService;
     private final ObjectMapper objectMapper;
     private final UserService userService;
     private final UserAuthTokenDao userAuthTokenDao;
@@ -49,13 +49,13 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
             userService.signUp(userLoginRequest);
         }
 
-        UserAuthToken userAuthToken = jwtProvider.generateToken(userLoginRequest.getEmail(), Role.USER.name());
+        UserAuthToken userAuthToken = jwtProviderService.generateToken(userLoginRequest.getEmail(), Role.USER.name());
 
         // then, token 발급 후 -> access token, refresh token
         writeTokenResponse(response, userAuthToken);
 
         // redis - refresh token save
-        userAuthTokenDao.saveRefreshToken(userLoginRequest.getEmail(), userAuthToken.getRefreshToken());
+        userAuthTokenDao.saveRefreshToken(userAuthToken.getToken(), userAuthToken.getRefreshToken());
     }
 
     private void writeTokenResponse(HttpServletResponse response, UserAuthToken userAuthToken) throws IOException {

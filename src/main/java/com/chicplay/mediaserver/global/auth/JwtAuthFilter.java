@@ -22,7 +22,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final JwtProvider jwtProvider;
+    private final JwtProviderService jwtProviderService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -31,11 +31,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // Validation Access Token
 
-        if (StringUtils.hasText(token) && jwtProvider.validateToken(token)) {
+        if (StringUtils.hasText(token) && jwtProviderService.validateToken(token)) {
 
-            String email = jwtProvider.getEmail(token);
-
-            String accessToken = jwtProvider.getAccessToken(token);
+            String email = jwtProviderService.getEmail(token);
 
             UserLoginRequest user = UserLoginRequest.builder().email(email).build();
 
