@@ -33,7 +33,8 @@ public class VideoApi {
 
     /***
      * raw-video-storage에 video를 업로드하는 api
-     * aws media convert를 이용한 인코딩이 완료되면 lambda 함수를 통해서 자동으로 save api 호출
+     * aws media convert를 이용한
+     * 인코딩이 완료되면 lambda 함수를 통해서 자동으로 save api 호출
      */
     @PostMapping(value = "",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

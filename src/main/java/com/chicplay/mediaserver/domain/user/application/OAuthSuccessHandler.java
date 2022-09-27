@@ -7,10 +7,13 @@ import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
 import com.chicplay.mediaserver.global.auth.JwtProviderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,12 +21,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.http.HttpHeaders;
 import java.util.Map;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
+public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProviderService jwtProviderService;
     private final ObjectMapper objectMapper;
@@ -52,22 +57,28 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         UserAuthToken userAuthToken = jwtProviderService.generateToken(userLoginRequest.getEmail(), Role.USER.name());
 
         // then, token 발급 후 -> access token, refresh token
-        writeTokenResponse(response, userAuthToken);
+        //writeTokenResponse(response, userAuthToken);'
+
+        String targetUrl = UriComponentsBuilder.fromUriString("https://dev.edu-vivid.com/api/test")
+                .queryParam("token", userAuthToken.getToken())
+                .build().toUriString();
+
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
         // redis - refresh token save
         userAuthTokenDao.saveRefreshToken(userAuthToken.getEmail(), userAuthToken.getRefreshToken());
     }
 
-    private void writeTokenResponse(HttpServletResponse response, UserAuthToken userAuthToken) throws IOException {
-
-        response.setContentType("text/html;charset=UTF-8");
-
-        response.addHeader("Auth", userAuthToken.getToken());
-        //response.addHeader("Refresh", userAuthToken.getRefreshToken());
-        response.setContentType("application/json;charset=UTF-8");
-
-        PrintWriter writer = response.getWriter();
-        writer.println(objectMapper.writeValueAsString(userAuthToken));
-        writer.flush();
-    }
+//    private void writeTokenResponse(HttpServletResponse response, UserAuthToken userAuthToken) throws IOException {
+//
+//        response.setContentType("text/html;charset=UTF-8");
+//
+//        response.addHeader("Auth", userAuthToken.getToken());
+//        //response.addHeader("Refresh", userAuthToken.getRefreshToken());
+//        response.setContentType("application/json;charset=UTF-8");
+//
+//        PrintWriter writer = response.getWriter();
+//        writer.println(objectMapper.writeValueAsString(userAuthToken));
+//        writer.flush();
+//    }
 }

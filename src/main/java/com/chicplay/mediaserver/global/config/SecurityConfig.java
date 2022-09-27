@@ -36,7 +36,7 @@ public class SecurityConfig {
 
         // filter 안타게끔
         return (web) -> web.ignoring().mvcMatchers(
-                "/auth/token", "/swagger-ui/**"
+                "/auth/token", "/swagger-ui/**","/api/test", "/v3/api-docs/**","/login/oauth2/code"
         );
     }
 
@@ -64,10 +64,11 @@ public class SecurityConfig {
                 .anyRequest().authenticated()   // 나머지 요청에 대해서 권한이 있어야함
                 .and()
                 .oauth2Login()
-                .authorizationEndpoint().baseUri("/login") // 소셜 로그인 url
-                .and()
                 .successHandler(oAuthSuccessHandler)
-                .userInfoEndpoint().userService(auth2UserService);
+                .userInfoEndpoint().userService(auth2UserService)
+                .and()
+                .authorizationEndpoint().baseUri("/login"); // 소셜 로그인 url
+
 
 
         http

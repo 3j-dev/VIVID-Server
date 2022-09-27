@@ -5,6 +5,7 @@ import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
 import com.chicplay.mediaserver.domain.user.dto.UserNewTokenReqeust;
 import com.chicplay.mediaserver.domain.user.dto.UserSignUpResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,14 +25,15 @@ public class UserApi {
 
     private final OAuthUserService oAuthUserService;
 
-    @PostMapping("/api/test/account")
-    public UserSignUpResponse signUp(@RequestBody @Valid final UserLoginRequest userLoginRequest){
+//    @PostMapping("/api/test/account")
+//    public UserSignUpResponse signUp(@RequestBody @Valid final UserLoginRequest userLoginRequest){
+//
+//        UserSignUpResponse userSignUpResponse = userService.signUp(userLoginRequest);
+//
+//        return userSignUpResponse;
+//    }
 
-        UserSignUpResponse userSignUpResponse = userService.signUp(userLoginRequest);
-
-        return userSignUpResponse;
-    }
-
+    @Operation(summary = "user logout api", description = "user가 logout 할 시 호출하는 api입니다. redis의 refresh token을 삭제합니다.")
     @PostMapping("/auth/logout")
     public void logout(HttpServletRequest request){
 
@@ -39,6 +41,7 @@ public class UserApi {
     }
 
     // access token 만료시 refresh token을 통해 재발급
+    @Operation(summary = "user access token re-issue api", description = "redis의 refresh token을 활용하여 access token을 재발급합니다.")
     @GetMapping("/auth/token")
     public UserNewTokenReqeust issueNewAccessToken(HttpServletRequest request){
 
@@ -48,6 +51,7 @@ public class UserApi {
     }
 
 
+    @Operation(summary = "test api", description = "서버 연결을 테스팅 하기 위한 api 입니다.")
     @GetMapping("/api/test")
     public String test(){
 
