@@ -11,6 +11,7 @@ import com.chicplay.mediaserver.global.auth.JwtProviderService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.net.http.HttpRequest;
 import java.util.Collections;
@@ -36,6 +38,11 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
     private final UserAuthTokenDao userAuthTokenDao;
 
     private final JwtProviderService jwtProviderService;
+
+    private final HttpSession httpSession;
+
+    @Value("${spring.redis-user.session.timeout}")
+    private int sessionTime;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -59,17 +66,26 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
     // access token re-isuue
     public UserNewTokenReqeust getNewAccessToken(HttpServletRequest httpRequest) {
 
-        // email from access token
-        String accessToken = jwtProviderService.parseBearerToken(httpRequest);
-        String email = jwtProviderService.getEmail(accessToken);
+        // get refreshToken from Redis Session
+        String refreshToken = (String)httpSession.getAttribute("refreshToken");
 
-        // get refresh token from redis
-        String refreshToken = userAuthTokenDao.getRefreshToken(email);
+        // redis에 session data가 없음.
+        if (refreshToken.isEmpty() || refreshToken == null){
+
+            // not found exception
+            throw new RefreshTokenExpiredException();
+        }
 
         try {
             // 유효한 토큰 일 경우 re-issue access token return
             if (jwtProviderService.validateToken(refreshToken)) {
+
+                String email = jwtProviderService.getEmail(refreshToken);
                 UserAuthToken userAuthToken = jwtProviderService.generateToken(email, Role.USER.name());
+
+                // refresh token update
+                httpSession.setAttribute("refreshToken", userAuthToken.getToken());
+                httpSession.setMaxInactiveInterval(sessionTime);
 
                 return UserNewTokenReqeust.builder().accessToken(userAuthToken.getToken()).build();
             }

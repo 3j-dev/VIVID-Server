@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,7 +32,7 @@ import java.util.Map;
 public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProviderService jwtProviderService;
-    private final ObjectMapper objectMapper;
+    private final HttpSession httpSession;
     private final UserService userService;
     private final UserAuthTokenDao userAuthTokenDao;
 
@@ -66,7 +67,9 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
         // redis - refresh token save
-        userAuthTokenDao.saveRefreshToken(userAuthToken.getEmail(), userAuthToken.getRefreshToken());
+        //userAuthTokenDao.saveRefreshToken(userAuthToken.getEmail(), userAuthToken.getRefreshToken());
+        httpSession.setAttribute("refreshToken", userAuthToken.getRefreshToken());
+
     }
 
 //    private void writeTokenResponse(HttpServletResponse response, UserAuthToken userAuthToken) throws IOException {
