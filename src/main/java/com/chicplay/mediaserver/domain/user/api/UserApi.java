@@ -46,11 +46,20 @@ public class UserApi {
     }
 
     // access token 만료시 refresh token을 통해 재발급
-    @Operation(summary = "user access token re-issue api", description = "redis의 refresh token을 활용하여 access token을 재발급합니다.")
+    @Operation(summary = "user access token issue api", description = "redis의 refresh token을 활용하여 access token을 재발급합니다. 페이지 리로드시 access token을 재발급받습니다.")
     @GetMapping("/auth/token")
-    public UserNewTokenReqeust issueNewAccessToken(HttpServletRequest request){
+    public UserNewTokenReqeust issueNewAccessToken(){
 
-        UserNewTokenReqeust newAccessToken = oAuthUserService.getNewAccessToken(request);
+        UserNewTokenReqeust newAccessToken = oAuthUserService.getNewAccessToken();
+
+        return newAccessToken;
+    }
+
+    @Operation(summary = "user silent access token issue api", description = "redis의 refresh token을 활용하여 access token을 재발급합니다. access token 만료시 silent refesh 하는 api입니다.")
+    @GetMapping("/auth/token/silent-refresh")
+    public UserNewTokenReqeust issueNewAccessTokenFromSilentRefresh(HttpServletRequest request){
+
+        UserNewTokenReqeust newAccessToken = oAuthUserService.getNewAccessTokenFromSilentRefresh(request);
 
         return newAccessToken;
     }

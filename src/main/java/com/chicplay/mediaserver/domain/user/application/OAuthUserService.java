@@ -4,15 +4,19 @@ import com.chicplay.mediaserver.domain.user.dao.UserAuthTokenDao;
 import com.chicplay.mediaserver.domain.user.domain.UserAuthToken;
 import com.chicplay.mediaserver.domain.user.dto.OAuthAttributes;
 import com.chicplay.mediaserver.domain.user.domain.Role;
+import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
 import com.chicplay.mediaserver.domain.user.dto.UserNewTokenReqeust;
 import com.chicplay.mediaserver.domain.user.exception.RefreshTokenExpiredException;
 import com.chicplay.mediaserver.domain.user.exception.RefreshTokenNotFoundException;
 import com.chicplay.mediaserver.global.auth.JwtProviderService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -41,9 +45,6 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
 
     private final HttpSession httpSession;
 
-    @Value("${spring.redis-user.session.timeout}")
-    private int sessionTime;
-
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
@@ -63,39 +64,27 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
                 Collections.singleton(new SimpleGrantedAuthority(Role.USER.name())),attributeMap,"email");
     }
 
-    // access token re-isuue
-    public UserNewTokenReqeust getNewAccessToken(HttpServletRequest httpRequest) {
+    // access token re-issue
+    public UserNewTokenReqeust getNewAccessToken() {
 
-        // get refreshToken from Redis Session
-        String refreshToken = (String)httpSession.getAttribute("refreshToken");
+        UserAuthToken tokenFromRedisSession = jwtProviderService.getTokenFromRedisSession();
 
-        // redis에 session data가 없음.
-        if (refreshToken.isEmpty() || refreshToken == null){
+        return UserNewTokenReqeust.builder().accessToken(tokenFromRedisSession.getToken()).build();
+    }
 
-            // not found exception
-            throw new RefreshTokenExpiredException();
+    // access token re-isuue from silent refresh
+    public UserNewTokenReqeust getNewAccessTokenFromSilentRefresh(HttpServletRequest request) {
+
+        String token = jwtProviderService.parseBearerToken(request);
+
+        // silent refresh 시, access token 검사.
+        if (!StringUtils.hasText(token) || !jwtProviderService.validateToken(token)) {
+            throw new JwtException("Access Token Invalid");
         }
 
-        try {
-            // 유효한 토큰 일 경우 re-issue access token return
-            if (jwtProviderService.validateToken(refreshToken)) {
+        UserAuthToken tokenFromRedisSession = jwtProviderService.getTokenFromRedisSession();
 
-                String email = jwtProviderService.getEmail(refreshToken);
-                UserAuthToken userAuthToken = jwtProviderService.generateToken(email, Role.USER.name());
-
-                // refresh token update
-                httpSession.setAttribute("refreshToken", userAuthToken.getToken());
-                httpSession.setMaxInactiveInterval(sessionTime);
-
-                return UserNewTokenReqeust.builder().accessToken(userAuthToken.getToken()).build();
-            }
-        } catch (ExpiredJwtException expiredJwtException){
-
-            // refresh token 만료 된 경우, logout 시킨다.
-            throw new RefreshTokenExpiredException();
-        }
-
-        throw new RefreshTokenNotFoundException();
+        return UserNewTokenReqeust.builder().accessToken(tokenFromRedisSession.getToken()).build();
     }
 
     public void removeRefreshTokenByLogout(HttpServletRequest httpRequest) {

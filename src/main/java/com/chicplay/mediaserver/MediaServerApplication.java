@@ -11,7 +11,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 
 @EnableJpaAuditing
 //@EnableCaching
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 10080)
+@EnableRedisHttpSession()
 @EnableBatchProcessing
 @EnableScheduling
 @SpringBootApplication

@@ -69,7 +69,6 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         // redis - refresh token save
         //userAuthTokenDao.saveRefreshToken(userAuthToken.getEmail(), userAuthToken.getRefreshToken());
         httpSession.setAttribute("refreshToken", userAuthToken.getRefreshToken());
-
     }
 
 //    private void writeTokenResponse(HttpServletResponse response, UserAuthToken userAuthToken) throws IOException {

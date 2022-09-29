@@ -19,6 +19,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.servlet.http.HttpSession;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class SecurityConfig {
 
         // filter 안타게끔
         return (web) -> web.ignoring().mvcMatchers(
-                "/auth/token", "/swagger-ui/**","/api/test/**", "/v3/api-docs/**","/login/oauth2/code"
+                "/auth/token/**", "/swagger-ui/**","/api/test/**", "/v3/api-docs/**","/login/oauth2/code"
         );
     }
 
@@ -45,7 +47,7 @@ public class SecurityConfig {
         http.httpBasic().disable()
                 .csrf().disable()
                 .formLogin().disable() // 로그인 폼 미사용
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
                 .headers().frameOptions().disable()
                 .and()
