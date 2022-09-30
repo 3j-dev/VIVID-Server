@@ -18,8 +18,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsUtils;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -44,6 +47,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        // cors 관련 설정
+        http.cors().configurationSource(request -> {
+            var cors = new CorsConfiguration();
+            cors.setAllowedOrigins(List.of("https://dev.edu-vivid.com","http://localhost:8081"));
+            cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            return cors;
+        });
+
         http.httpBasic().disable()
                 .csrf().disable()
                 .formLogin().disable() // 로그인 폼 미사용
@@ -61,6 +74,7 @@ public class SecurityConfig {
                         , "/js/**"
                         , "/h2-console/**"
                 ).permitAll()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // 추가
                 .antMatchers("/login/**", "/auth/**").permitAll() // Security 허용 url
                 .antMatchers("/api/**").hasRole(Role.USER.name())   // 모든 api 요청에 대해 user 권한
                 .anyRequest().authenticated()   // 나머지 요청에 대해서 권한이 있어야함
