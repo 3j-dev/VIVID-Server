@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Slf4j
@@ -27,9 +28,9 @@ public class VideoSpaceParticipantApi {
     // video space에 account를 추가한다. 즉, VideoSpaceParticipant save
     @Operation(summary = "video space에 account를 추가하는 api", description = "video space에 account 추가하는 api 입니다.")
     @PostMapping("/api/video-space-participant")
-    public VideoSpaceParticipantSaveResponse save(@RequestBody @Valid final VideoSpaceParticipantSaveRequest videoSpaceParticipantSaveRequest) {
+    public VideoSpaceParticipantSaveResponse save(@RequestBody @Valid final VideoSpaceParticipantSaveRequest videoSpaceParticipantSaveRequest, HttpServletRequest request) {
 
-        VideoSpaceParticipantSaveResponse videoSpaceParticipantSaveResponse = videoSpaceParticipantService.save(videoSpaceParticipantSaveRequest);
+        VideoSpaceParticipantSaveResponse videoSpaceParticipantSaveResponse = videoSpaceParticipantService.save(videoSpaceParticipantSaveRequest, request);
 
         return videoSpaceParticipantSaveResponse;
     }

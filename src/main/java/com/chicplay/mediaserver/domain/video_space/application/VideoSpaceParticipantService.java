@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Service
 @Slf4j
 @Transactional
@@ -28,10 +30,10 @@ public class VideoSpaceParticipantService {
     private final IndividualVideoService individualVideoService;
 
     // 이미 생성돼 있는 videoSpace에 유저 추가 : VideoSpaceParticipant save
-    public VideoSpaceParticipantSaveResponse save(VideoSpaceParticipantSaveRequest videoSpaceParticipantSaveRequest) {
+    public VideoSpaceParticipantSaveResponse save(VideoSpaceParticipantSaveRequest videoSpaceParticipantSaveRequest, HttpServletRequest request) {
 
         // account get by email
-        User user = userService.findByEmail();
+        User user = userService.findByEmail(request);
 
         // video space get by videoId
         VideoSpace videoSpace = videoSpaceService.findById(videoSpaceParticipantSaveRequest.getVideoSpaceId());

@@ -1,19 +1,13 @@
 package com.chicplay.mediaserver.global.auth;
 
-import com.chicplay.mediaserver.domain.user.application.OAuthUserService;
 import com.chicplay.mediaserver.domain.user.domain.Role;
 import com.chicplay.mediaserver.domain.user.domain.UserAuthToken;
-import com.chicplay.mediaserver.domain.user.dto.UserNewTokenReqeust;
-import com.chicplay.mediaserver.domain.user.exception.HeaderAccessTokenInvalidException;
-import com.chicplay.mediaserver.domain.user.exception.RefreshTokenExpiredException;
+import com.chicplay.mediaserver.domain.user.exception.HeaderAccessTokenNotFoundException;
 import com.chicplay.mediaserver.domain.user.exception.RefreshTokenNotFoundException;
-import com.chicplay.mediaserver.global.error.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,8 +15,8 @@ import org.springframework.util.StringUtils;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
 import java.security.Key;
+import java.time.temporal.TemporalUnit;
 import java.util.Base64;
 import java.util.Date;
 
@@ -34,9 +28,6 @@ public class JwtProviderService {
 
     @Value("${jwt.password}")
     private String secretKey;
-
-    @Value("${spring.redis-user.session.timeout}")
-    private int sessionTime;
 
     private Key key;
 
@@ -105,6 +96,23 @@ public class JwtProviderService {
         } catch (JwtException jwtException) {
             throw jwtException;
         }
+    }
+
+    public String getEmailFromHeaderAccessToken(HttpServletRequest request) {
+
+        String accessToken = parseBearerToken(request);
+
+        // redis에 session data가 없음.
+        if (!StringUtils.hasText(accessToken)){
+
+            // not found exception
+            throw new HeaderAccessTokenNotFoundException();
+        }
+
+        String email = getEmail(accessToken);
+
+        return email;
+
     }
 
     public String parseBearerToken(HttpServletRequest request) {

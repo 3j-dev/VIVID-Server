@@ -6,13 +6,20 @@ import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
 import com.chicplay.mediaserver.domain.user.dto.UserSignUpResponse;
 import com.chicplay.mediaserver.domain.user.exception.EmailDuplicateException;
+import com.chicplay.mediaserver.domain.user.exception.HeaderAccessTokenNotFoundException;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
+import com.chicplay.mediaserver.global.auth.JwtProviderService;
+import io.micrometer.core.lang.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,9 +31,18 @@ public class UserService {
 
     private final UserDao userDao;
 
-    public User findByEmail() {
+    private final JwtProviderService jwtProviderService;
 
-        String testEmail = "jsb100800@naver.com";
+    public String getEmailFromAuthentication(HttpServletRequest request) {
+
+        String email = jwtProviderService.getEmailFromHeaderAccessToken(request);
+
+        return email;
+    }
+
+    public User findByEmail(HttpServletRequest request) {
+
+        String testEmail = getEmailFromAuthentication(request);
 
         User user = userDao.findByEmail(testEmail);
 

@@ -4,19 +4,12 @@ import com.chicplay.mediaserver.domain.user.dao.UserAuthTokenDao;
 import com.chicplay.mediaserver.domain.user.domain.UserAuthToken;
 import com.chicplay.mediaserver.domain.user.dto.OAuthAttributes;
 import com.chicplay.mediaserver.domain.user.domain.Role;
-import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
-import com.chicplay.mediaserver.domain.user.dto.UserNewTokenReqeust;
-import com.chicplay.mediaserver.domain.user.exception.RefreshTokenExpiredException;
-import com.chicplay.mediaserver.domain.user.exception.RefreshTokenNotFoundException;
+import com.chicplay.mediaserver.domain.user.dto.UserNewTokenRequest;
 import com.chicplay.mediaserver.global.auth.JwtProviderService;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -29,7 +22,6 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
-import java.net.http.HttpRequest;
 import java.util.Collections;
 import java.util.Map;
 
@@ -65,15 +57,15 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
     }
 
     // access token re-issue
-    public UserNewTokenReqeust getNewAccessToken() {
+    public UserNewTokenRequest getNewAccessToken() {
 
         UserAuthToken tokenFromRedisSession = jwtProviderService.getTokenFromRedisSession();
 
-        return UserNewTokenReqeust.builder().accessToken(tokenFromRedisSession.getToken()).build();
+        return UserNewTokenRequest.builder().accessToken(tokenFromRedisSession.getToken()).build();
     }
 
     // access token re-isuue from silent refresh
-    public UserNewTokenReqeust getNewAccessTokenFromSilentRefresh(HttpServletRequest request) {
+    public UserNewTokenRequest getNewAccessTokenFromSilentRefresh(HttpServletRequest request) {
 
         String token = jwtProviderService.parseBearerToken(request);
 
@@ -84,7 +76,7 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
 
         UserAuthToken tokenFromRedisSession = jwtProviderService.getTokenFromRedisSession();
 
-        return UserNewTokenReqeust.builder().accessToken(tokenFromRedisSession.getToken()).build();
+        return UserNewTokenRequest.builder().accessToken(tokenFromRedisSession.getToken()).build();
     }
 
     public void removeRefreshTokenByLogout(HttpServletRequest httpRequest) {

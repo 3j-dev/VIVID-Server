@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +33,10 @@ public class VideoSpaceService {
     private final UserService userService;
 
     // 로그인한 account의 video space, video get list get 메소드
-    public List<VideoSpaceGetResponse> read() {
+    public List<VideoSpaceGetResponse> read(HttpServletRequest request) {
 
         // account get by email
-        User user = userService.findByEmail();
+        User user = userService.findByEmail(request);
 
         List<VideoSpaceGetResponse> videoSpaceReadResponse = new ArrayList<>();
 
@@ -48,10 +49,10 @@ public class VideoSpaceService {
 
 
     // video space save, 생성시 생성자에 대해서 participant 자동 생성
-    public VideoSpaceSaveResponse save(VideoSpaceSaveRequest videoSpaceSaveRequest) {
+    public VideoSpaceSaveResponse save(VideoSpaceSaveRequest videoSpaceSaveRequest,HttpServletRequest request) {
 
         // account find
-        User user = userService.findByEmail();
+        User user = userService.findByEmail(request);
 
         // video space 생성
         VideoSpace savedVideoSpace = videoSpaceRepository.save(videoSpaceSaveRequest.toEntity());

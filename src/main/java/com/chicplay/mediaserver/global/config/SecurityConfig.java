@@ -47,7 +47,7 @@ public class SecurityConfig {
         http.httpBasic().disable()
                 .csrf().disable()
                 .formLogin().disable() // 로그인 폼 미사용
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .headers().frameOptions().disable()
                 .and()

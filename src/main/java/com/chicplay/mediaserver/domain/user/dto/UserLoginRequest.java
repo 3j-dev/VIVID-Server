@@ -7,11 +7,12 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.Map;
 
 @Getter
 @NoArgsConstructor
-public class UserLoginRequest {
+public class UserLoginRequest{
 
     @NotBlank
     @Email(message = "이메일을 양식을 지켜주세요.")
