@@ -4,6 +4,7 @@ import com.chicplay.mediaserver.domain.user.dao.UserAuthTokenDao;
 import com.chicplay.mediaserver.domain.user.domain.UserAuthToken;
 import com.chicplay.mediaserver.domain.user.dto.OAuthAttributes;
 import com.chicplay.mediaserver.domain.user.domain.Role;
+import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
 import com.chicplay.mediaserver.domain.user.dto.UserNewTokenRequest;
 import com.chicplay.mediaserver.global.auth.JwtProviderService;
 import io.jsonwebtoken.JwtException;
@@ -88,6 +89,25 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
         // remove refresh token
         userAuthTokenDao.removeRefreshToken(email);
 
+    }
+
+
+    // test login용
+    public UserNewTokenRequest loginByTestUser() {
+
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
+                .email("test01@gmail.com")
+                .name("테스트")
+                .picture("https://lh3.googleusercontent.com/a/ALm5wu30vxzpsZnUhBIzgRdhl7FeR-dEt0WTCQxaLNUC=s96-c")
+                .build();
+
+        // token 생성
+        UserAuthToken userAuthToken = jwtProviderService.generateToken(userLoginRequest.getEmail(), Role.USER.name());
+
+        // session 저장.
+        httpSession.setAttribute("refreshToken", userAuthToken.getRefreshToken());
+
+        return UserNewTokenRequest.builder().accessToken(userAuthToken.getToken()).build();
     }
 
 //    // 유저 생성 및 수정 서비스 로직

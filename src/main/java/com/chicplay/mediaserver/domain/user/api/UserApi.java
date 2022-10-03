@@ -66,4 +66,16 @@ public class UserApi {
         return "hello_test";
     }
 
+    // test user로 로그인합니다. 이때 access token을 발급하며, session에 리프래쉬 토큰이 저장됩니다.
+    @Operation(summary = "test user login api", description = "test용 계정으로 login 할 수 있는 api입니다.")
+    @GetMapping("/auth/token/test")
+    public UserNewTokenRequest loginByTestUser() {
+
+        UserNewTokenRequest userNewTokenRequest = oAuthUserService.loginByTestUser();
+
+        return userNewTokenRequest;
+    }
+
+
+
 }
