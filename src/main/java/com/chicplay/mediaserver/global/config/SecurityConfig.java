@@ -85,8 +85,6 @@ public class SecurityConfig {
                 .and()
                 .authorizationEndpoint().baseUri("/login"); // 소셜 로그인 url
 
-
-
         http
                 .addFilterBefore(new JwtAuthFilter(jwtProviderService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthExceptionFilter(), JwtAuthFilter.class);

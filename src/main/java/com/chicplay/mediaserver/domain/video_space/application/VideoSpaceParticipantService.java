@@ -30,10 +30,10 @@ public class VideoSpaceParticipantService {
     private final IndividualVideoService individualVideoService;
 
     // 이미 생성돼 있는 videoSpace에 유저 추가 : VideoSpaceParticipant save
-    public VideoSpaceParticipantSaveResponse save(VideoSpaceParticipantSaveRequest videoSpaceParticipantSaveRequest, HttpServletRequest request) {
+    public VideoSpaceParticipantSaveResponse save(VideoSpaceParticipantSaveRequest videoSpaceParticipantSaveRequest) {
 
         // account get by email
-        User user = userService.findByEmail(request);
+        User user = userService.findByEmail();
 
         // video space get by videoId
         VideoSpace videoSpace = videoSpaceService.findById(videoSpaceParticipantSaveRequest.getVideoSpaceId());

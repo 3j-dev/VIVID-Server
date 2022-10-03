@@ -66,12 +66,12 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
     }
 
     // access token re-isuue from silent refresh
-    public UserNewTokenRequest getNewAccessTokenFromSilentRefresh(HttpServletRequest request) {
+    public UserNewTokenRequest getNewAccessTokenFromSilentRefresh() {
 
-        String token = jwtProviderService.parseBearerToken(request);
+        String token = jwtProviderService.parseBearerToken();
 
         // silent refresh 시, access token 검사.
-        if (!StringUtils.hasText(token) || !jwtProviderService.validateToken(token)) {
+        if (!jwtProviderService.validateToken(token)) {
             throw new JwtException("Access Token Invalid");
         }
 
@@ -80,10 +80,10 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
         return UserNewTokenRequest.builder().accessToken(tokenFromRedisSession.getToken()).build();
     }
 
-    public void removeRefreshTokenByLogout(HttpServletRequest httpRequest) {
+    public void removeRefreshTokenByLogout() {
 
         // email from access token
-        String accessToken = jwtProviderService.parseBearerToken(httpRequest);
+        String accessToken = jwtProviderService.parseBearerToken();
         String email = jwtProviderService.getEmail(accessToken);
 
         // remove refresh token

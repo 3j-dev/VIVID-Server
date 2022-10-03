@@ -33,10 +33,10 @@ public class VideoSpaceService {
     private final UserService userService;
 
     // 로그인한 account의 video space, video get list get 메소드
-    public List<VideoSpaceGetResponse> read(HttpServletRequest request) {
+    public List<VideoSpaceGetResponse> read() {
 
         // account get by email
-        User user = userService.findByEmail(request);
+        User user = userService.findByEmail();
 
         List<VideoSpaceGetResponse> videoSpaceReadResponse = new ArrayList<>();
 
@@ -49,10 +49,10 @@ public class VideoSpaceService {
 
 
     // video space save, 생성시 생성자에 대해서 participant 자동 생성
-    public VideoSpaceSaveResponse save(VideoSpaceSaveRequest videoSpaceSaveRequest,HttpServletRequest request) {
+    public VideoSpaceSaveResponse save(VideoSpaceSaveRequest videoSpaceSaveRequest) {
 
         // account find
-        User user = userService.findByEmail(request);
+        User user = userService.findByEmail();
 
         // video space 생성
         VideoSpace savedVideoSpace = videoSpaceRepository.save(videoSpaceSaveRequest.toEntity());

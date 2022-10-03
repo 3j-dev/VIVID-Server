@@ -48,6 +48,9 @@ dependencies {
 	//batch
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
 
+	// aop
+	implementation 'org.springframework:spring-aop'
+
 	//Querydsl
 	implementation 'com.querydsl:querydsl-jpa'
 	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"

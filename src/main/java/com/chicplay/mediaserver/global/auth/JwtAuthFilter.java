@@ -31,10 +31,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String token = jwtProviderService.parseBearerToken(request);
+        String token = jwtProviderService.parseBearerToken();
 
         // Validation Access Token
-        if (StringUtils.hasText(token) && jwtProviderService.validateToken(token)) {
+        if (jwtProviderService.validateToken(token)) {
 
             String email = jwtProviderService.getEmail(token);
 

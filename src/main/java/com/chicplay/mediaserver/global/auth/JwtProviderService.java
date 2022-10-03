@@ -2,7 +2,8 @@ package com.chicplay.mediaserver.global.auth;
 
 import com.chicplay.mediaserver.domain.user.domain.Role;
 import com.chicplay.mediaserver.domain.user.domain.UserAuthToken;
-import com.chicplay.mediaserver.domain.user.exception.HeaderAccessTokenNotFoundException;
+import com.chicplay.mediaserver.domain.user.exception.AccessTokenInvalidException;
+import com.chicplay.mediaserver.domain.user.exception.AccessTokenNotFoundException;
 import com.chicplay.mediaserver.domain.user.exception.RefreshTokenNotFoundException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -11,12 +12,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.security.Key;
-import java.time.temporal.TemporalUnit;
 import java.util.Base64;
 import java.util.Date;
 
@@ -94,20 +96,13 @@ public class JwtProviderService {
         } catch (ExpiredJwtException expiredJwtException) {
             throw expiredJwtException;
         } catch (JwtException jwtException) {
-            throw jwtException;
+            throw new AccessTokenInvalidException();
         }
     }
 
-    public String getEmailFromHeaderAccessToken(HttpServletRequest request) {
+    public String getEmailFromHeaderAccessToken() {
 
-        String accessToken = parseBearerToken(request);
-
-        // redis에 session data가 없음.
-        if (!StringUtils.hasText(accessToken)){
-
-            // not found exception
-            throw new HeaderAccessTokenNotFoundException();
-        }
+        String accessToken = parseBearerToken();
 
         String email = getEmail(accessToken);
 
@@ -115,15 +110,16 @@ public class JwtProviderService {
 
     }
 
-    public String parseBearerToken(HttpServletRequest request) {
+    public String parseBearerToken() {
 
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String bearerToken = request.getHeader("Authorization");
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
 
-        return "";
+        throw new AccessTokenNotFoundException();
     }
 
     public String getEmail(String token) {

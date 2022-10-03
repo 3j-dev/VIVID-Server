@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,9 +35,9 @@ public class UserApi {
 
     @Operation(summary = "user logout api", description = "user가 logout 할 시 호출하는 api입니다. redis의 refresh token을 삭제합니다.")
     @PostMapping("/auth/logout")
-    public void logout(HttpServletRequest request){
+    public void logout(){
 
-        oAuthUserService.removeRefreshTokenByLogout(request);
+        oAuthUserService.removeRefreshTokenByLogout();
     }
 
     // access token 만료시 refresh token을 통해 재발급
@@ -51,9 +52,9 @@ public class UserApi {
 
     @Operation(summary = "user silent access token issue api", description = "redis의 refresh token을 활용하여 access token을 재발급합니다. access token 만료시 silent refesh 하는 api입니다.")
     @GetMapping("/auth/token/silent-refresh")
-    public UserNewTokenRequest issueNewAccessTokenFromSilentRefresh(HttpServletRequest request){
+    public UserNewTokenRequest issueNewAccessTokenFromSilentRefresh(){
 
-        UserNewTokenRequest newAccessToken = oAuthUserService.getNewAccessTokenFromSilentRefresh(request);
+        UserNewTokenRequest newAccessToken = oAuthUserService.getNewAccessTokenFromSilentRefresh();
 
         return newAccessToken;
     }

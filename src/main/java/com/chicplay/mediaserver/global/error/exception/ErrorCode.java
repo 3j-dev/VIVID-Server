@@ -21,13 +21,10 @@ public enum ErrorCode {
 
     // account - token
     ACCESS_TOKEN_EXPIRED("AT01", "Access Token is Expired",HttpStatus.UNAUTHORIZED.value()),
-    ACCESS_TOKEN_NOT_SUPPORTED("AT02", "Access Token is Unsupported Token",HttpStatus.UNAUTHORIZED.value()),
-    ACCESS_TOKEN_ILLEGAL_STATE("AT03", "Access Token is Illegal State",HttpStatus.UNAUTHORIZED.value()),
-    ACCESS_TOKEN_NOT_MATCHED("AT04", "Access Token is Should not be Trusted.",HttpStatus.UNAUTHORIZED.value()),
-    HEADER_ACCESS_TOKEN_INVALID("AT05", "Header Access Token is invalid.",HttpStatus.UNAUTHORIZED.value()),
-    HEADER_ACCESS_TOKEN_NOT_FOUND("AT05", "Header Access Token is invalid.",HttpStatus.UNAUTHORIZED.value()),
-    REFRESH_TOKEN_NOT_FOUND("AT06", "Refreshed Token Not Found.",HttpStatus.UNAUTHORIZED.value()),
-    REFRESH_TOKEN_EXPIRED("AT07", "Refreshed Token Not Found.",HttpStatus.UNAUTHORIZED.value()),
+    ACCESS_TOKEN_INVALID("AT02", "Access Token is Invalid.",HttpStatus.UNAUTHORIZED.value()),
+    ACCESS_TOKEN_NOT_FOUND("AT03", "Access Token is not Found in Header.",HttpStatus.UNAUTHORIZED.value()),
+    REFRESH_TOKEN_NOT_FOUND("AT04", "Refreshed Token is Not Found.",HttpStatus.UNAUTHORIZED.value()),
+    REFRESH_TOKEN_EXPIRED("AT05", "Refreshed Token is Expired.",HttpStatus.UNAUTHORIZED.value()),
 
 
     // video
