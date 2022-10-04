@@ -15,7 +15,6 @@ public class VideoSpaceParticipantSaveRequest {
 
     @NotNull
     private Long videoSpaceId;
-
     @Builder
     public VideoSpaceParticipantSaveRequest(Long videoSpaceId) {
         this.videoSpaceId = videoSpaceId;

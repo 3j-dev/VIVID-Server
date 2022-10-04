@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.video_space.application;
 
+import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
@@ -8,12 +9,18 @@ import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceParticipantSaveRequest;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceParticipantSaveResponse;
+import com.chicplay.mediaserver.domain.video_space.exception.VideoSpaceParticipantNotFoundException;
+import io.micrometer.core.lang.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -26,8 +33,6 @@ public class VideoSpaceParticipantService {
     private final UserService userService;
 
     private final VideoSpaceService videoSpaceService;
-
-    private final IndividualVideoService individualVideoService;
 
     // 이미 생성돼 있는 videoSpace에 유저 추가 : VideoSpaceParticipant save
     public VideoSpaceParticipantSaveResponse save(VideoSpaceParticipantSaveRequest videoSpaceParticipantSaveRequest) {
@@ -42,12 +47,32 @@ public class VideoSpaceParticipantService {
         VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().videoSpace(videoSpace).user(user).build();
         VideoSpaceParticipant savedVideoSpaceParticipant = videoSpaceParticipantRepository.save(videoSpaceParticipant);
 
-        //individual video save
-        individualVideoService.createAfterAccountAddedToVideoSpace(savedVideoSpaceParticipant,videoSpace);
+        // list에 individulaVideo 객체를 각각 생성해서 add
+        videoSpace.getVideos().forEach(video -> {
+            savedVideoSpaceParticipant.getIndividualVideos()
+                    .add(IndividualVideo.builder().video(video).videoSpaceParticipant(savedVideoSpaceParticipant).build());
+        });
 
         VideoSpaceParticipantSaveResponse videoSpaceParticipantSaveResponse = VideoSpaceParticipantSaveResponse.builder().videoSpaceParticipant(savedVideoSpaceParticipant).build();
 
         return videoSpaceParticipantSaveResponse;
+    }
+
+    public VideoSpaceParticipant findById(Long videoSpaceParticipantId) {
+        Optional<VideoSpaceParticipant> videoSpaceParticipant = videoSpaceParticipantRepository.findById(videoSpaceParticipantId);
+
+        // not found exception
+        videoSpaceParticipant.orElseThrow(() -> new VideoSpaceParticipantNotFoundException(Long.toString(videoSpaceParticipantId)));
+
+        return videoSpaceParticipant.get();
+    }
+
+    private void checkValidUserAccessFromId(Long videoSpaceParticipantId) {
+
+        VideoSpaceParticipant videoSpaceParticipant = findById(videoSpaceParticipantId);
+
+        // user 권한 체크
+        userService.checkValidUserAccess(videoSpaceParticipant.getUser().getEmail());
     }
 
 

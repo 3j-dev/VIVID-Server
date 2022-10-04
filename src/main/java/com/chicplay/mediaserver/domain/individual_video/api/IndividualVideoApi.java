@@ -10,9 +10,6 @@ import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Encoding;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,7 +65,7 @@ public class IndividualVideoApi {
     @GetMapping("/api/videos/{individual-video-id}")
     public IndividualVideoDetailsGetResponse getDetails(@PathVariable("individual-video-id") String individualVideoId) throws IOException {
 
-        IndividualVideoDetailsGetResponse individualVideoDetailsGetResponse = individualVideoService.getById(individualVideoId);
+        IndividualVideoDetailsGetResponse individualVideoDetailsGetResponse = individualVideoService.getDetailsById(individualVideoId);
 
         return individualVideoDetailsGetResponse;
     }

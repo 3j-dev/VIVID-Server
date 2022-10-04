@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -70,11 +71,11 @@ public class UserApi {
     // test user로 로그인합니다. 이때 access token을 발급하며, session에 리프래쉬 토큰이 저장됩니다.
     @Operation(summary = "test user login api", description = "test용 계정으로 login 할 수 있는 api입니다.")
     @GetMapping("/auth/token/test")
-    public UserNewTokenRequest loginByTestUser() {
+    public List<UserNewTokenRequest> loginByTestUser() {
 
-        UserNewTokenRequest userNewTokenRequest = oAuthUserService.loginByTestUser();
+        List<UserNewTokenRequest> userNewTokenRequestList= oAuthUserService.loginByTestUser();
 
-        return userNewTokenRequest;
+        return userNewTokenRequestList;
     }
 
 

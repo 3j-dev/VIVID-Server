@@ -13,8 +13,8 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableJpaAuditing
 //@EnableCaching
 @EnableRedisHttpSession()
-@EnableBatchProcessing
-@EnableScheduling
+//@EnableBatchProcessing
+//@EnableScheduling
 @SpringBootApplication
 @EnableAspectJAutoProxy
 public class MediaServerApplication {

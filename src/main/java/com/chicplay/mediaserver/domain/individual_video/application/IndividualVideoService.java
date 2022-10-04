@@ -9,6 +9,7 @@ import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoGetRe
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
 import com.chicplay.mediaserver.domain.individual_video.exception.IndividualVideoNotFoundException;
 import com.chicplay.mediaserver.domain.video.domain.Video;
+import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceParticipantService;
 import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceService;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
@@ -39,25 +40,35 @@ public class IndividualVideoService {
 
     private final VideoSpaceService videoSpaceService;
 
+    private final VideoSpaceParticipantService videoSpaceParticipantService;
+
     private final AwsS3Service awsS3Service;
 
-    public IndividualVideoDetailsGetResponse getById(String individualVideoId) throws IOException {
+    public IndividualVideo findById(String individualVideoId) {
 
-        // individualVideoId를 통해 individualVideo get
         Optional<IndividualVideo> individualVideo = individualVideoRepository.findById(UUID.fromString(individualVideoId));
+        individualVideo.orElseThrow(() -> new IndividualVideoNotFoundException());
 
-        // not found exception
-        individualVideo.orElseThrow(() -> new IndividualVideoNotFoundException(individualVideoId));
+        return individualVideo.get();
+    }
+
+    public IndividualVideoDetailsGetResponse getDetailsById(String individualVideoId) throws IOException {
+
+
+        IndividualVideo individualVideo = findById(individualVideoId);
+
+        // login user 권한 체크
+        userService.checkValidUserAccess(individualVideo.getVideoSpaceParticipant().getUser().getEmail());
 
         // video file path get
-        String videoFilePath = awsS3Service.getVideoFilePath(individualVideo.get().getVideo().getId());
+        String videoFilePath = awsS3Service.getVideoFilePath(individualVideo.getVideo().getId());
 
         // visualIndexImageList생성
-        List<String> visualIndexImages = awsS3Service.getVisualIndexImages(individualVideo.get().getVideo().getId());
+        List<String> visualIndexImages = awsS3Service.getVisualIndexImages(individualVideo.getVideo().getId());
 
         // response dto 생성
         IndividualVideoDetailsGetResponse individualVideoDetailsGetResponse = IndividualVideoDetailsGetResponse.builder()
-                .individualVideo(individualVideo.get())
+                .individualVideo(individualVideo)
                 .videoFilePath(videoFilePath)
                 .visualIndexImageFilePathList(visualIndexImages)
                 .build();
@@ -82,30 +93,19 @@ public class IndividualVideoService {
 
     }
 
-    // video space에 신규 유저가 add 된후, 모든 영상에서 대해 individual video 생성
-    public void createAfterAccountAddedToVideoSpace(VideoSpaceParticipant videoSpaceParticipant, VideoSpace videoSpace) {
-
-        List<IndividualVideo> individualVideos = new ArrayList<>();
-
-        videoSpace.getVideos().forEach(video -> {
-
-            // list에 individulaVideo 객체를 각각 생성해서 add
-            individualVideos.add(IndividualVideo.builder().video(video).videoSpaceParticipant(videoSpaceParticipant).build());
-        });
-
-        // jpa bulk insert, uuid 방식이어서 jpa bulk insert 가능
-        individualVideoRepository.saveAll(individualVideos);
-
-    }
-
     public List<IndividualVideoGetResponse> getByVideoSpaceParticipantId(Long videoSpaceParticipantId) {
 
+        // 로그인 id와 videoSpaceParticipantId의 user id가 같은지 판단.
+        VideoSpaceParticipant videoSpaceParticipant = videoSpaceParticipantService.findById(videoSpaceParticipantId);
+        userService.checkValidUserAccess(videoSpaceParticipant.getUser().getEmail());
+
+        // find all individual videos
         List<IndividualVideo> individualVideos = individualVideoRepository.findAllByVideoSpaceParticipantId(videoSpaceParticipantId);
 
-        if (individualVideos == null || individualVideos.isEmpty())
-            new IndividualVideoNotFoundException();
-
         List<IndividualVideoGetResponse> individualVideoGetResponses = new ArrayList<>();
+
+        if (individualVideos == null || individualVideos.isEmpty())
+            return individualVideoGetResponses;
 
         individualVideos.forEach(individualVideo -> {
             individualVideoGetResponses.add(IndividualVideoGetResponse.builder()
@@ -116,6 +116,7 @@ public class IndividualVideoService {
         return individualVideoGetResponses;
     }
 
+    // image upload service
     public SnapshotImageUploadResponse uploadSnapshotImage(MultipartFile file, String individualVideoId, String videoTime) {
 
         // image upload, upload된 image file path get
@@ -127,6 +128,14 @@ public class IndividualVideoService {
                 .time(videoTime).build();
 
         return response;
+    }
+
+    public void checkValidUserAccessId(String individualVideoId) {
+
+        IndividualVideo individualVideo = findById(individualVideoId);
+
+        // user 권한 체크
+        userService.checkValidUserAccess(individualVideo.getVideoSpaceParticipant().getUser().getEmail());
     }
 
 }

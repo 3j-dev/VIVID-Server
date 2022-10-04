@@ -58,7 +58,9 @@ public class VideoSpaceService {
         VideoSpace savedVideoSpace = videoSpaceRepository.save(videoSpaceSaveRequest.toEntity());
 
         // 생성자가 포함된 video space participant create, 연관 관계 매핑에 의해 생성된다.
+
         VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().videoSpace(savedVideoSpace).user(user).build();
+        savedVideoSpace.getVideoSpaceParticipants().add(videoSpaceParticipant);
 
         return VideoSpaceSaveResponse.builder().videoSpace(savedVideoSpace).build();
     }

@@ -6,6 +6,7 @@ import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
 import com.chicplay.mediaserver.domain.user.dto.UserSignUpResponse;
 import com.chicplay.mediaserver.domain.user.exception.EmailDuplicateException;
+import com.chicplay.mediaserver.domain.user.exception.UserAccessDeniedException;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
 import com.chicplay.mediaserver.global.auth.JwtProviderService;
@@ -69,6 +70,13 @@ public class UserService {
 
 
         return UserSignUpResponse.builder().user(savedUser).build();
+    }
+
+    // 접근된 email과 로그인한 email을 비교하여 유효한 접근인 체크하는 메소드
+    public void checkValidUserAccess(String accessedEmail) {
+        String email = getEmailFromAuthentication();
+        if (!accessedEmail.equals(email))
+            throw new UserAccessDeniedException();
     }
 
 

@@ -23,7 +23,9 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -54,7 +56,7 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
         Map<String, Object> attributeMap = oAuthAttributes.convertToMap();
 
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(Role.USER.name())),attributeMap,"email");
+                Collections.singleton(new SimpleGrantedAuthority(Role.USER.name())), attributeMap, "email");
     }
 
     // access token re-issue
@@ -93,21 +95,33 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
 
 
     // test login용
-    public UserNewTokenRequest loginByTestUser() {
+    public List<UserNewTokenRequest> loginByTestUser() {
 
-        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
-                .email("test01@gmail.com")
-                .name("테스트")
-                .picture("https://lh3.googleusercontent.com/a/ALm5wu30vxzpsZnUhBIzgRdhl7FeR-dEt0WTCQxaLNUC=s96-c")
-                .build();
+        List<String> testEmail = new ArrayList<>();
+        testEmail.add("test01@gmail.com");
+        testEmail.add("test02@gmail.com");
+        testEmail.add("test03@gmail.com");
 
-        // token 생성
-        UserAuthToken userAuthToken = jwtProviderService.generateToken(userLoginRequest.getEmail(), Role.USER.name());
+        List<UserNewTokenRequest> userNewTokenRequestList = new ArrayList<>();
 
-        // session 저장.
-        httpSession.setAttribute("refreshToken", userAuthToken.getRefreshToken());
+        testEmail.forEach(email -> {
 
-        return UserNewTokenRequest.builder().accessToken(userAuthToken.getToken()).build();
+            UserLoginRequest userLoginRequest = UserLoginRequest.builder()
+                    .email(email)
+                    .name("테스트")
+                    .picture("https://lh3.googleusercontent.com/a/ALm5wu30vxzpsZnUhBIzgRdhl7FeR-dEt0WTCQxaLNUC=s96-c")
+                    .build();
+
+            // token 생성
+            UserAuthToken userAuthToken = jwtProviderService.generateToken(userLoginRequest.getEmail(), Role.USER.name());
+
+            // session 저장.
+            httpSession.setAttribute("refreshToken", userAuthToken.getRefreshToken());
+
+            userNewTokenRequestList.add(UserNewTokenRequest.builder().accessToken(userAuthToken.getToken()).build());
+        });
+
+        return userNewTokenRequestList;
     }
 
 //    // 유저 생성 및 수정 서비스 로직

@@ -1,10 +1,12 @@
 package com.chicplay.mediaserver.domain.individual_video.application;
 
 import com.chicplay.mediaserver.domain.individual_video.dao.TextMemoStateDao;
+import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateHistory;
 import com.chicplay.mediaserver.domain.individual_video.domain.TextMemoStateLatest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateRedisSaveRequest;
 import com.chicplay.mediaserver.domain.individual_video.dto.TextMemoStateResponse;
+import com.chicplay.mediaserver.domain.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,10 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TextMemoStateService {
 
+    private final UserService userService;
+
+    private final IndividualVideoService individualVideoService;
+
     private final TextMemoStateDao textMemoStateDao;
 
 
@@ -30,6 +36,9 @@ public class TextMemoStateService {
     // redis로 부터 latest get
     public TextMemoStateResponse getLatestFromRedis(String individualVideoId){
 
+        // 권한 체크
+        individualVideoService.checkValidUserAccessId(individualVideoId);
+
         // redis return 값이 null 일 경우, dynamoDB에서 get
         TextMemoStateLatest textMemoStateLatest = Optional
                 .ofNullable(textMemoStateDao.getLatestFromRedis(individualVideoId))
@@ -41,6 +50,9 @@ public class TextMemoStateService {
 
     // dynamoDB에서 history list get
     public List<TextMemoStateResponse> getHistoryFromDynamoDb(String individualVideoId){
+
+        // 권한 체크
+        individualVideoService.checkValidUserAccessId(individualVideoId);
 
         List<TextMemoStateHistory> historyListFromDynamo = textMemoStateDao.getHistoryListFromDynamo(individualVideoId);
 
