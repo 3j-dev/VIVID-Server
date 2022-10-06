@@ -60,7 +60,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         // then, token 발급 후 -> access token, refresh token
         //writeTokenResponse(response, userAuthToken);'
 
-        String targetUrl = UriComponentsBuilder.fromUriString("https://dev.edu-vivid.com/api/test")
+        String targetUrl = UriComponentsBuilder.fromUriString("https://dev.edu-vivid.com")
                 .queryParam("token", userAuthToken.getToken())
                 .build().toUriString();
 
