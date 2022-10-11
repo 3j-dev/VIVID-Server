@@ -45,7 +45,6 @@ public class WebexApiService {
         // http header 설정.
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity formEntity = new HttpEntity<>(parameters, headers);
 
         // webex api 호출

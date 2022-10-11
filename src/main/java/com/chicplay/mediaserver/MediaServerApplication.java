@@ -19,8 +19,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableAspectJAutoProxy
 public class MediaServerApplication {
 
-
-
 	public static void main(String[] args) {
 		SpringApplication.run(MediaServerApplication.class, args);
 	}

@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class VideoSpaceService {
     public List<VideoSpaceGetResponse> read() {
 
         // account get by email
-        User user = userService.findByEmail();
+        User user = userService.findByAccessToken();
 
         List<VideoSpaceGetResponse> videoSpaceReadResponse = new ArrayList<>();
 
@@ -52,7 +51,7 @@ public class VideoSpaceService {
     public VideoSpaceSaveResponse save(VideoSpaceSaveRequest videoSpaceSaveRequest) {
 
         // account find
-        User user = userService.findByEmail();
+        User user = userService.findByAccessToken();
 
         // video space 생성
         VideoSpace savedVideoSpace = videoSpaceRepository.save(videoSpaceSaveRequest.toEntity());

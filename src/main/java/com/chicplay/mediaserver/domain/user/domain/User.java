@@ -30,7 +30,7 @@ public class User extends BaseTime {
     private String email;
 
     @Embedded
-    private Institution institution;
+    private Institution institution = new Institution();
 
     @Column(name="name", nullable = false)
     private String name;
@@ -58,5 +58,16 @@ public class User extends BaseTime {
         this.role = role;
         this.picture = picture;
     }
+
+    // null 체크를 위한 getter 따로 생성
+    public Institution getInstitution() {
+        return this.institution == null ? new Institution() : this.institution;
+    }
+
+    public void changeInstitution(Institution institution) {
+        this.institution = institution;
+    }
+
+
 
 }

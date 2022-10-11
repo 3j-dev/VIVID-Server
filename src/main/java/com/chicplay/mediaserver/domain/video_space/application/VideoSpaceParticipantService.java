@@ -3,23 +3,17 @@ package com.chicplay.mediaserver.domain.video_space.application;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.domain.User;
-import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceParticipantRepository;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceParticipantSaveRequest;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceParticipantSaveResponse;
 import com.chicplay.mediaserver.domain.video_space.exception.VideoSpaceParticipantNotFoundException;
-import io.micrometer.core.lang.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,7 +32,7 @@ public class VideoSpaceParticipantService {
     public VideoSpaceParticipantSaveResponse save(VideoSpaceParticipantSaveRequest videoSpaceParticipantSaveRequest) {
 
         // account get by email
-        User user = userService.findByEmail();
+        User user = userService.findByAccessToken();
 
         // video space get by videoId
         VideoSpace videoSpace = videoSpaceService.findById(videoSpaceParticipantSaveRequest.getVideoSpaceId());

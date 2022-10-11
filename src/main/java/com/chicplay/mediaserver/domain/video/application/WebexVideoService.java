@@ -1,7 +1,8 @@
 package com.chicplay.mediaserver.domain.video.application;
 
 import com.chicplay.mediaserver.domain.user.application.UserService;
-import com.chicplay.mediaserver.domain.video.api.WebexVideoApi;
+import com.chicplay.mediaserver.domain.user.domain.Institution;
+import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.global.infra.webex_api.WebexApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,15 +19,34 @@ public class WebexVideoService {
 
     private final WebexApiService webexApiService;
 
+
+    // get recordings
+    public void getRecordings() {
+
+        // access token get
+        String webexAccessToken = userService.getWebexAccessToken();
+
+
+
+    }
+
+    // webex api를 이용해서 access token을 얻어내고, save합니다.
+    public void saveWebexAccessTokenFromWebexApi(String code) {
+
+        // user get
+        User user = userService.findByAccessToken();
+
+        // access token get
+        String accessToken = webexApiService.getAccessToken(code);
+
+        // access token save
+        Institution institution = user.getInstitution();
+        institution.changeWebexAccessToken(accessToken);
+
+        user.changeInstitution(institution);
+    }
+
     public void loginWebex() {
-
-        // access token이 존재하지 않을 경우, throw -> login page로 이동하게끔
-        if (!userService.existsWebexAccessToken()) {
-
-        }
-
-
-
 
 
     }
