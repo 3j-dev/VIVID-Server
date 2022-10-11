@@ -1,7 +1,14 @@
 package com.chicplay.mediaserver.global.infra.webex_api;
 
 import com.chicplay.mediaserver.domain.user.application.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,10 +18,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WebexApiService {
@@ -31,7 +37,9 @@ public class WebexApiService {
     @Qualifier("webexRestTemplate")
     private final RestTemplate webexRestTemplate;
 
-    // 최초 로그인 시,
+    private final ObjectMapper mapper;
+
+    // 최초 로그인 시, access token get
     public String getAccessToken(String code) {
 
         // http body 설정
@@ -54,6 +62,37 @@ public class WebexApiService {
         String accessToken = response.getBody().get("access_token").toString();
 
         return accessToken;
+    }
+
+    public List<WebexRecordingGetResponse> getWebexRecordings(String accessToken) throws JsonProcessingException {
+
+        HttpHeaders header = new HttpHeaders();
+        header.set("Authorization", "Bearer "+ accessToken);
+
+        HttpEntity<String> entity = new HttpEntity<>(header);
+        ResponseEntity<String> response = webexRestTemplate.exchange("/recordingReport/accessSummary", HttpMethod.GET, entity, String.class);
+
+
+        // parsing 작업
+        JSONObject jsonObject = new JSONObject(response.getBody());
+        JSONArray jsonArray = (JSONArray) jsonObject.get("items");
+
+        List<WebexRecordingGetResponse> webexRecordingGetResponses = new ArrayList<>();
+
+        for(int i=0; i<jsonArray.length(); i++){
+            JSONObject jsonObj = (JSONObject)jsonArray.get(i);
+
+            WebexRecordingGetResponse webexRecordingGetResponse = WebexRecordingGetResponse.builder()
+                    .recordingId((String) jsonObj.get("recordingId"))
+                    .topic((String) jsonObj.get("topic"))
+                    .hostEmail((String) jsonObj.get("hostEmail"))
+                    .timeRecorded((String) jsonObj.get("timeRecorded")).build();
+
+            webexRecordingGetResponses.add(webexRecordingGetResponse);
+        }
+
+        return webexRecordingGetResponses;
+
     }
 
 

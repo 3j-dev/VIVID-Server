@@ -2,6 +2,8 @@ package com.chicplay.mediaserver.domain.video.api;
 
 import com.chicplay.mediaserver.domain.video.application.WebexVideoService;
 import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
+import com.chicplay.mediaserver.global.infra.webex_api.WebexRecordingGetResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -43,10 +46,20 @@ public class WebexVideoApi {
     public void saveWebexAccessToken(@PathVariable("code") String code) {
 
         webexVideoService.saveWebexAccessTokenFromWebexApi(code);
-
     }
 
+    @GetMapping("/api/webex/recordings")
+    @Operation(summary = "webex recordings get api", description = "webex 녹화본 리스트를 get하는 api입니다.")
+    public List<WebexRecordingGetResponse> getWebexRecordings() throws JsonProcessingException {
+
+        List<WebexRecordingGetResponse> webexRecordings = webexVideoService.getWebexRecordings();
+
+        return webexRecordings;
+    }
+
+
     @GetMapping("/api/login/webex")
+    @Operation(summary = "webex login redirection", description = "해당 url로 이동시, webex login창으로 redirection 됩니다.")
     public void redirectWebexLoginUrl(HttpServletResponse httpServletResponse) throws IOException {
         httpServletResponse.sendRedirect(webexLoginUrl);
     }
