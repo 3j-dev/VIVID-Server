@@ -27,4 +27,8 @@ public class WebexVideoApi {
         // s3로 업로드
         awsS3Service.uploadRawVideoToS3(FILE_URL);
     }
+
+    public void getWebexRecordings() {
+
+    }
 }

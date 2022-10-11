@@ -33,7 +33,8 @@ public class JwtProviderService {
 
     private Key key;
 
-    private final long tokenPeriod = 1000L * 60L * 10L;     // 10분
+    //private final long tokenPeriod = 1000L * 60L * 10L;     // 10분
+    private final long tokenPeriod = 1000L * 60L * 120L;     // 10분
 
     private final long refreshPeriod = 1000L * 60L * 60L * 24L * 10L;      // 10일
 

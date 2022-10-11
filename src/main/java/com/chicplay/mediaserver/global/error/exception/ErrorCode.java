@@ -26,9 +26,12 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_FOUND("AT04", "Refreshed Token is Not Found.",HttpStatus.UNAUTHORIZED.value()),
     REFRESH_TOKEN_EXPIRED("AT05", "Refreshed Token is Expired.",HttpStatus.UNAUTHORIZED.value()),
 
-
     // video
-    IMAGE_UPLOAD_FAILED("V02", "Image upload is failed.",HttpStatus.INTERNAL_SERVER_ERROR.value());
+    IMAGE_UPLOAD_FAILED("V02", "Image upload is failed.", HttpStatus.INTERNAL_SERVER_ERROR.value()),
+
+    // external API
+    EXTERNAL_API_FAILED("E01", "External API Request is failed", HttpStatus.INTERNAL_SERVER_ERROR.value());
+
 
     private final String code;
     private final String message;

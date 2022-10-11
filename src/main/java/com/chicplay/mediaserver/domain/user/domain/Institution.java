@@ -15,9 +15,10 @@ public class Institution {
     @Column(name = "zoom_id")
     private String zoomId;
 
-    @Column(name = "webex_id")
-    private String webexId;
+    @Column(name = "webex_access_token")
+    private String webexAccessToken;
 
-    @Column(name = "elice_id")
-    private String eliceId;
+    public void changeWebexAccessToken(String webexAccessToken) {
+        this.webexAccessToken = webexAccessToken;
+    }
 }
