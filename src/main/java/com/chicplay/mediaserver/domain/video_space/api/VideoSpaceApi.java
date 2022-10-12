@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -27,9 +26,9 @@ public class VideoSpaceApi {
     @GetMapping("/api/video-space")
     public List<VideoSpaceGetResponse> getByAccount() {
 
-        List<VideoSpaceGetResponse> videoSpaceReadRespons = videoSpaceService.read();
+        List<VideoSpaceGetResponse> videoSpaceReadResponse = videoSpaceService.getList();
 
-        return videoSpaceReadRespons;
+        return videoSpaceReadResponse;
     }
 
     // space 생성 api

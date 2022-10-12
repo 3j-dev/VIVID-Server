@@ -25,21 +25,14 @@ public class VideoSpaceGetResponse {
     private List<VideoGetResponse> videos = new ArrayList<>();
 
     @Builder
-    public VideoSpaceGetResponse(VideoSpaceParticipant videoSpaceParticipant) {
+    public VideoSpaceGetResponse(VideoSpaceParticipant videoSpaceParticipant, VideoSpace videoSpace) {
 
-        VideoSpace videoSpace = videoSpaceParticipant.getVideoSpace();
         this.id = videoSpaceParticipant.getId();
         this.name = videoSpace.getName();
         this.description = videoSpace.getDescription();
+    }
 
-        List<Video> videoList = videoSpace.getVideos();
-        videoList.forEach(video -> {
-            videos.add(VideoGetResponse
-                    .builder()
-                    .id(video.getId())
-                    .title(video.getTitle())
-                    .description(video.getDescription())
-                    .build());
-        });
+    public void addVideoGetResponse(VideoGetResponse videoGetResponse) {
+        this.videos.add(videoGetResponse);
     }
 }

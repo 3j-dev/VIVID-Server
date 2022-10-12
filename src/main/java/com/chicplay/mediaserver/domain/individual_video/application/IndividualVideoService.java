@@ -38,8 +38,6 @@ public class IndividualVideoService {
 
     private final IndividualVideoDao individualVideoDao;
 
-    private final VideoSpaceService videoSpaceService;
-
     private final VideoSpaceParticipantService videoSpaceParticipantService;
 
     private final AwsS3Service awsS3Service;

@@ -1,7 +1,12 @@
 package com.chicplay.mediaserver.domain.video_space.application;
 
+import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
+import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
+import com.chicplay.mediaserver.domain.individual_video.exception.IndividualVideoNotFoundException;
 import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.domain.User;
+import com.chicplay.mediaserver.domain.video.domain.Video;
+import com.chicplay.mediaserver.domain.video.dto.VideoGetResponse;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceDao;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceRepository;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
@@ -16,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,18 +38,56 @@ public class VideoSpaceService {
     private final UserService userService;
 
     // 로그인한 account의 video space, video get list get 메소드
-    public List<VideoSpaceGetResponse> read() {
+    public List<VideoSpaceGetResponse> getList() {
 
         // account get by email
         User user = userService.findByAccessToken();
 
-        List<VideoSpaceGetResponse> videoSpaceReadResponse = new ArrayList<>();
+        List<VideoSpaceGetResponse> videoSpaceGetResponseList = new ArrayList<>();
 
+        // user가 참여해 있는 video space get
         user.getVideoSpaceParticipants().forEach(videoSpaceParticipant -> {
-            videoSpaceReadResponse.add(VideoSpaceGetResponse.builder().videoSpaceParticipant(videoSpaceParticipant).build());
+
+            VideoSpace videoSpace = videoSpaceParticipant.getVideoSpace();
+
+            List<Video> videoList = videoSpace.getVideos();
+
+            // response dto 생성, 해당 dto에 video 리스트가 포함된다.
+            VideoSpaceGetResponse videoSpaceGetResponse = VideoSpaceGetResponse.builder()
+                    .videoSpaceParticipant(videoSpaceParticipant)
+                    .videoSpace(videoSpace)
+                    .build();
+
+            HashMap<Long, VideoGetResponse> videoSpaceGetResponseHashMap = new HashMap<>();
+
+            // 각각 video에 대해 individual video id랑 매칭하기 위해 hash map으로 생성
+            videoList.forEach(video -> {
+
+                // video 마다 dto 생성, 해당 dto는 individual_video_id도 포함한다.
+                VideoGetResponse videoGetResponse = VideoGetResponse.builder()
+                        .id(video.getId())
+                        .title(video.getTitle())
+                        .description(video.getDescription())
+                        .build();
+
+                videoSpaceGetResponseHashMap.put(video.getId(), videoGetResponse);
+            });
+
+            // individual video id add
+            videoSpaceParticipant.getIndividualVideos().forEach(individualVideo -> {
+
+                if(!videoSpaceGetResponseHashMap.containsKey(individualVideo.getVideo().getId()))
+                    return;
+
+                VideoGetResponse videoGetResponse = videoSpaceGetResponseHashMap.get(individualVideo.getVideo().getId());
+                videoGetResponse.changeIndividualVideoId(individualVideo.getId().toString());
+                videoSpaceGetResponse.addVideoGetResponse(videoGetResponse);
+            });
+
+            videoSpaceGetResponseList.add(videoSpaceGetResponse);
         });
 
-        return videoSpaceReadResponse;
+        return videoSpaceGetResponseList;
     }
 
 

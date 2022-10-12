@@ -31,7 +31,7 @@ public class WebexVideoApi {
 
     private final WebexVideoService webexVideoService;
 
-    @PostMapping("/api/webex/recordings/{videoSpaceId}/{recordingId}")
+    @PostMapping("/api/webex/recordings/{video-space-id}/{recording-id}")
     @Operation(summary = "webex video 업로드 메소드", description = "webex video를 s3에 업로드하는 api 입니다.")
     public VideoSaveResponse uploadVideosFromWebex(
             @PathVariable("videoSpaceId") Long videoSpaceId,

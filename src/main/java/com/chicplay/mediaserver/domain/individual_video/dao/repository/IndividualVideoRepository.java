@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface IndividualVideoRepository extends JpaRepository<IndividualVideo, UUID> {
 
     List<IndividualVideo> findAllByVideoSpaceParticipantId(Long videoSpaceParticipantId);
+
 }

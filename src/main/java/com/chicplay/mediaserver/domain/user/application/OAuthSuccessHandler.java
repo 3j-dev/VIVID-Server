@@ -62,6 +62,8 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         String targetUrl = UriComponentsBuilder.fromUriString("https://dev.edu-vivid.com")
                 .queryParam("token", userAuthToken.getToken())
+                .queryParam("name", userLoginRequest.getName())
+                .queryParam("picture", userLoginRequest.getPicture())
                 .build().toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
