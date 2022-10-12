@@ -1,8 +1,6 @@
 package com.chicplay.mediaserver.domain.video.api;
 
-import com.chicplay.mediaserver.domain.individual_video.dto.SnapShotImageUploadRequest;
 import com.chicplay.mediaserver.domain.video.application.VideoService;
-import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveRequest;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 
 
 @Slf4j
@@ -36,7 +33,7 @@ public class VideoApi {
      * aws media convert를 이용한
      * 인코딩이 완료되면 lambda 함수를 통해서 자동으로 save api 호출
      */
-    @PostMapping(value = "",
+    @PostMapping(value = "/{videoSpaceId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "video 직접 업로드 api", description = "video를 직접 업로드하는 api")
     public VideoSaveResponse upload(
@@ -46,10 +43,12 @@ public class VideoApi {
 
             @RequestPart("videoInfo")
             @Parameter(description = "VideoSaveRequest 객체 json input")
-            @Valid final VideoSaveRequest videoSaveRequest
+            @Valid final VideoSaveRequest videoSaveRequest,
+
+            @PathVariable("videoSpaceId") Long videoSpaceId
     ) {
 
-        VideoSaveResponse videoSaveResponse = videoService.upload(multipartFile, videoSaveRequest);
+        VideoSaveResponse videoSaveResponse = videoService.uploadByMultipartFile(multipartFile, videoSpaceId, videoSaveRequest);
 
         return videoSaveResponse;
     }

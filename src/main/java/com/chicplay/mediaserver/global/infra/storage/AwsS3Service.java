@@ -3,8 +3,6 @@ package com.chicplay.mediaserver.global.infra.storage;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
-import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
-import com.chicplay.mediaserver.domain.video.dto.VideoSaveRequest;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveResponse;
 import com.chicplay.mediaserver.domain.video.exception.ImageUploadFailedException;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +44,7 @@ public class AwsS3Service {
     private final AmazonS3Client amazonS3Client;
 
     // multipartFile을 통해 video s3에 업로드
-    public VideoSaveResponse uploadVideoToS3(MultipartFile file, Long videoId) {
+    public VideoSaveResponse uploadVideoToS3ByMultipartFile(MultipartFile file, Long videoId) {
 
         // 메타 데이터 추출
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -55,11 +53,32 @@ public class AwsS3Service {
 
         // s3 upload
         try(InputStream inputStream = file.getInputStream()) {
-            amazonS3Client.putObject(new PutObjectRequest(rawVideoBucket, videoId.toString(), inputStream, objectMetadata)
+            amazonS3Client.putObject(new PutObjectRequest(rawVideoBucket, videoId.toString() + ".mp4", inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch(IOException e) {
             throw new ImageUploadFailedException();
         }
+
+        return VideoSaveResponse.builder().id(videoId).build();
+    }
+
+    // download Url를 통해 video s3에 업로드
+    public VideoSaveResponse uploadVideoToS3ByDownloadUrl(String fileUrl, Long videoId) throws IOException {
+
+        // url connection get
+        URL url = new URL(fileUrl);
+        URLConnection connection =  url.openConnection();
+
+        // download stream get
+        InputStream is = connection.getInputStream();
+        byte[] bytes = IOUtils.toByteArray(is);
+        ObjectMetadata metadata = new ObjectMetadata();
+        ByteArrayInputStream byteArrayIs = new ByteArrayInputStream(bytes);
+        metadata.setContentLength(bytes.length);
+
+        // s3 upload
+        amazonS3Client.putObject(new PutObjectRequest(rawVideoBucket, videoId.toString() + ".mp4", byteArrayIs, metadata)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
 
         return VideoSaveResponse.builder().id(videoId).build();
     }
@@ -131,23 +150,6 @@ public class AwsS3Service {
         }
 
         return keys;
-    }
-
-    public void uploadRawVideoToS3(String fileUrl) throws IOException {
-
-        URL url = new URL(fileUrl);
-        URLConnection conn =  url.openConnection();
-        InputStream is = conn.getInputStream();
-
-        byte[] f = IOUtils.toByteArray(is);
-        ObjectMetadata metadata = new ObjectMetadata();
-
-        ByteArrayInputStream byteArrayIs = new ByteArrayInputStream(f);
-        metadata.setContentLength(f.length);
-
-        // s3 upload
-        amazonS3Client.putObject(new PutObjectRequest(rawVideoBucket, "test.mp4", byteArrayIs, metadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.chicplay.mediaserver.domain.video.application;
 
 import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
+import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.video.dao.VideoDao;
 import com.chicplay.mediaserver.domain.video.dao.VideoRepository;
 import com.chicplay.mediaserver.domain.video.domain.Video;
@@ -34,18 +35,43 @@ public class VideoService {
 
     private final IndividualVideoService individualVideoService;
 
+    private final UserService userService;
+
     private final AwsS3Service awsS3Service;
 
-    public VideoSaveResponse upload(MultipartFile multipartFile, VideoSaveRequest videoSaveRequest) {
+    public VideoSaveResponse uploadByMultipartFile(MultipartFile multipartFile, Long videoSpaceId, VideoSaveRequest videoSaveRequest) {
+
+        // get email
+        String email = userService.getEmailFromAuthentication();
 
         // 해당 video의 video space find
-        VideoSpace videoSpace = videoSpaceService.findById(videoSaveRequest.getVideoSpaceId());
+        VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
 
         // 객체 저장
-        Video savedVideo = videoRepository.save(videoSaveRequest.toEntity(videoSpace));
+        Video savedVideo = videoRepository.save(videoSaveRequest.toEntity(email));
 
-        // aws upload
-        VideoSaveResponse videoSaveResponse = awsS3Service.uploadVideoToS3(multipartFile, savedVideo.getId());
+        // aws upload by multipart file
+        VideoSaveResponse videoSaveResponse = awsS3Service.uploadVideoToS3ByMultipartFile(multipartFile, savedVideo.getId());
+
+        // space 모든 참가자들에 대해 각각의 individual videos 생성
+        individualVideoService.createAfterVideoSaved(savedVideo,videoSpace);
+
+        return videoSaveResponse;
+    }
+
+    public VideoSaveResponse uploadByDownloadUrl(String recordingDownloadUrl, Long videoSpaceId, VideoSaveRequest videoSaveRequest) throws IOException {
+
+        // get email
+        String email = userService.getEmailFromAuthentication();
+
+        // 해당 video의 video space find
+        VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
+
+        // 객체 저장
+        Video savedVideo = videoRepository.save(videoSaveRequest.toEntity(email));
+
+        // aws upload by download url
+        VideoSaveResponse videoSaveResponse = awsS3Service.uploadVideoToS3ByDownloadUrl(recordingDownloadUrl, savedVideo.getId());
 
         // space 모든 참가자들에 대해 각각의 individual videos 생성
         individualVideoService.createAfterVideoSaved(savedVideo,videoSpace);

@@ -3,6 +3,9 @@ package com.chicplay.mediaserver.domain.video.application;
 import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.domain.Institution;
 import com.chicplay.mediaserver.domain.user.domain.User;
+import com.chicplay.mediaserver.domain.video.dto.VideoSaveRequest;
+import com.chicplay.mediaserver.domain.video.dto.VideoSaveResponse;
+import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
 import com.chicplay.mediaserver.global.infra.webex_api.WebexApiService;
 import com.chicplay.mediaserver.global.infra.webex_api.WebexRecordingGetResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -20,6 +24,8 @@ import java.util.List;
 public class WebexVideoService {
 
     private final UserService userService;
+
+    private final VideoService videoService;
 
     private final WebexApiService webexApiService;
 
@@ -52,7 +58,22 @@ public class WebexVideoService {
         user.changeInstitution(institution);
     }
 
-    public void loginWebex() {
+    // webex recording을 upload합니다.
+    public VideoSaveResponse uploadRecording(String webexRecordingId, Long videoSpaceId, VideoSaveRequest videoSaveRequest) throws IOException {
+
+        // access token get
+        String webexAccessToken = userService.getWebexAccessToken();
+
+        // webex recording download url get
+        String recordingDownloadUrl = webexApiService.getRecordingDownloadUrl(webexAccessToken, webexRecordingId);
+
+        // s3로 업로드
+        VideoSaveResponse videoSaveResponse = videoService.uploadByDownloadUrl(recordingDownloadUrl, videoSpaceId, videoSaveRequest);
+
+        return videoSaveResponse;
+    }
+
+    public void loginWebex(String id) {
 
 
     }

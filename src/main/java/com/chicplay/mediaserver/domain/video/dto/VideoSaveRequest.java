@@ -20,15 +20,11 @@ public class VideoSaveRequest {
     @NotBlank
     private String description;
 
-    @NotNull
-    private Long videoSpaceId;
-
-    public Video toEntity(VideoSpace videoSpace) {
+    public Video toEntity(String email) {
         return Video.builder()
                 .title(this.title)
                 .description(this.description)
-                .videoSpace(videoSpace)
-                .uploaderId("test")
+                .uploaderId(email)
                 .build();
     }
 

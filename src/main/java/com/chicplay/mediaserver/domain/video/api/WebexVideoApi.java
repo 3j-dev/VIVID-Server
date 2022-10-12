@@ -1,6 +1,9 @@
 package com.chicplay.mediaserver.domain.video.api;
 
+import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideosGetRequest;
 import com.chicplay.mediaserver.domain.video.application.WebexVideoService;
+import com.chicplay.mediaserver.domain.video.dto.VideoSaveRequest;
+import com.chicplay.mediaserver.domain.video.dto.VideoSaveResponse;
 import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
 import com.chicplay.mediaserver.global.infra.webex_api.WebexRecordingGetResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,12 +12,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -28,17 +29,18 @@ public class WebexVideoApi {
     @Value("${webex.api.login-uri}")
     private String webexLoginUrl;
 
-    private final AwsS3Service awsS3Service;
-
     private final WebexVideoService webexVideoService;
 
-    @PostMapping("/api/webex/video")
+    @PostMapping("/api/webex/recordings/{videoSpaceId}/{recordingId}")
     @Operation(summary = "webex video 업로드 메소드", description = "webex video를 s3에 업로드하는 api 입니다.")
-    @ApiResponse(responseCode = "200", description = "webex video 업로드 완료 후, 상태 코드 200을 반환합니다.")
-    public void uploadVideosFromWebex() throws IOException {
+    public VideoSaveResponse uploadVideosFromWebex(
+            @PathVariable("videoSpaceId") Long videoSpaceId,
+            @PathVariable("recordingId") String recordingId,
+            @RequestBody VideoSaveRequest videoSaveRequest) throws IOException {
 
-        // s3로 업로드
-        awsS3Service.uploadRawVideoToS3(FILE_URL);
+        VideoSaveResponse videoSaveResponse = webexVideoService.uploadRecording(recordingId, videoSpaceId, videoSaveRequest);
+
+        return videoSaveResponse;
     }
 
     @PostMapping("/api/webex/token/{code}")
@@ -56,7 +58,6 @@ public class WebexVideoApi {
 
         return webexRecordings;
     }
-
 
     @GetMapping("/api/login/webex")
     @Operation(summary = "webex login redirection", description = "해당 url로 이동시, webex login창으로 redirection 됩니다.")

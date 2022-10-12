@@ -64,6 +64,7 @@ public class WebexApiService {
         return accessToken;
     }
 
+    // webex recordings get api 호출
     public List<WebexRecordingGetResponse> getWebexRecordings(String accessToken) throws JsonProcessingException {
 
         HttpHeaders header = new HttpHeaders();
@@ -74,13 +75,13 @@ public class WebexApiService {
 
 
         // parsing 작업
-        JSONObject jsonObject = new JSONObject(response.getBody());
-        JSONArray jsonArray = (JSONArray) jsonObject.get("items");
+        JSONObject responseJsonObject = new JSONObject(response.getBody());
+        JSONArray recordingArray = (JSONArray) responseJsonObject.get("items");
 
         List<WebexRecordingGetResponse> webexRecordingGetResponses = new ArrayList<>();
 
-        for(int i=0; i<jsonArray.length(); i++){
-            JSONObject jsonObj = (JSONObject)jsonArray.get(i);
+        for(int i=0; i<recordingArray.length(); i++){
+            JSONObject jsonObj = (JSONObject)recordingArray.get(i);
 
             WebexRecordingGetResponse webexRecordingGetResponse = WebexRecordingGetResponse.builder()
                     .recordingId((String) jsonObj.get("recordingId"))
@@ -93,6 +94,22 @@ public class WebexApiService {
 
         return webexRecordingGetResponses;
 
+    }
+
+    // get webex recording direct download url
+    public String getRecordingDownloadUrl(String accessToken, String webexRecordingId) {
+
+        HttpHeaders header = new HttpHeaders();
+        header.set("Authorization", "Bearer "+ accessToken);
+
+        HttpEntity<String> entity = new HttpEntity<>(header);
+        ResponseEntity<String> response = webexRestTemplate.exchange("/recordings/" + webexRecordingId, HttpMethod.GET, entity, String.class);
+
+        // parsing 작업
+        JSONObject responseJsonObject = new JSONObject(response.getBody());
+        JSONObject downloadLinkJsonObject = responseJsonObject.getJSONObject("temporaryDirectDownloadLinks");
+
+        return (String) downloadLinkJsonObject.get("recordingDownloadLink");
     }
 
 
