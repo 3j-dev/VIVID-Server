@@ -11,4 +11,6 @@ public interface IndividualVideoRepository extends JpaRepository<IndividualVideo
 
     List<IndividualVideo> findAllByVideoSpaceParticipantId(Long videoSpaceParticipantId);
 
+    List<IndividualVideo> findAllByVideoIdAndVideoSpaceParticipantId(Long videoId, Long videoSpaceParticipantId);
+
 }

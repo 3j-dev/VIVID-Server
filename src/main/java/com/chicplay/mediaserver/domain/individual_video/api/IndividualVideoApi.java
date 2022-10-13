@@ -56,7 +56,7 @@ public class IndividualVideoApi {
     @GetMapping("/api/videos")
     public List<IndividualVideoGetResponse> getList(@RequestBody @Valid IndividualVideosGetRequest individualVideosGetRequest) {
 
-        List<IndividualVideoGetResponse> individualVideoGetResponse = individualVideoService.getByVideoSpaceParticipantId(individualVideosGetRequest.getVideoSpaceParticipantId());
+        List<IndividualVideoGetResponse> individualVideoGetResponse = individualVideoService.findAllByVideoParticipantId(individualVideosGetRequest.getVideoSpaceParticipantId());
 
         return individualVideoGetResponse;
     }

@@ -83,7 +83,10 @@ public class IndividualVideoService {
         videoSpace.getVideoSpaceParticipants().forEach(videoSpaceParticipant -> {
 
             // list에 individulaVideo 객체를 각각 생성해서 add
-            individualVideos.add(IndividualVideo.builder().video(video).videoSpaceParticipant(videoSpaceParticipant).build());
+            individualVideos.add(IndividualVideo.builder()
+                    .video(video)
+                    .videoSpaceParticipant(videoSpaceParticipant)
+                    .build());
         });
 
         // jpa bulk insert, uuid 방식이어서 jpa bulk insert 가능
@@ -91,7 +94,8 @@ public class IndividualVideoService {
 
     }
 
-    public List<IndividualVideoGetResponse> getByVideoSpaceParticipantId(Long videoSpaceParticipantId) {
+    // 참가해있는 space의 individual video get
+    public List<IndividualVideoGetResponse> findAllByVideoParticipantId(Long videoSpaceParticipantId) {
 
         // 로그인 id와 videoSpaceParticipantId의 user id가 같은지 판단.
         VideoSpaceParticipant videoSpaceParticipant = videoSpaceParticipantService.findById(videoSpaceParticipantId);

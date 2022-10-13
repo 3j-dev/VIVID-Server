@@ -17,9 +17,18 @@ public class IndividualVideoGetResponse {
 
     private LocalDateTime updatedDate;
 
+    private String videoTitle;
+
+    private String videoDescription;
+
+    private LocalDateTime videoCreatedDate;
+
     @Builder
     public IndividualVideoGetResponse(IndividualVideo individualVideo) {
         this.individualVideoId = individualVideo.getId();
         this.updatedDate = individualVideo.getUpdatedDate();
+        this.videoTitle = individualVideo.getVideo().getTitle();
+        this.videoDescription = individualVideo.getVideo().getDescription();
+        this.videoCreatedDate = individualVideo.getVideo().getUpdatedDate();
     }
 }
