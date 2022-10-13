@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VideoSpaceParticipantSaveResponse {
 
-    private String accountEmail;
+    private String userEmail;
 
     private Long videoSpaceId;
 
     @Builder
     public VideoSpaceParticipantSaveResponse(VideoSpaceParticipant videoSpaceParticipant) {
-        this.accountEmail = videoSpaceParticipant.getUser().getEmail();
+        this.userEmail = videoSpaceParticipant.getUser().getEmail();
         this.videoSpaceId = videoSpaceParticipant.getVideoSpace().getId();
     }
 }

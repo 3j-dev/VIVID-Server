@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/videos")
+@RequestMapping("/api/individual-videos")
 public class TextMemoStateApi {
 
     private final TextMemoStateService textMemoStateService;

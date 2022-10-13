@@ -48,7 +48,7 @@ public class VideoService {
         VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
 
         // 객체 저장
-        Video savedVideo = videoRepository.save(videoSaveRequest.toEntity(email));
+        Video savedVideo = videoRepository.save(videoSaveRequest.toEntity(videoSpace, email));
 
         // aws upload by multipart file
         VideoSaveResponse videoSaveResponse = awsS3Service.uploadVideoToS3ByMultipartFile(multipartFile, savedVideo.getId());
@@ -68,7 +68,7 @@ public class VideoService {
         VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
 
         // 객체 저장
-        Video savedVideo = videoRepository.save(videoSaveRequest.toEntity(email));
+        Video savedVideo = videoRepository.save(videoSaveRequest.toEntity(videoSpace, email));
 
         // aws upload by download url
         VideoSaveResponse videoSaveResponse = awsS3Service.uploadVideoToS3ByDownloadUrl(recordingDownloadUrl, savedVideo.getId());
@@ -81,6 +81,8 @@ public class VideoService {
 
     // upload 된 후 video의 uploaded 상태 변경
     public void changeUploadState(Long videoId, boolean isUploaded) {
+
+        log.info("test11");
 
         // 해당 video의 find
         Video video = videoDao.findById(videoId);

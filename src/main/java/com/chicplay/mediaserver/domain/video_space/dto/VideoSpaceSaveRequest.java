@@ -24,10 +24,11 @@ public class VideoSpaceSaveRequest {
         this.description = description;
     }
 
-    public VideoSpace toEntity() {
+    public VideoSpace toEntity(String hostEmail) {
         return VideoSpace.builder()
                 .name(this.name)
                 .description(this.description)
+                .hostEmail(hostEmail)
                 .build();
     }
 }

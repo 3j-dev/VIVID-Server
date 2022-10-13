@@ -98,7 +98,7 @@ public class VideoSpaceService {
         User user = userService.findByAccessToken();
 
         // video space 생성
-        VideoSpace savedVideoSpace = videoSpaceRepository.save(videoSpaceSaveRequest.toEntity());
+        VideoSpace savedVideoSpace = videoSpaceRepository.save(videoSpaceSaveRequest.toEntity(user.getEmail()));
 
         // 생성자가 포함된 video space participant create, 연관 관계 매핑에 의해 생성된다.
 

@@ -30,7 +30,7 @@ public class UserService {
 
     private final JwtProviderService jwtProviderService;
 
-    // email로 부터 user를 get한다.
+    // access token으로부터 현재 로그인된 user를 get한다.
     public User findByAccessToken() {
 
         String email = getEmailFromAuthentication();
@@ -40,12 +40,20 @@ public class UserService {
         return user;
     }
 
-    // header 정보에서 email 정보를 get해온다.
+    // header access token에서 email 정보를 get해온다.
     public String getEmailFromAuthentication() {
 
         String email = jwtProviderService.getEmailFromHeaderAccessToken();
 
         return email;
+    }
+
+    // email을 통해 user find
+    public User findByEmail(String email) {
+
+        User user = userDao.findByEmail(email);
+
+        return user;
     }
 
     // email로 유저가 존재하는지 검색
@@ -82,7 +90,11 @@ public class UserService {
         User user = dto.toEntity();
 
         // save 개인 영상 스페이스
-        VideoSpace videoSpace = VideoSpace.builder().name("개인 영상").description(user.getName() + "님의 개인 영상 그룹 입니다.").build();
+        VideoSpace videoSpace = VideoSpace.builder()
+                .name("개인 영상")
+                .description(user.getName() + "님의 개인 영상 그룹 입니다.")
+                .hostEmail(user.getEmail())
+                .build();
 
         // 개인 영상 스페이스 - account 매핑 테이블 생성
         VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().user(user).videoSpace(videoSpace).build();

@@ -6,8 +6,8 @@ import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceParticipantRepository;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
-import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceParticipantSaveRequest;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceParticipantSaveResponse;
+import com.chicplay.mediaserver.domain.video_space.exception.VideoSpaceParticipantDuplicatedException;
 import com.chicplay.mediaserver.domain.video_space.exception.VideoSpaceParticipantNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +29,19 @@ public class VideoSpaceParticipantService {
     private final VideoSpaceService videoSpaceService;
 
     // 이미 생성돼 있는 videoSpace에 유저 추가 : VideoSpaceParticipant save
-    public VideoSpaceParticipantSaveResponse save(VideoSpaceParticipantSaveRequest videoSpaceParticipantSaveRequest) {
+    public VideoSpaceParticipantSaveResponse save(Long videoSpaceId, String userEmail) {
 
         // account get by email
-        User user = userService.findByAccessToken();
+        User user = userService.findByEmail(userEmail);
 
         // video space get by videoId
-        VideoSpace videoSpace = videoSpaceService.findById(videoSpaceParticipantSaveRequest.getVideoSpaceId());
+        VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
+
+        // exception by duplicated user
+        videoSpace.getVideoSpaceParticipants().forEach(videoSpaceParticipant -> {
+            if(videoSpaceParticipant.getUser().getEmail().equals(userEmail))
+                throw new VideoSpaceParticipantDuplicatedException();
+        });
 
         // Video participant save
         VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().videoSpace(videoSpace).user(user).build();

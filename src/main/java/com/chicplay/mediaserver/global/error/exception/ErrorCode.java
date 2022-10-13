@@ -29,6 +29,9 @@ public enum ErrorCode {
     // video
     IMAGE_UPLOAD_FAILED("V02", "Image upload is failed.", HttpStatus.INTERNAL_SERVER_ERROR.value()),
 
+    // video space
+    VIDEO_SPACE_USER_DUPLICATION("VS01", "User is Already Added.", HttpStatus.BAD_REQUEST.value()),
+
     // external API
     EXTERNAL_API_FAILED("E01", "External API Request is failed", HttpStatus.INTERNAL_SERVER_ERROR.value());
 

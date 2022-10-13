@@ -34,9 +34,13 @@ public class VideoSpace extends BaseTime {
     @Column(name="description")
     private String description;
 
+    @Column(name = "host_email")
+    private String hostEmail;
+
     @Builder
-    public VideoSpace(String name, String description) {
+    public VideoSpace(String name, String description, String hostEmail) {
         this.name = name;
         this.description = description;
+        this.hostEmail = hostEmail;
     }
 }
