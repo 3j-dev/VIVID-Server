@@ -5,12 +5,14 @@ import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.domain.individual_video.exception.IndividualVideoNotFoundException;
 import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.domain.User;
+import com.chicplay.mediaserver.domain.user.dto.UserGetResponse;
 import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.domain.video.dto.VideoGetResponse;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceDao;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceRepository;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
+import com.chicplay.mediaserver.domain.video_space.dto.HostedVideoSpaceGetResponse;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceGetResponse;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceSaveRequest;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceSaveResponse;
@@ -76,7 +78,7 @@ public class VideoSpaceService {
             // individual video id add
             videoSpaceParticipant.getIndividualVideos().forEach(individualVideo -> {
 
-                if(!videoSpaceGetResponseHashMap.containsKey(individualVideo.getVideo().getId()))
+                if (!videoSpaceGetResponseHashMap.containsKey(individualVideo.getVideo().getId()))
                     return;
 
                 VideoGetResponse videoGetResponse = videoSpaceGetResponseHashMap.get(individualVideo.getVideo().getId());
@@ -88,6 +90,49 @@ public class VideoSpaceService {
         });
 
         return videoSpaceGetResponseList;
+    }
+
+    public List<HostedVideoSpaceGetResponse> getHostedVideoSpace() {
+
+        // email get, = host email
+        String email = userService.getEmailFromAuthentication();
+
+        // find by host email
+        List<VideoSpace> videoSpaces = videoSpaceRepository.findAllByHostEmail(email);
+
+        List<HostedVideoSpaceGetResponse> hostedVideoSpaceGetResponseList = new ArrayList<>();
+
+        // size 0일 경우 exception
+        if (videoSpaces.size() == 0 || videoSpaces == null)
+            return hostedVideoSpaceGetResponseList;
+
+        // video space마다 response dto 생성
+        videoSpaces.forEach(videoSpace -> {
+
+            HostedVideoSpaceGetResponse hostedVideoSpaceGetResponse = HostedVideoSpaceGetResponse.builder().videoSpace(videoSpace).build();
+
+            // create video response dto
+            videoSpace.getVideos().forEach(video -> {
+                hostedVideoSpaceGetResponse.addVideoGetResponse(VideoGetResponse.builder()
+                        .id(video.getId())
+                        .title(video.getTitle())
+                        .description(video.getDescription()).build());
+            });
+
+            // create user response dto
+            videoSpace.getVideoSpaceParticipants().forEach(videoSpaceParticipant -> {
+                User user = videoSpaceParticipant.getUser();
+                hostedVideoSpaceGetResponse.addUserGetResponse(UserGetResponse.builder()
+                        .email(user.getEmail())
+                        .name(user.getName())
+                        .picture(user.getPicture())
+                        .build());
+            });
+
+            hostedVideoSpaceGetResponseList.add(hostedVideoSpaceGetResponse);
+        });
+
+        return hostedVideoSpaceGetResponseList;
     }
 
 

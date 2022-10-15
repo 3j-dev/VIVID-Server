@@ -1,6 +1,7 @@
 package com.chicplay.mediaserver.domain.video_space.api;
 
 import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceService;
+import com.chicplay.mediaserver.domain.video_space.dto.HostedVideoSpaceGetResponse;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceGetResponse;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceSaveRequest;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceSaveResponse;
@@ -22,14 +23,24 @@ public class VideoSpaceApi {
 
     private final VideoSpaceService videoSpaceService;
 
-    @Operation(summary = "video space list get api", description = "로그인한 account의 video space list를 get api 입니다.")
+    @Operation(summary = "video space list get api", description = "로그인한 user의 video space list를 get api 입니다.")
     @GetMapping("/api/video-space")
-    public List<VideoSpaceGetResponse> getByAccount() {
+    public List<VideoSpaceGetResponse> getByUser() {
 
         List<VideoSpaceGetResponse> videoSpaceReadResponse = videoSpaceService.getList();
 
         return videoSpaceReadResponse;
     }
+
+    @Operation(summary = "video space hosted list get api", description = "로그인한 user가 host인 video space list를 get api 입니다.")
+    @GetMapping("/api/video-space/hosted")
+    public List<HostedVideoSpaceGetResponse> getHostedVideoSpaces(){
+
+        List<HostedVideoSpaceGetResponse> hostedVideoSpace = videoSpaceService.getHostedVideoSpace();
+
+        return hostedVideoSpace;
+    }
+
 
     // space 생성 api
     @Operation(summary = "video space create api", description = "video space를 생성하는 api 입니다. 최초 생성시, 생성자만 참가해 있습니다.")
