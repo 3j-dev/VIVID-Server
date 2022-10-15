@@ -3,14 +3,13 @@ package com.chicplay.mediaserver.global.config;
 import com.chicplay.mediaserver.domain.user.domain.Role;
 import com.chicplay.mediaserver.global.auth.JwtAuthExceptionFilter;
 import com.chicplay.mediaserver.global.auth.JwtAuthFilter;
-import com.chicplay.mediaserver.global.auth.JwtProviderService;
-import com.chicplay.mediaserver.domain.user.application.OAuthSuccessHandler;
+import com.chicplay.mediaserver.global.auth.application.JwtProviderService;
+import com.chicplay.mediaserver.global.auth.application.OAuthSuccessHandler;
 import com.chicplay.mediaserver.global.auth.RestAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,7 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Configuration

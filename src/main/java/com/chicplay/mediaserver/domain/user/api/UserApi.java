@@ -1,17 +1,14 @@
 package com.chicplay.mediaserver.domain.user.api;
 
-import com.chicplay.mediaserver.domain.user.application.OAuthUserService;
-import com.chicplay.mediaserver.domain.user.application.UserService;
-import com.chicplay.mediaserver.domain.user.dto.UserNewTokenRequest;
+import com.chicplay.mediaserver.domain.user.application.UserLoginService;
+import com.chicplay.mediaserver.domain.user.dto.UserNewTokenDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -20,9 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserApi {
 
-    private final UserService userService;
-
-    private final OAuthUserService oAuthUserService;
+    private final UserLoginService userLoginService;
 
     private final HttpSession httpSession;
 
@@ -34,32 +29,33 @@ public class UserApi {
 //        return userSignUpResponse;
 //    }
 
+    // access token 만료시 refresh token을 통해 재발급
+    @Operation(summary = "user access token issue api", description = "쿠키의 access token get하거나, redis의 refresh token을 활용하여 access token을 재발급합니다.")
+    @PostMapping("/auth/token")
+    public UserNewTokenDto reIssueAccessToken(){
+
+        UserNewTokenDto newAccessToken = userLoginService.reIssueAccessToken();
+
+        return newAccessToken;
+    }
+
     @Operation(summary = "user logout api", description = "user가 logout 할 시 호출하는 api입니다. redis의 refresh token을 삭제합니다.")
     @PostMapping("/auth/logout")
     public void logout(){
 
-        oAuthUserService.removeRefreshTokenByLogout();
+        userLoginService.removeTokensByLogout();
     }
 
-    // access token 만료시 refresh token을 통해 재발급
-    @Operation(summary = "user access token issue api", description = "redis의 refresh token을 활용하여 access token을 재발급합니다. 페이지 리로드시 access token을 재발급받습니다.")
-    @GetMapping("/auth/token")
-    public UserNewTokenRequest issueNewAccessToken(){
 
-        UserNewTokenRequest newAccessToken = oAuthUserService.getNewAccessToken();
+    // test user로 로그인합니다. 이때 access token을 발급하며, session에 리프래쉬 토큰이 저장됩니다.
+    @Operation(summary = "test user login api", description = "test용 계정으로 login 할 수 있는 api입니다.")
+    @GetMapping("/auth/token/test")
+    public List<UserNewTokenDto> loginByTestUser() {
 
-        return newAccessToken;
+        List<UserNewTokenDto> userNewTokenDtoList = userLoginService.loginByTestUser();
+
+        return userNewTokenDtoList;
     }
-
-    @Operation(summary = "user silent access token issue api", description = "redis의 refresh token을 활용하여 access token을 재발급합니다. access token 만료시 silent refesh 하는 api입니다.")
-    @GetMapping("/auth/token/silent-refresh")
-    public UserNewTokenRequest issueNewAccessTokenFromSilentRefresh(){
-
-        UserNewTokenRequest newAccessToken = oAuthUserService.getNewAccessTokenFromSilentRefresh();
-
-        return newAccessToken;
-    }
-
 
     @Operation(summary = "test api", description = "서버 연결을 테스팅 하기 위한 api 입니다.")
     @GetMapping("/api/test")
@@ -68,16 +64,14 @@ public class UserApi {
         return "hello_test";
     }
 
-    // test user로 로그인합니다. 이때 access token을 발급하며, session에 리프래쉬 토큰이 저장됩니다.
-    @Operation(summary = "test user login api", description = "test용 계정으로 login 할 수 있는 api입니다.")
-    @GetMapping("/auth/token/test")
-    public List<UserNewTokenRequest> loginByTestUser() {
-
-        List<UserNewTokenRequest> userNewTokenRequestList= oAuthUserService.loginByTestUser();
-
-        return userNewTokenRequestList;
-    }
-
+    //    @Operation(summary = "user silent access token issue api", description = "redis의 refresh token을 활용하여 access token을 재발급합니다. access token 만료시 silent refesh 하는 api입니다.")
+//    @GetMapping("/auth/token/silent-refresh")
+//    public UserNewTokenDto issueNewAccessTokenFromSilentRefresh(){
+//
+//        UserNewTokenDto newAccessToken = userLoginService.getNewAccessTokenFromSilentRefresh();
+//
+//        return newAccessToken;
+//    }
 
 
 }

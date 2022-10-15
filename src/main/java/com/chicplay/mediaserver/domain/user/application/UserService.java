@@ -10,12 +10,16 @@ import com.chicplay.mediaserver.domain.user.exception.EmailDuplicateException;
 import com.chicplay.mediaserver.domain.user.exception.UserAccessDeniedException;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
-import com.chicplay.mediaserver.global.auth.JwtProviderService;
+import com.chicplay.mediaserver.global.auth.application.JwtProviderService;
+import com.chicplay.mediaserver.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 @Service
@@ -74,7 +78,7 @@ public class UserService {
 
         // access token not found exception
         if (!StringUtils.hasText(webexAccessToken)){
-            throw new AccessTokenNotFoundException();
+            throw new AccessTokenNotFoundException(ErrorCode.ACCESS_TOKEN_NOT_FOUND_IN_HEADER);
         }
 
         return webexAccessToken;
@@ -112,5 +116,16 @@ public class UserService {
             throw new UserAccessDeniedException();
     }
 
+    // user의 ip를 get하는 메소드
+    public String getUserIp() {
+
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String userIp = request.getHeader("X-FORWARDED-FOR");
+
+        if (userIp == null)
+            userIp = request.getRemoteAddr();
+
+        return userIp;
+    }
 
 }

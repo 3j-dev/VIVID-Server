@@ -37,8 +37,8 @@ public class RedisUserConfig {
     private String redisPassword;
 
 
+    //@SpringSessionRedisConnectionFactory
     @Bean(name = "userRedisConnectionFactory")
-    @SpringSessionRedisConnectionFactory
     public RedisConnectionFactory userRedisConnectionFactory() {
 
         final RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();

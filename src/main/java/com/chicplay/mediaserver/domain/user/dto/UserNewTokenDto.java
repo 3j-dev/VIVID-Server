@@ -8,13 +8,13 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @NoArgsConstructor
-public class UserNewTokenRequest {
+public class UserNewTokenDto {
 
     @NotBlank
     private String accessToken;
 
     @Builder
-    public UserNewTokenRequest(String accessToken) {
+    public UserNewTokenDto(String accessToken) {
         this.accessToken = accessToken;
     }
 }

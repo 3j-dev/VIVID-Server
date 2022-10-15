@@ -1,10 +1,11 @@
-package com.chicplay.mediaserver.global.auth;
+package com.chicplay.mediaserver.global.auth.application;
 
 import com.chicplay.mediaserver.domain.user.domain.Role;
 import com.chicplay.mediaserver.domain.user.domain.UserAuthToken;
 import com.chicplay.mediaserver.domain.user.exception.AccessTokenInvalidException;
 import com.chicplay.mediaserver.domain.user.exception.AccessTokenNotFoundException;
 import com.chicplay.mediaserver.domain.user.exception.RefreshTokenNotFoundException;
+import com.chicplay.mediaserver.global.error.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +34,10 @@ public class JwtProviderService {
 
     private Key key;
 
-    //private final long tokenPeriod = 1000L * 60L * 10L;     // 10분
-    private final long tokenPeriod = 1000L * 60L * 120L;     // 2시간
+    //private final long tokenPeriod = 1000L * 60L * 120L;     // 10분
+    private final long tokenPeriod = 1L;     // 2시간
 
-    private final long refreshPeriod = 1000L * 60L * 60L * 24L * 10L;      // 10일
+    private final long refreshPeriod = 1000L * 60L * 60L * 24L * 14L;      // 14일
 
     @PostConstruct
     protected void init() {
@@ -66,17 +67,7 @@ public class JwtProviderService {
                         .compact());
     }
 
-    public UserAuthToken getTokenFromRedisSession() {
-
-        // get refreshToken from Redis Session
-        String refreshToken = (String)httpSession.getAttribute("refreshToken");
-
-        // redis에 session data가 없음.
-        if (!StringUtils.hasText(refreshToken)){
-
-            // not found exception
-            throw new RefreshTokenNotFoundException();
-        }
+    public UserAuthToken generateTokenFromRefreshToken(String refreshToken) {
 
         // 유효한 토큰 일 경우 re-issue access token return
         if (validateToken(refreshToken)) {
@@ -90,20 +81,10 @@ public class JwtProviderService {
         throw new RefreshTokenNotFoundException();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (ExpiredJwtException expiredJwtException) {
-            throw expiredJwtException;
-        } catch (JwtException jwtException) {
-            throw new AccessTokenInvalidException();
-        }
-    }
 
     public String getEmailFromHeaderAccessToken() {
 
-        String accessToken = parseBearerToken();
+        String accessToken = getAccessToken();
 
         String email = getEmail(accessToken);
 
@@ -111,7 +92,7 @@ public class JwtProviderService {
 
     }
 
-    public String parseBearerToken() {
+    public String getAccessToken() {
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String bearerToken = request.getHeader("Authorization");
@@ -120,7 +101,7 @@ public class JwtProviderService {
             return bearerToken.substring(7);
         }
 
-        throw new AccessTokenNotFoundException();
+        throw new AccessTokenNotFoundException(ErrorCode.ACCESS_TOKEN_NOT_FOUND_IN_HEADER);
     }
 
     public String getEmail(String token) {
@@ -133,6 +114,17 @@ public class JwtProviderService {
         } catch (ExpiredJwtException expiredJwtException) {
 
             return expiredJwtException.getClaims().getSubject();
+        }
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (ExpiredJwtException expiredJwtException) {
+            throw expiredJwtException;
+        } catch (JwtException jwtException) {
+            throw new AccessTokenInvalidException();
         }
     }
 }

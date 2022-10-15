@@ -2,20 +2,14 @@ package com.chicplay.mediaserver.global.auth;
 
 import com.chicplay.mediaserver.domain.user.exception.AccessTokenInvalidException;
 import com.chicplay.mediaserver.domain.user.exception.AccessTokenNotFoundException;
-import com.chicplay.mediaserver.domain.user.exception.RefreshTokenExpiredException;
-import com.chicplay.mediaserver.domain.user.exception.RefreshTokenNotFoundException;
 import com.chicplay.mediaserver.global.error.ErrorResponse;
 import com.chicplay.mediaserver.global.error.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SignatureException;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -48,7 +42,7 @@ public class JwtAuthExceptionFilter extends OncePerRequestFilter {
         } catch (AccessTokenNotFoundException accessTokenNotFoundException) {
 
             // access token not found exception
-            setErrorResponse(HttpStatus.UNAUTHORIZED, response, ErrorCode.ACCESS_TOKEN_NOT_FOUND);
+            setErrorResponse(HttpStatus.UNAUTHORIZED, response, ErrorCode.ACCESS_TOKEN_NOT_FOUND_IN_HEADER);
         }
     }
 

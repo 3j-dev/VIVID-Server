@@ -10,13 +10,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
-@EnableJpaAuditing
+
 //@EnableCaching
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 10800)
+//@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 10800)
 //@EnableBatchProcessing
 //@EnableScheduling
-@SpringBootApplication
+@EnableJpaAuditing
 @EnableAspectJAutoProxy
+@SpringBootApplication
 public class MediaServerApplication {
 
 	public static void main(String[] args) {

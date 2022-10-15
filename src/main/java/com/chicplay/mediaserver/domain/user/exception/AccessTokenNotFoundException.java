@@ -5,7 +5,7 @@ import com.chicplay.mediaserver.global.error.exception.ErrorCode;
 
 public class AccessTokenNotFoundException extends BusinessException {
 
-    public AccessTokenNotFoundException() {
-        super(ErrorCode.ACCESS_TOKEN_NOT_FOUND);
+    public AccessTokenNotFoundException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

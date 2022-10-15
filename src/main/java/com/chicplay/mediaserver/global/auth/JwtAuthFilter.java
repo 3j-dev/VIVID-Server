@@ -1,24 +1,20 @@
 package com.chicplay.mediaserver.global.auth;
 
-import com.chicplay.mediaserver.domain.user.domain.UserAuthToken;
 import com.chicplay.mediaserver.domain.user.domain.UserSessionDetails;
-import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
+import com.chicplay.mediaserver.global.auth.application.JwtProviderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -31,12 +27,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String token = jwtProviderService.parseBearerToken();
+        String accessToken = jwtProviderService.getAccessToken();
 
         // Validation Access Token
-        if (jwtProviderService.validateToken(token)) {
+        if (jwtProviderService.validateToken(accessToken)) {
 
-            String email = jwtProviderService.getEmail(token);
+            String email = jwtProviderService.getEmail(accessToken);
 
             UserSessionDetails userSessionDetails = UserSessionDetails.builder().email(email).build();
 
@@ -55,7 +51,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
 
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
 
         return authenticationToken;
 

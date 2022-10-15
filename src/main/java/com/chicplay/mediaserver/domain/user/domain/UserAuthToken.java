@@ -2,7 +2,6 @@ package com.chicplay.mediaserver.domain.user.domain;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
@@ -13,13 +12,13 @@ public class UserAuthToken {
 
     @Id
     private String email;
-    private String token;
+    private String accessToken;
     private String refreshToken;
 
     @Builder
-    public UserAuthToken(String email, String token, String refreshToken) {
+    public UserAuthToken(String email, String accessToken, String refreshToken) {
         this.email = email;
-        this.token = token;
+        this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
 }

@@ -1,16 +1,17 @@
-package com.chicplay.mediaserver.domain.user.application;
+package com.chicplay.mediaserver.global.auth.application;
 
-import com.chicplay.mediaserver.domain.user.dao.UserAuthTokenDao;
+import com.chicplay.mediaserver.domain.user.application.UserAccessTokenCookieService;
+import com.chicplay.mediaserver.domain.user.application.UserLoginService;
+import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.domain.Role;
 import com.chicplay.mediaserver.domain.user.domain.UserAuthToken;
 import com.chicplay.mediaserver.domain.user.dto.UserLoginRequest;
-import com.chicplay.mediaserver.global.auth.JwtProviderService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.chicplay.mediaserver.global.auth.application.JwtProviderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,11 +19,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.http.HttpHeaders;
+import java.net.URLEncoder;
 import java.util.Map;
 
 @Slf4j
@@ -32,10 +31,15 @@ import java.util.Map;
 public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProviderService jwtProviderService;
-    private final HttpSession httpSession;
-    private final UserService userService;
-    private final UserAuthTokenDao userAuthTokenDao;
 
+    private final UserService userService;
+
+    private final UserLoginService userLoginService;
+
+    private final UserAccessTokenCookieService userAccessTokenCookieService;
+
+    @Value("${root-url}")
+    private String rootUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -60,17 +64,19 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         // then, token 발급 후 -> access token, refresh token
         //writeTokenResponse(response, userAuthToken);'
 
-        String targetUrl = UriComponentsBuilder.fromUriString("https://dev.edu-vivid.com")
-                .queryParam("token", userAuthToken.getToken())
-                .queryParam("name", userLoginRequest.getName())
+        String targetUrl = UriComponentsBuilder.fromUriString(rootUrl)
+                .queryParam("token", userAuthToken.getAccessToken())
+                .queryParam("name", URLEncoder.encode(userLoginRequest.getName(),"UTF-8"))
                 .queryParam("picture", userLoginRequest.getPicture())
                 .build().toUriString();
 
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
-
         // redis - refresh token save
-        //userAuthTokenDao.saveRefreshToken(userAuthToken.getEmail(), userAuthToken.getRefreshToken());
-        httpSession.setAttribute("refreshToken", userAuthToken.getRefreshToken());
+        userLoginService.saveRefreshToken(userAuthToken.getRefreshToken());
+
+        // access token save in cookie
+        userAccessTokenCookieService.saveAccessTokenCookie(userAuthToken.getAccessToken());
+
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
 //    private void writeTokenResponse(HttpServletResponse response, UserAuthToken userAuthToken) throws IOException {

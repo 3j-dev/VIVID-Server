@@ -25,21 +25,21 @@ public class UserAuthTokenDao {
     }
 
     // save refresh token redis
-    public void saveRefreshToken(String email, String refreshToken) {
+    public void saveRefreshToken(String userIp, String refreshToken) {
 
         final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
 
-        stringStringValueOperations.set(email, refreshToken, 10, TimeUnit.DAYS);
+        stringStringValueOperations.set(userIp, refreshToken, 14, TimeUnit.DAYS);
 
     }
 
     // get refresh token redis
-    public String getRefreshToken(String email) {
+    public String getRefreshToken(String userIp) {
 
         final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
 
         // refresh token get from redis
-        Optional<Object> refreshToken = Optional.ofNullable(stringStringValueOperations.get(email));
+        Optional<Object> refreshToken = Optional.ofNullable(stringStringValueOperations.get(userIp));
 
         // handle not found exception
         refreshToken.orElseThrow(() -> new RefreshTokenNotFoundException());
@@ -49,11 +49,11 @@ public class UserAuthTokenDao {
     }
 
     // remove refresh token
-    public void removeRefreshToken(String email) {
+    public void removeRefreshToken(String userIp) {
 
         final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
 
-        stringStringValueOperations.set(email, "", 1, TimeUnit.MILLISECONDS);
+        stringStringValueOperations.set(userIp, "", 1, TimeUnit.MILLISECONDS);
     }
 
 
