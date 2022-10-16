@@ -85,7 +85,7 @@ public class AwsS3Service {
 
 
     // 스냅샷 이미지를 s3에 업로드하는 메소드
-    public String uploadSnapshotImagesToS3(MultipartFile file, String individualVideoId, String videoTime){
+    public String uploadSnapshotImagesToS3(MultipartFile file, String individualVideoId, Long videoTime){
 
         // 디렉토리 이름은 individualVideoId, fileName은 캡처 시간대
         String snapshotImageKey = individualVideoId + '/' + videoTime;

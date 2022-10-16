@@ -42,14 +42,11 @@ public class IndividualVideoApi {
             @Parameter(description = "multipartFile image file")
             MultipartFile multipartFile,
 
-            @RequestPart("snapshotInfo")
-            @Parameter(description = "SnapShotImageUploadRequest 객체 json input")
-            @Valid final SnapShotImageUploadRequest request,
-
+            @RequestParam("video-time") Long videoTime,
             @PathVariable("individual-video-id") String individualVideoId
             ) {
 
-        return individualVideoService.uploadSnapshotImage(multipartFile, individualVideoId, request.getVideoTime());
+        return individualVideoService.uploadSnapshotImage(multipartFile, individualVideoId,videoTime);
     }
 
     @Operation(summary = "individual videos list get api", description = "video space participant id를 이용하여 individual video id list를 get 하는 api입니다")

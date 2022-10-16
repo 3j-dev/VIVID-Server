@@ -18,7 +18,7 @@ public class SnapshotImageUploadResponse {
     @Schema(description = "이미지 파일 경로" , example = "test01.aws.com")
     private String filePath;
 
-    @Schema(description = "스냅샷 캡처 시간" , example = "00:13:51")
-    private String time;
+    @Schema(description = "스냅샷 캡처 시간(초)" , example = "120")
+    private Long time;
 
 }

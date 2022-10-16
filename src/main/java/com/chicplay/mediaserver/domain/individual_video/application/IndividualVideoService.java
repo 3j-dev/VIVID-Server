@@ -125,7 +125,7 @@ public class IndividualVideoService {
     }
 
     // image upload service
-    public SnapshotImageUploadResponse uploadSnapshotImage(MultipartFile file, String individualVideoId, String videoTime) {
+    public SnapshotImageUploadResponse uploadSnapshotImage(MultipartFile file, String individualVideoId, Long videoTime) {
 
         // image upload, upload된 image file path get
         String snapshotImageFilePath = awsS3Service.uploadSnapshotImagesToS3(file, individualVideoId, videoTime);
