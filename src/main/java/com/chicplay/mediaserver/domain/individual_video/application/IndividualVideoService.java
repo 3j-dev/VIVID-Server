@@ -58,6 +58,12 @@ public class IndividualVideoService {
         // login user 권한 체크
         userService.checkValidUserAccess(individualVideo.getVideoSpaceParticipant().getUser().getEmail());
 
+        // last access time update
+        individualVideo.changeLastAccessTime();
+
+        // last access video update
+        userService.changeLastAccessIndividualVideoId(UUID.fromString(individualVideoId));
+
         // video file path get
         String videoFilePath = awsS3Service.getVideoFilePath(individualVideo.getVideo().getId());
 
@@ -132,8 +138,21 @@ public class IndividualVideoService {
         return response;
     }
 
+    public void updateLastAccessTime(String individualVideoId) {
+
+        // individual video get
+        IndividualVideo individualVideo = findById(individualVideoId);
+
+        // login user 권한 체크
+        userService.checkValidUserAccess(individualVideo.getVideoSpaceParticipant().getUser().getEmail());
+
+        // last access time update
+        individualVideo.changeLastAccessTime();
+    }
+
     public void checkValidUserAccessId(String individualVideoId) {
 
+        // individual video get
         IndividualVideo individualVideo = findById(individualVideoId);
 
         // user 권한 체크

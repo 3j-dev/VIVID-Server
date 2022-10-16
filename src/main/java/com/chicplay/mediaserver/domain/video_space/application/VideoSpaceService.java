@@ -1,8 +1,5 @@
 package com.chicplay.mediaserver.domain.video_space.application;
 
-import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
-import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
-import com.chicplay.mediaserver.domain.individual_video.exception.IndividualVideoNotFoundException;
 import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.user.dto.UserGetResponse;
@@ -42,7 +39,7 @@ public class VideoSpaceService {
     // 로그인한 account의 video space, video get list get 메소드
     public List<VideoSpaceGetResponse> getList() {
 
-        // account get by email
+        // account get by access token
         User user = userService.findByAccessToken();
 
         List<VideoSpaceGetResponse> videoSpaceGetResponseList = new ArrayList<>();
@@ -82,8 +79,8 @@ public class VideoSpaceService {
                     return;
 
                 VideoGetResponse videoGetResponse = videoSpaceGetResponseHashMap.get(individualVideo.getVideo().getId());
-                videoGetResponse.changeIndividualVideoId(individualVideo.getId().toString());
-                videoSpaceGetResponse.addVideoGetResponse(videoGetResponse);
+                videoGetResponse.changeIndividualVideoState(individualVideo.getId().toString(), individualVideo.getLastAccessTime(), individualVideo.getProgressRate());
+                videoSpaceGetResponse.addVideo(videoGetResponse);
             });
 
             videoSpaceGetResponseList.add(videoSpaceGetResponse);
@@ -92,7 +89,7 @@ public class VideoSpaceService {
         return videoSpaceGetResponseList;
     }
 
-    public List<HostedVideoSpaceGetResponse> getHostedVideoSpace() {
+    public List<HostedVideoSpaceGetResponse> getHostedList() {
 
         // email get, = host email
         String email = userService.getEmailFromAuthentication();

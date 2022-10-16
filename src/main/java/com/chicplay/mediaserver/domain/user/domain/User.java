@@ -43,13 +43,8 @@ public class User extends BaseTime {
     @Column(name="role", nullable = false)
     private Role role;
 
-
-//    @Builder
-//    public User(String email, Password password, String name) {
-//        this.email = email;
-//        this.password = password;
-//        this.name = name;
-//    }
+    @Column(name = "last_access_individual_video_id")
+    private UUID lastAccessIndividualVideoId;
 
     @Builder
     public User(String email,  String name, String picture, Role role) {
@@ -57,6 +52,10 @@ public class User extends BaseTime {
         this.name = name;
         this.role = role;
         this.picture = picture;
+    }
+
+    public void changeLastAccessIndividualVideoId(UUID lastAccessIndividualVideoId) {
+        this.lastAccessIndividualVideoId = lastAccessIndividualVideoId;
     }
 
     // null 체크를 위한 getter 따로 생성

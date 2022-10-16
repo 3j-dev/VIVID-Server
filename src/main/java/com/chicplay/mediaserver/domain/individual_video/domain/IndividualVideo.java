@@ -8,9 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -33,10 +33,23 @@ public class IndividualVideo extends BaseTime {
     @JoinColumn(name = "video_space_participant_id")
     private VideoSpaceParticipant videoSpaceParticipant;
 
+    @Column(name = "progress_rate")
+    private Long progressRate;
+
+    @Column(name = "last_access_time")
+    private LocalDateTime lastAccessTime;
+
     @Builder
     public IndividualVideo(Video video, VideoSpaceParticipant videoSpaceParticipant) {
         changeVideo(video);
         changeVideoSpaceParticipant(videoSpaceParticipant);
+        this.progressRate = 0L;
+        this.lastAccessTime = LocalDateTime.now();
+    }
+
+    // 최종 접근 시간 변경 메소드
+    public void changeLastAccessTime() {
+        this.lastAccessTime = LocalDateTime.now();
     }
 
     // 연관 관계 편의 메소드

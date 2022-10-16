@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class VideoGetResponse {
@@ -17,6 +19,10 @@ public class VideoGetResponse {
 
     private String description;
 
+    private LocalDateTime lastAccessTime;
+
+    private Long progressRate;
+
     @Builder
     public VideoGetResponse(Long id,String title, String description) {
         this.id = id;
@@ -24,7 +30,9 @@ public class VideoGetResponse {
         this.description = description;
     }
 
-    public void changeIndividualVideoId(String individualVideoId) {
+    public void changeIndividualVideoState(String individualVideoId, LocalDateTime lastAccessTime, Long progressRate) {
         this.individualVideoId = individualVideoId;
+        this.lastAccessTime = lastAccessTime;
+        this.progressRate = progressRate;
     }
 }

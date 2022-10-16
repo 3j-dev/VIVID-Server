@@ -36,7 +36,7 @@ public class VideoSpaceApi {
     @GetMapping("/api/video-space/hosted")
     public List<HostedVideoSpaceGetResponse> getHostedVideoSpaces(){
 
-        List<HostedVideoSpaceGetResponse> hostedVideoSpace = videoSpaceService.getHostedVideoSpace();
+        List<HostedVideoSpaceGetResponse> hostedVideoSpace = videoSpaceService.getHostedList();
 
         return hostedVideoSpace;
     }

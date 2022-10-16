@@ -70,4 +70,12 @@ public class IndividualVideoApi {
         return individualVideoDetailsGetResponse;
     }
 
+    @Operation(summary = "individual video last accessed update api", description = "individual video의 최종 접근 시각을 최신화하는 api입니다.")
+    @PutMapping("/api/individual-videos/{individual-video-id}/accessed")
+    public void updateLastAccessTime(@PathVariable("individual-video-id") String individualVideoId) throws IOException {
+
+        // 최종 접근 시간 변경
+        individualVideoService.updateLastAccessTime(individualVideoId);
+    }
+
 }

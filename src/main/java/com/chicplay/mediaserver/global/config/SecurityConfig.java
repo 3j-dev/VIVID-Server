@@ -39,7 +39,7 @@ public class SecurityConfig {
 
         // filter 안타게끔
         return (web) -> web.ignoring().mvcMatchers(
-                "/auth/token/**", "/swagger-ui/**","/api/test/**"
+                "/api/auth/token/**", "/swagger-ui/**","/api/test/**"
                 , "/v3/api-docs/**","/login/oauth2/code", "/api/login/webex",
                 "/api/videos/{video_id}/uploaded"
         );

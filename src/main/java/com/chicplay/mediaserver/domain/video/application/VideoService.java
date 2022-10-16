@@ -82,8 +82,6 @@ public class VideoService {
     // upload 된 후 video의 uploaded 상태 변경
     public void changeUploadState(Long videoId, boolean isUploaded) {
 
-        log.info("test11");
-
         // 해당 video의 find
         Video video = videoDao.findById(videoId);
 

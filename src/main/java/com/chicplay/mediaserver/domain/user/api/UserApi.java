@@ -1,6 +1,7 @@
 package com.chicplay.mediaserver.domain.user.api;
 
 import com.chicplay.mediaserver.domain.user.application.UserLoginService;
+import com.chicplay.mediaserver.domain.user.application.UserMyPageService;
 import com.chicplay.mediaserver.domain.user.dto.UserNewTokenDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -19,19 +20,9 @@ public class UserApi {
 
     private final UserLoginService userLoginService;
 
-    private final HttpSession httpSession;
-
-//    @PostMapping("/api/test/account")
-//    public UserSignUpResponse signUp(@RequestBody @Valid final UserLoginRequest userLoginRequest){
-//
-//        UserSignUpResponse userSignUpResponse = userService.signUp(userLoginRequest);
-//
-//        return userSignUpResponse;
-//    }
-
     // access token 만료시 refresh token을 통해 재발급
     @Operation(summary = "user access token issue api", description = "쿠키의 access token get하거나, redis의 refresh token을 활용하여 access token을 재발급합니다.")
-    @PostMapping("/auth/token")
+    @PostMapping("/api/auth/token")
     public UserNewTokenDto reIssueAccessToken(){
 
         UserNewTokenDto newAccessToken = userLoginService.reIssueAccessToken();
@@ -40,16 +31,15 @@ public class UserApi {
     }
 
     @Operation(summary = "user logout api", description = "user가 logout 할 시 호출하는 api입니다. redis의 refresh token을 삭제합니다.")
-    @PostMapping("/auth/logout")
+    @PostMapping("/api/auth/logout")
     public void logout(){
 
         userLoginService.removeTokensByLogout();
     }
 
-
     // test user로 로그인합니다. 이때 access token을 발급하며, session에 리프래쉬 토큰이 저장됩니다.
     @Operation(summary = "test user login api", description = "test용 계정으로 login 할 수 있는 api입니다.")
-    @GetMapping("/auth/token/test")
+    @GetMapping("/api/auth/token/test")
     public List<UserNewTokenDto> loginByTestUser() {
 
         List<UserNewTokenDto> userNewTokenDtoList = userLoginService.loginByTestUser();

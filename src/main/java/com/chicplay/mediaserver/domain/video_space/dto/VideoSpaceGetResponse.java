@@ -32,7 +32,7 @@ public class VideoSpaceGetResponse {
         this.description = videoSpace.getDescription();
     }
 
-    public void addVideoGetResponse(VideoGetResponse videoGetResponse) {
+    public void addVideo(VideoGetResponse videoGetResponse) {
         this.videos.add(videoGetResponse);
     }
 }

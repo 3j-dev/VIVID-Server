@@ -21,6 +21,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -107,6 +108,14 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         return UserSignUpResponse.builder().user(savedUser).build();
+    }
+
+    public void changeLastAccessIndividualVideoId(UUID lastAccessIndividualVideoId) {
+
+        User user = findByAccessToken();
+
+        // chagne last
+        user.changeLastAccessIndividualVideoId(lastAccessIndividualVideoId);
     }
 
     // 접근된 email과 로그인한 email을 비교하여 유효한 접근인 체크하는 메소드
