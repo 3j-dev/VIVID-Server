@@ -2,6 +2,7 @@ package com.chicplay.mediaserver.domain.video.application;
 
 import com.chicplay.mediaserver.domain.individual_video.application.IndividualVideoService;
 import com.chicplay.mediaserver.domain.user.application.UserService;
+import com.chicplay.mediaserver.domain.user.exception.UserAccessDeniedException;
 import com.chicplay.mediaserver.domain.video.dao.VideoDao;
 import com.chicplay.mediaserver.domain.video.dao.VideoRepository;
 import com.chicplay.mediaserver.domain.video.domain.Video;
@@ -13,6 +14,7 @@ import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +41,7 @@ public class VideoService {
 
     private final AwsS3Service awsS3Service;
 
+    // multipart 파일을 통한 직접 업로드 메소드
     public VideoSaveResponse uploadByMultipartFile(MultipartFile multipartFile, Long videoSpaceId, VideoSaveRequest videoSaveRequest) {
 
         // get email
@@ -46,6 +49,10 @@ public class VideoService {
 
         // 해당 video의 video space find
         VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
+
+        // video space의 host email과 현재 접속 user의 email이 불일치할 경우, throw
+        if(!videoSpace.getHostEmail().equals(email))
+            throw new UserAccessDeniedException();
 
         // 객체 저장
         Video savedVideo = videoRepository.save(videoSaveRequest.toEntity(videoSpace, email));
@@ -59,6 +66,7 @@ public class VideoService {
         return videoSaveResponse;
     }
 
+    // download url을 통한 video 업로드
     public VideoSaveResponse uploadByDownloadUrl(String recordingDownloadUrl, Long videoSpaceId, VideoSaveRequest videoSaveRequest) throws IOException {
 
         // get email
@@ -66,6 +74,10 @@ public class VideoService {
 
         // 해당 video의 video space find
         VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
+
+        // video space의 host email과 현재 접속 user의 email이 불일치할 경우, throw
+        if(!videoSpace.getHostEmail().equals(email))
+            throw new UserAccessDeniedException();
 
         // 객체 저장
         Video savedVideo = videoRepository.save(videoSaveRequest.toEntity(videoSpace, email));

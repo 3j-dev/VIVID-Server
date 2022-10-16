@@ -127,6 +127,9 @@ public class IndividualVideoService {
     // image upload service
     public SnapshotImageUploadResponse uploadSnapshotImage(MultipartFile file, String individualVideoId, Long videoTime) {
 
+        // user 권한 체크
+        checkValidUserAccessId(individualVideoId);
+
         // image upload, upload된 image file path get
         String snapshotImageFilePath = awsS3Service.uploadSnapshotImagesToS3(file, individualVideoId, videoTime);
 

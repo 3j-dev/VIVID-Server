@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.user.application;
 
+import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.domain.user.dao.UserDao;
 import com.chicplay.mediaserver.domain.user.dao.UserRepository;
 import com.chicplay.mediaserver.domain.user.domain.User;
@@ -8,6 +9,7 @@ import com.chicplay.mediaserver.domain.user.dto.UserSignUpResponse;
 import com.chicplay.mediaserver.domain.user.exception.AccessTokenNotFoundException;
 import com.chicplay.mediaserver.domain.user.exception.EmailDuplicateException;
 import com.chicplay.mediaserver.domain.user.exception.UserAccessDeniedException;
+import com.chicplay.mediaserver.domain.user.exception.UserNotFoundException;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
 import com.chicplay.mediaserver.global.auth.application.JwtProviderService;
@@ -21,6 +23,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -78,7 +82,7 @@ public class UserService {
         String webexAccessToken = user.getInstitution().getWebexAccessToken();
 
         // access token not found exception
-        if (!StringUtils.hasText(webexAccessToken)){
+        if (!StringUtils.hasText(webexAccessToken)) {
             throw new AccessTokenNotFoundException(ErrorCode.ACCESS_TOKEN_NOT_FOUND_IN_HEADER);
         }
 

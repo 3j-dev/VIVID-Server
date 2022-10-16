@@ -2,12 +2,14 @@ package com.chicplay.mediaserver.domain.user.api;
 
 import com.chicplay.mediaserver.domain.user.application.UserLoginService;
 import com.chicplay.mediaserver.domain.user.application.UserMyPageService;
+import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.dto.UserNewTokenDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
@@ -19,6 +21,8 @@ import java.util.List;
 public class UserApi {
 
     private final UserLoginService userLoginService;
+
+    private final UserService userService;
 
     // access token 만료시 refresh token을 통해 재발급
     @Operation(summary = "user access token issue api", description = "쿠키의 access token get하거나, redis의 refresh token을 활용하여 access token을 재발급합니다.")
@@ -49,7 +53,9 @@ public class UserApi {
 
     @Operation(summary = "test api", description = "서버 연결을 테스팅 하기 위한 api 입니다.")
     @GetMapping("/api/test")
-    public String test(){
+    public String test(@RequestParam("email") String email){
+
+        userService.test(email);
 
         return "hello_test";
     }

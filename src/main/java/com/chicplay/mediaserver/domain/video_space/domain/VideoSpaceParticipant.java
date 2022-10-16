@@ -27,12 +27,12 @@ public class VideoSpaceParticipant extends BaseTime {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "videoSpaceParticipant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<IndividualVideo> individualVideos = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "video_space_id")
     private VideoSpace videoSpace;
-
-    @OneToMany(mappedBy = "videoSpaceParticipant", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<IndividualVideo> individualVideos = new ArrayList<>();
 
     @Builder
     public VideoSpaceParticipant(User user, VideoSpace videoSpace) {
