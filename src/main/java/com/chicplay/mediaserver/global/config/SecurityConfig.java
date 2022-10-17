@@ -75,7 +75,7 @@ public class SecurityConfig {
                         , "/h2-console/**"
                 ).permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // 추가
-                .antMatchers("/login/**", "/auth/**").permitAll() // Security 허용 url
+                .antMatchers("/api/login/**", "/api/auth/**").permitAll() // Security 허용 url
                 .antMatchers("/api/**").hasRole(Role.USER.name())   // 모든 api 요청에 대해 user 권한
                 .anyRequest().authenticated()   // 나머지 요청에 대해서 권한이 있어야함
                 .and()

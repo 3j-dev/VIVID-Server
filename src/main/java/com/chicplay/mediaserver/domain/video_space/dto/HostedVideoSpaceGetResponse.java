@@ -1,6 +1,7 @@
 package com.chicplay.mediaserver.domain.video_space.dto;
 
 import com.chicplay.mediaserver.domain.user.dto.UserGetResponse;
+import com.chicplay.mediaserver.domain.video.dto.HostedVideoGetResponse;
 import com.chicplay.mediaserver.domain.video.dto.VideoGetResponse;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
@@ -22,7 +23,7 @@ public class HostedVideoSpaceGetResponse {
 
     private String description;
 
-    private List<VideoGetResponse> videos = new ArrayList<>();
+    private List<HostedVideoGetResponse> videos = new ArrayList<>();
 
     private List<UserGetResponse> users = new ArrayList<>();
 
@@ -34,8 +35,8 @@ public class HostedVideoSpaceGetResponse {
         this.description = videoSpace.getDescription();
     }
 
-    public void addVideoGetResponse(VideoGetResponse videoGetResponse) {
-        this.videos.add(videoGetResponse);
+    public void addVideoGetResponse(HostedVideoGetResponse hostedVideoGetResponse) {
+        this.videos.add(hostedVideoGetResponse);
     }
 
     public void addUserGetResponse(UserGetResponse userGetResponse) {

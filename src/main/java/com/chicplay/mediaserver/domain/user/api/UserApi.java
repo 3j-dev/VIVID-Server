@@ -55,8 +55,6 @@ public class UserApi {
     @GetMapping("/api/test")
     public String test(@RequestParam("email") String email){
 
-        userService.test(email);
-
         return "hello_test";
     }
 

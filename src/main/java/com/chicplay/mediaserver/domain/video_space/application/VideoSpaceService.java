@@ -4,6 +4,7 @@ import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.user.dto.UserGetResponse;
 import com.chicplay.mediaserver.domain.video.domain.Video;
+import com.chicplay.mediaserver.domain.video.dto.HostedVideoGetResponse;
 import com.chicplay.mediaserver.domain.video.dto.VideoGetResponse;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceDao;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceRepository;
@@ -110,7 +111,7 @@ public class VideoSpaceService {
 
             // create video response dto
             videoSpace.getVideos().forEach(video -> {
-                hostedVideoSpaceGetResponse.addVideoGetResponse(VideoGetResponse.builder()
+                hostedVideoSpaceGetResponse.addVideoGetResponse(HostedVideoGetResponse.builder()
                         .id(video.getId())
                         .title(video.getTitle())
                         .description(video.getDescription()).build());

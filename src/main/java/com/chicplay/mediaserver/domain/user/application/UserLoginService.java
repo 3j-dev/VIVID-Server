@@ -91,7 +91,7 @@ public class UserLoginService {
         userAuthTokenDao.removeRefreshToken(userService.getUserIp());
 
         // remove access token in http only cookie
-        userAccessTokenCookieService.makeAccessTokenCookie(null, 30 * 60);
+        userAccessTokenCookieService.makeAccessTokenCookie(null, 1);
 
     }
 
