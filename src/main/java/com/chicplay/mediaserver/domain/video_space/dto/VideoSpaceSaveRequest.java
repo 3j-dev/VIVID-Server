@@ -29,6 +29,7 @@ public class VideoSpaceSaveRequest {
                 .name(this.name)
                 .description(this.description)
                 .hostEmail(hostEmail)
+                .isIndividualVideoSpace(false)
                 .build();
     }
 }

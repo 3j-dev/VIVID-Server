@@ -15,7 +15,7 @@ public class VideoSpaceParticipantApi {
     private final VideoSpaceParticipantService videoSpaceParticipantService;
 
     // video space에 account를 추가한다. 즉, VideoSpaceParticipant save
-    @Operation(summary = "video space에 account를 추가하는 api", description = "video space에 user를 추가하는 api 입니다.")
+    @Operation(summary = "video space에 user를 추가하는 api", description = "video space에 user를 추가하는 api 입니다.")
     @PostMapping("/api/video-space/{video-space-id}/{user-email}")
     public VideoSpaceParticipantSaveResponse save(
             @PathVariable("video-space-id") Long videoSpaceId,
@@ -25,5 +25,18 @@ public class VideoSpaceParticipantApi {
 
         return videoSpaceParticipantSaveResponse;
     }
+
+    // video space에 account를 추가한다. 즉, VideoSpaceParticipant save
+    @Operation(summary = "video space에서 user를 삭제하는 api", description = "video space에 user를 삭제하는 api 입니다.")
+    @DeleteMapping("/api/video-space/{video-space-id}/{user-email}")
+    public void delete(
+            @PathVariable("video-space-id") Long videoSpaceId,
+            @PathVariable("user-email") String userEmail) {
+
+
+
+    }
+
+
 
 }

@@ -12,12 +12,15 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class VideoSpaceSaveResponse {
 
+    private Long videoSpaceId;
+
     private String name;
 
     private String description;
 
     @Builder
     public VideoSpaceSaveResponse(VideoSpace videoSpace) {
+        this.videoSpaceId = videoSpace.getId();
         this.name = videoSpace.getName();
         this.description = videoSpace.getDescription();
     }

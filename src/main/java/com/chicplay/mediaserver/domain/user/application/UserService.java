@@ -103,11 +103,11 @@ public class UserService {
                 .name("개인 영상")
                 .description(user.getName() + "님의 개인 영상 그룹 입니다.")
                 .hostEmail(user.getEmail())
+                .isIndividualVideoSpace(true)
                 .build();
 
         // 개인 영상 스페이스 - account 매핑 테이블 생성
         VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().user(user).videoSpace(videoSpace).build();
-        //VideoSpaceParticipant savedVideoSpaceParticipant = videoSpaceParticipantService.saveAfterAccountSaved(videoSpaceParticipant);
 
         User savedUser = userRepository.save(user);
 

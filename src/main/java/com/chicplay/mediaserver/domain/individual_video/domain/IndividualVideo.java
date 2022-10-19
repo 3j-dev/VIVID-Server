@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,12 +27,12 @@ public class IndividualVideo extends BaseTime {
     @Column(name = "individual_video_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "video_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "video_id", nullable = false)
     private Video video;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "video_space_participant_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "video_space_participant_id", nullable = false)
     private VideoSpaceParticipant videoSpaceParticipant;
 
     @Column(name = "progress_rate")
@@ -73,6 +75,11 @@ public class IndividualVideo extends BaseTime {
 
         this.videoSpaceParticipant = videoSpaceParticipant;
         this.videoSpaceParticipant.getIndividualVideos().add(this);
+    }
+
+    public void remove() {
+        video = null;
+        videoSpaceParticipant = null;
     }
 
 

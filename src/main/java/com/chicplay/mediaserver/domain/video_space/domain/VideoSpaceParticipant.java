@@ -23,25 +23,25 @@ public class VideoSpaceParticipant extends BaseTime {
     @Column(name = "video_space_participant_id", updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "videoSpaceParticipant", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<IndividualVideo> individualVideos = new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "video_space_id")
     private VideoSpace videoSpace;
 
+    @OneToMany(mappedBy = "videoSpaceParticipant", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<IndividualVideo> individualVideos = new ArrayList<>();
+
     @Builder
     public VideoSpaceParticipant(User user, VideoSpace videoSpace) {
-        changeAccount(user);
+        changeUser(user);
         changeVideoSpace(videoSpace);
     }
 
     // 연관 관계 편의 메소드
-    public void changeAccount(User user) {
+    public void changeUser(User user) {
 
         // account 관계가 있다면,
         if(this.user != null){
@@ -63,6 +63,13 @@ public class VideoSpaceParticipant extends BaseTime {
 
         this.videoSpace = videoSpace;
         this.videoSpace.getVideoSpaceParticipants().add(this);
-
     }
+
+    public void remove() {
+        this.videoSpace = null;
+    }
+
+
+
+
 }

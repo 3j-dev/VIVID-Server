@@ -22,25 +22,51 @@ public class VideoSpace extends BaseTime {
     @Column(name = "video_space_id", updatable = false)
     private Long id;
 
-    @OneToMany(mappedBy = "videoSpace",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "videoSpace", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VideoSpaceParticipant> videoSpaceParticipants = new ArrayList<>();
 
-    @OneToMany(mappedBy = "videoSpace",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "videoSpace", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Video> videos = new ArrayList<>();
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
-    @Column(name="description")
+    @Column(name = "description")
     private String description;
 
     @Column(name = "host_email")
     private String hostEmail;
 
+    @Column(name = "is_individual_video_space", columnDefinition = "TINYINT(1)")
+    private boolean isIndividualVideoSpace;
+
     @Builder
-    public VideoSpace(String name, String description, String hostEmail) {
+    public VideoSpace(String name, String description, String hostEmail, boolean isIndividualVideoSpace) {
         this.name = name;
         this.description = description;
         this.hostEmail = hostEmail;
+        this.isIndividualVideoSpace = isIndividualVideoSpace;
+    }
+
+    // remove 연관 관계 편의 메소드
+    public void remove() {
+
+        // videoSpaecParticipant와 연관 관계 끊기
+        for (VideoSpaceParticipant videoSpaceParticipant : videoSpaceParticipants) {
+
+            // user와 연관 관계 끊기
+            videoSpaceParticipant.getUser().remove(videoSpaceParticipant);
+            videoSpaceParticipant.remove();
+        }
+
+        // video와 연관 관계 끊기
+        for (Video video : videos) {
+            video.remove();
+        }
+
+        // 연관관계 끊기
+        videos.clear();
+        videoSpaceParticipants.clear();
+
     }
 }

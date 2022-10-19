@@ -22,7 +22,7 @@ public class User extends BaseTime {
     @Column(name = "user_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VideoSpaceParticipant> videoSpaceParticipants = new ArrayList<>();
 
     @Email
@@ -66,6 +66,12 @@ public class User extends BaseTime {
     public void changeInstitution(Institution institution) {
         this.institution = institution;
     }
+
+    public void remove(VideoSpaceParticipant videoSpaceParticipant) {
+        videoSpaceParticipants.remove(videoSpaceParticipant);
+    }
+
+
 
 
 

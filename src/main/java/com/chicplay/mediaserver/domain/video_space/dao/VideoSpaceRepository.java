@@ -9,4 +9,5 @@ public interface VideoSpaceRepository extends JpaRepository<VideoSpace, Long> {
 
     List<VideoSpace> findAllByHostEmail(String hostEmail);
 
+
 }

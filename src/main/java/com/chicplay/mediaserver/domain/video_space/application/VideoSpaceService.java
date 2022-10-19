@@ -1,12 +1,15 @@
 package com.chicplay.mediaserver.domain.video_space.application;
 
+import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.user.dto.UserGetResponse;
+import com.chicplay.mediaserver.domain.user.exception.UserAccessDeniedException;
 import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.domain.video.dto.HostedVideoGetResponse;
 import com.chicplay.mediaserver.domain.video.dto.VideoGetResponse;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceDao;
+import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceParticipantRepository;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceRepository;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
@@ -32,6 +35,8 @@ import java.util.Optional;
 public class VideoSpaceService {
 
     private final VideoSpaceRepository videoSpaceRepository;
+
+    private final VideoSpaceParticipantRepository videoSpaceParticipantRepository;
 
     private final VideoSpaceDao videoSpaceDao;
 
@@ -90,6 +95,7 @@ public class VideoSpaceService {
         return videoSpaceGetResponseList;
     }
 
+    // 자신이 생성한(host인) video space list를 get합니다.
     public List<HostedVideoSpaceGetResponse> getHostedList() {
 
         // email get, = host email
@@ -156,7 +162,6 @@ public class VideoSpaceService {
 
         // id를 통해 videoSpace get
         Optional<VideoSpace> videoSpace = videoSpaceRepository.findById(id);
-        //VideoSpace videoSpace = videoSpaceDao.findById(id);
 
         // not found exception
         videoSpace.orElseThrow(() -> new VideoSpaceNotFoundException(id.toString()));
@@ -164,5 +169,21 @@ public class VideoSpaceService {
         return videoSpace.get();
     }
 
+    public void delete(Long videoSpaceId) {
 
+        User user = userService.findByAccessToken();
+
+        VideoSpace videoSpace = findById(videoSpaceId);
+
+        // 자신이 host인 경우만 삭제 가능, throw new
+        if(!videoSpace.getHostEmail().equals(user.getEmail()))
+            throw new UserAccessDeniedException();
+
+        // 연관 관계 끊기.
+        videoSpace.remove();
+
+        // space delete
+        videoSpaceRepository.deleteById(videoSpaceId);
+
+    }
 }

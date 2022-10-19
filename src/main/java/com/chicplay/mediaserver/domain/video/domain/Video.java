@@ -4,6 +4,8 @@ import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,11 +23,11 @@ public class Video extends BaseTime{
     @Column(name = "video_id", updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "video_space_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "video_space_id", nullable = false)
     private VideoSpace videoSpace;
 
-    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "video", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IndividualVideo> individualVideos = new ArrayList<>();
 
     @Column(name="title", nullable = false)
@@ -65,5 +67,14 @@ public class Video extends BaseTime{
         this.videoSpace = videoSpace;
         this.videoSpace.getVideos().add(this);
 
+    }
+
+    public void remove() {
+        this.videoSpace = null;
+
+        // individualVideo와 연관관계 끊기
+        for (IndividualVideo individualVideo : individualVideos) {
+            individualVideo.remove();
+        }
     }
 }

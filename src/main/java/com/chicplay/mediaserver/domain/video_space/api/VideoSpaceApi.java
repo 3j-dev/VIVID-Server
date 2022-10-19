@@ -8,10 +8,7 @@ import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceSaveResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -49,5 +46,14 @@ public class VideoSpaceApi {
         VideoSpaceSaveResponse videoSpaceSaveResponse = videoSpaceService.save(videoSpaceSaveRequest);
         return videoSpaceSaveResponse;
     }
+
+    @Operation(summary = "video space delete api", description = "video space를 삭제하는 api 입니다.")
+    @DeleteMapping("/api/video-space/{video-space-id}")
+    public void delete(@PathVariable("video-space-id") Long videoSpaceId) {
+
+        videoSpaceService.delete(videoSpaceId);
+
+    }
+
 
 }
