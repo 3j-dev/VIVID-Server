@@ -37,6 +37,8 @@ public class UserLoginService {
         // 쿠키에 access token을 get, 이 때 쿠키에 값 없으면 throw exception
         String accessToken = userAccessTokenCookieService.getAccessTokenFromCookie();
 
+        String email = jwtProviderService.getEmail(accessToken);
+
         try {
             // access token validation 판별.
             jwtProviderService.validateToken(accessToken);
@@ -45,15 +47,15 @@ public class UserLoginService {
             return UserNewTokenDto.builder().accessToken(accessToken).build();
         } catch (ExpiredJwtException expiredJwtException) {
             //만료됐을 경우, refresh token 확인.
-            return reIssueAccessTokenFromRefreshToken(accessToken);
+            return reIssueAccessTokenFromRefreshToken(email, accessToken);
         }
     }
 
     // refresh token으로부터 access token을 재발급 받는 메소드입니다.
-    public UserNewTokenDto reIssueAccessTokenFromRefreshToken(String accessToken) {
+    public UserNewTokenDto reIssueAccessTokenFromRefreshToken(String email, String accessToken) {
 
         // refresh token get, 쿠키가 있어도 ip를 통해 2차 판별.
-        String refreshToken = userAuthTokenDao.getRefreshToken(userService.getUserIp());
+        String refreshToken = userAuthTokenDao.getRefreshToken(email, userService.getUserIp());
 
         // refresh token validation
         try {
@@ -70,7 +72,7 @@ public class UserLoginService {
         UserAuthToken reIssuedToken = jwtProviderService.generateTokenFromRefreshToken(refreshToken);
 
         // refresh token save in redis
-        saveRefreshToken(reIssuedToken.getRefreshToken());
+        saveRefreshToken(email, reIssuedToken.getRefreshToken());
 
         // access token save in cookie
         userAccessTokenCookieService.saveAccessTokenCookie(reIssuedToken.getAccessToken());
@@ -80,15 +82,19 @@ public class UserLoginService {
 
 
     // refresh token redis에 저장.
-    public void saveRefreshToken(String refreshToken) {
-        userAuthTokenDao.saveRefreshToken(userService.getUserIp(), refreshToken);
+    public void saveRefreshToken(String email, String refreshToken) {
+
+        userAuthTokenDao.saveRefreshToken(email, userService.getUserIp(), refreshToken);
     }
 
     // logout으로 인한 모든 token 삭제.
     public void removeTokensByLogout() {
 
+        // email get
+        String email = jwtProviderService.getEmailFromHeaderAccessToken();
+
         // remove refresh token
-        userAuthTokenDao.removeRefreshToken(userService.getUserIp());
+        userAuthTokenDao.removeRefreshToken(email);
 
         // remove access token in http only cookie
         userAccessTokenCookieService.makeAccessTokenCookie(null, 1);

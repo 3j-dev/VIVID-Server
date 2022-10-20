@@ -13,7 +13,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
 
-
         registry.addMapping("/**")
                 .allowedOrigins("https://dev.edu-vivid.com","http://localhost:8081")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")

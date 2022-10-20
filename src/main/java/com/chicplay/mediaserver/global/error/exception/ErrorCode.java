@@ -24,6 +24,7 @@ public enum ErrorCode {
     ACCESS_TOKEN_INVALID("AT02", "Access Token is Invalid.",HttpStatus.UNAUTHORIZED.value()),
     ACCESS_TOKEN_NOT_FOUND_IN_HEADER("AT03", "Access Token is not Found in Header.",HttpStatus.UNAUTHORIZED.value()),
     ACCESS_TOKEN_NOT_FOUND_IN_COOKIE("AT04", "Access Token is not Found in Cookie.",HttpStatus.UNAUTHORIZED.value()),
+    WEBEX_ACCESS_TOKEN_NOT_FOUND_IN_HEADER("AT03-1", "Webex Access Token is not Found in Header.",HttpStatus.UNAUTHORIZED.value()),
     REFRESH_TOKEN_NOT_FOUND("AT05", "Refreshed Token is Not Found.",HttpStatus.UNAUTHORIZED.value()),
     REFRESH_TOKEN_EXPIRED("AT06", "Refreshed Token is Expired.",HttpStatus.UNAUTHORIZED.value()),
 

@@ -71,7 +71,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 .build().toUriString();
 
         // redis - refresh token save
-        userLoginService.saveRefreshToken(userAuthToken.getRefreshToken());
+        userLoginService.saveRefreshToken(userLoginRequest.getEmail(), userAuthToken.getRefreshToken());
 
         // access token save in cookie
         userAccessTokenCookieService.saveAccessTokenCookie(userAuthToken.getAccessToken());

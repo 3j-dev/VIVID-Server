@@ -1,14 +1,18 @@
 package com.chicplay.mediaserver.domain.user.dao;
 
+import com.chicplay.mediaserver.domain.user.exception.RefreshTokenExpiredException;
 import com.chicplay.mediaserver.domain.user.exception.RefreshTokenNotFoundException;
 import jdk.dynalink.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -18,42 +22,67 @@ import java.util.concurrent.TimeUnit;
 @Transactional
 public class UserAuthTokenDao {
 
-    private final  RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    private final String REFRESH_TOKEN_HASH_KEY = "refresh-token";
+
+    private final String USER_IP_HASH_KEY = "user-ip";
 
     public UserAuthTokenDao(@Qualifier("userRedisTemplate") RedisTemplate<?, ?> redisTemplate) {
         this.redisTemplate = (RedisTemplate<String, Object>) redisTemplate;
     }
 
     // save refresh token redis
-    public void saveRefreshToken(String userIp, String refreshToken) {
+    public void saveRefreshToken(String email, String userIp, String refreshToken) {
 
-        final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
+        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
 
-        stringStringValueOperations.set(userIp, refreshToken, 14, TimeUnit.DAYS);
+        // hash data 생성
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put(REFRESH_TOKEN_HASH_KEY, refreshToken);
+        userMap.put(USER_IP_HASH_KEY, userIp);
+
+        // save
+        hashOperations.putAll(email, userMap);
+
+        // 만료시간 설정
+        redisTemplate.expire(email, 14, TimeUnit.DAYS);
+
+//        final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
+//        stringStringValueOperations.set(userIp, refreshToken, 14, TimeUnit.DAYS);
 
     }
 
     // get refresh token redis
-    public String getRefreshToken(String userIp) {
+    public String getRefreshToken(String email, String userIp) {
 
-        final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
+        log.info("refresh-token-get");
 
-        // refresh token get from redis
-        Optional<Object> refreshToken = Optional.ofNullable(stringStringValueOperations.get(userIp));
+        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+
+        Optional<Object> refreshToken = Optional.ofNullable(hashOperations.get(email, REFRESH_TOKEN_HASH_KEY));
 
         // handle not found exception
         refreshToken.orElseThrow(() -> new RefreshTokenNotFoundException());
 
-        return (String)refreshToken.get();
+        String savedUserIp = (String) hashOperations.get(email, USER_IP_HASH_KEY);
+
+        // user ip check, refresh token remove
+        if (!userIp.equals(savedUserIp))
+            throw new RefreshTokenExpiredException();
+
+
+        return (String) refreshToken.get();
 
     }
 
     // remove refresh token
-    public void removeRefreshToken(String userIp) {
+    public void removeRefreshToken(String email) {
 
-        final ValueOperations<String, Object> stringStringValueOperations = redisTemplate.opsForValue();
+        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
 
-        stringStringValueOperations.set(userIp, "", 1, TimeUnit.MILLISECONDS);
+        hashOperations.delete(email, REFRESH_TOKEN_HASH_KEY);
+        hashOperations.delete(email, USER_IP_HASH_KEY);
     }
 
 
