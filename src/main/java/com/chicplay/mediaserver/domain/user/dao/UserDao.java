@@ -24,7 +24,7 @@ public class UserDao {
     public User findByEmail(final String email) {
 
         // fetch join + queryDLS를 통한 get
-        Optional<User> account = Optional.ofNullable(query.select(QUser.user)
+        Optional<User> user = Optional.ofNullable(query.select(QUser.user)
                 .from(QUser.user)
                 .leftJoin(QUser.user.videoSpaceParticipants, QVideoSpaceParticipant.videoSpaceParticipant)
                 .fetchJoin()
@@ -32,9 +32,9 @@ public class UserDao {
                 .distinct().fetchOne());
 
         // not found exception
-        account.orElseThrow(() -> new UserNotFoundException(email));
+        user.orElseThrow(() -> new UserNotFoundException(email));
 
-        return account.get();
+        return user.get();
     }
 
 

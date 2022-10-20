@@ -39,7 +39,7 @@ public class VideoSpaceParticipantService {
 
         // exception by duplicated user
         videoSpace.getVideoSpaceParticipants().forEach(videoSpaceParticipant -> {
-            if(videoSpaceParticipant.getUser().getEmail().equals(userEmail))
+            if (videoSpaceParticipant.getUser().getEmail().equals(userEmail))
                 throw new VideoSpaceParticipantDuplicatedException();
         });
 
@@ -58,13 +58,33 @@ public class VideoSpaceParticipantService {
         return videoSpaceParticipantSaveResponse;
     }
 
+    // delete vide space participant
+    public void deleteVideoSpaceParticipant(Long videoSpaceId, String email) {
+
+        // find video space by id
+        VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
+
+        // user get
+        User user = userService.findByEmail(email);
+
+        VideoSpaceParticipant videoSpaceParticipant = videoSpaceParticipantRepository.findByVideoSpaceAndUser(videoSpace, user).orElseThrow(VideoSpaceParticipantNotFoundException::new);
+
+        log.info(videoSpaceParticipant.getId().toString());
+
+
+        /// 여기
+
+        //videoSpace.getVideoSpaceParticipants().remove()
+
+
+    }
+
     public VideoSpaceParticipant findById(Long videoSpaceParticipantId) {
-        Optional<VideoSpaceParticipant> videoSpaceParticipant = videoSpaceParticipantRepository.findById(videoSpaceParticipantId);
 
-        // not found exception
-        videoSpaceParticipant.orElseThrow(() -> new VideoSpaceParticipantNotFoundException(Long.toString(videoSpaceParticipantId)));
+        // find video space by id
+        VideoSpaceParticipant videoSpaceParticipant = videoSpaceParticipantRepository.findById(videoSpaceParticipantId).orElseThrow(VideoSpaceParticipantNotFoundException::new);
 
-        return videoSpaceParticipant.get();
+        return videoSpaceParticipant;
     }
 
     private void checkValidUserAccessFromId(Long videoSpaceParticipantId) {
@@ -74,8 +94,6 @@ public class VideoSpaceParticipantService {
         // user 권한 체크
         userService.checkValidUserAccess(videoSpaceParticipant.getUser().getEmail());
     }
-
-
 
 
 }

@@ -33,6 +33,7 @@ public class VideoSpaceParticipantApi {
             @PathVariable("video-space-id") Long videoSpaceId,
             @PathVariable("user-email") String userEmail) {
 
+        videoSpaceParticipantService.deleteVideoSpaceParticipant(videoSpaceId,userEmail);
 
 
     }

@@ -36,8 +36,6 @@ public class VideoSpaceService {
 
     private final VideoSpaceRepository videoSpaceRepository;
 
-    private final VideoSpaceParticipantRepository videoSpaceParticipantRepository;
-
     private final VideoSpaceDao videoSpaceDao;
 
     private final UserService userService;

@@ -52,7 +52,6 @@ public class VideoSpaceApi {
     public void delete(@PathVariable("video-space-id") Long videoSpaceId) {
 
         videoSpaceService.delete(videoSpaceId);
-
     }
 
 

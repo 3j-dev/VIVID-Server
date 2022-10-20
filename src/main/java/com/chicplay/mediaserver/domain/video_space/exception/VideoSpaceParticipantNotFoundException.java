@@ -4,7 +4,7 @@ import com.chicplay.mediaserver.global.error.exception.EntityNotFoundException;
 
 public class VideoSpaceParticipantNotFoundException extends EntityNotFoundException {
 
-    public VideoSpaceParticipantNotFoundException(String id) {
-        super(id.toString() + " is not found");
+    public VideoSpaceParticipantNotFoundException() {
+        super("VideoSpaceParticipant is not found");
     }
 }
