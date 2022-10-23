@@ -43,12 +43,13 @@ public class IndividualVideoService {
 
     private final AwsS3Service awsS3Service;
 
+    // find by id
     public IndividualVideo findById(String individualVideoId) {
 
-        Optional<IndividualVideo> individualVideo = individualVideoRepository.findById(UUID.fromString(individualVideoId));
-        individualVideo.orElseThrow(() -> new IndividualVideoNotFoundException());
+        IndividualVideo individualVideo = individualVideoRepository.findById(UUID.fromString(individualVideoId))
+                .orElseThrow(IndividualVideoNotFoundException::new);
 
-        return individualVideo.get();
+        return individualVideo;
     }
 
     public IndividualVideoDetailsGetResponse getDetailsById(String individualVideoId) throws IOException {
@@ -100,6 +101,63 @@ public class IndividualVideoService {
 
     }
 
+    public void deleteById(String individualVideoId) {
+
+        IndividualVideo individualVideo = findById(individualVideoId);
+
+        // login user 권한 체크
+        userService.checkValidUserAccess(individualVideo.getVideoSpaceParticipant().getUser().getEmail());
+
+        // 연관 관계 끊기
+        individualVideo.delete();
+
+        // delete by id
+        individualVideoRepository.deleteById(UUID.fromString(individualVideoId));
+
+    }
+
+
+    // image upload service
+    public SnapshotImageUploadResponse uploadSnapshotImage(MultipartFile file, String individualVideoId, Long videoTime) {
+
+        IndividualVideo individualVideo = findById(individualVideoId);
+
+        // login user 권한 체크
+        userService.checkValidUserAccess(individualVideo.getVideoSpaceParticipant().getUser().getEmail());
+
+        // image upload, upload된 image file path get
+        String snapshotImageFilePath = awsS3Service.uploadSnapshotImagesToS3(file, individualVideoId, videoTime);
+
+        // responses dto로 변환
+        SnapshotImageUploadResponse response = SnapshotImageUploadResponse.builder()
+                .filePath(snapshotImageFilePath)
+                .time(videoTime).build();
+
+        return response;
+    }
+
+    // 해당 individual video의 마지막 접근 시간을 update하는 메소드
+    public void updateLastAccessTime(String individualVideoId) {
+
+        // individual video get
+        IndividualVideo individualVideo = findById(individualVideoId);
+
+        // login user 권한 체크
+        userService.checkValidUserAccess(individualVideo.getVideoSpaceParticipant().getUser().getEmail());
+
+        // last access time update
+        individualVideo.changeLastAccessTime();
+    }
+
+    public void checkValidUserAccessId(String individualVideoId) {
+
+        // individual video get
+        IndividualVideo individualVideo = findById(individualVideoId);
+
+        // user 권한 체크
+        userService.checkValidUserAccess(individualVideo.getVideoSpaceParticipant().getUser().getEmail());
+    }
+
     // 참가해있는 space의 individual video get
     public List<IndividualVideoGetResponse> findAllByVideoParticipantId(Long videoSpaceParticipantId) {
 
@@ -122,44 +180,6 @@ public class IndividualVideoService {
         });
 
         return individualVideoGetResponses;
-    }
-
-    // image upload service
-    public SnapshotImageUploadResponse uploadSnapshotImage(MultipartFile file, String individualVideoId, Long videoTime) {
-
-        // user 권한 체크
-        checkValidUserAccessId(individualVideoId);
-
-        // image upload, upload된 image file path get
-        String snapshotImageFilePath = awsS3Service.uploadSnapshotImagesToS3(file, individualVideoId, videoTime);
-
-        // responses dto로 변환
-        SnapshotImageUploadResponse response = SnapshotImageUploadResponse.builder()
-                .filePath(snapshotImageFilePath)
-                .time(videoTime).build();
-
-        return response;
-    }
-
-    public void updateLastAccessTime(String individualVideoId) {
-
-        // individual video get
-        IndividualVideo individualVideo = findById(individualVideoId);
-
-        // login user 권한 체크
-        userService.checkValidUserAccess(individualVideo.getVideoSpaceParticipant().getUser().getEmail());
-
-        // last access time update
-        individualVideo.changeLastAccessTime();
-    }
-
-    public void checkValidUserAccessId(String individualVideoId) {
-
-        // individual video get
-        IndividualVideo individualVideo = findById(individualVideoId);
-
-        // user 권한 체크
-        userService.checkValidUserAccess(individualVideo.getVideoSpaceParticipant().getUser().getEmail());
     }
 
 }

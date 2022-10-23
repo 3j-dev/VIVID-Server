@@ -55,8 +55,10 @@ public class VideoSpaceParticipantService {
 
         // list에 individulaVideo 객체를 각각 생성해서 add
         videoSpace.getVideos().forEach(video -> {
-            savedVideoSpaceParticipant.getIndividualVideos()
-                    .add(IndividualVideo.builder().video(video).videoSpaceParticipant(savedVideoSpaceParticipant).build());
+            savedVideoSpaceParticipant.getIndividualVideos().add(IndividualVideo.builder()
+                            .video(video)
+                            .videoSpaceParticipant(savedVideoSpaceParticipant)
+                            .build());
         });
 
         VideoSpaceParticipantSaveResponse videoSpaceParticipantSaveResponse = VideoSpaceParticipantSaveResponse.builder().videoSpaceParticipant(savedVideoSpaceParticipant).build();

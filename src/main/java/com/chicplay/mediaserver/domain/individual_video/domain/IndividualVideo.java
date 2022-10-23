@@ -75,6 +75,17 @@ public class IndividualVideo extends BaseTime {
         this.videoSpaceParticipant.getIndividualVideos().add(this);
     }
 
+    public void delete() {
+
+        // ManyToOne 연관관계 끊기.
+        videoSpaceParticipant.getIndividualVideos().remove(this);
+        video.getIndividualVideos().remove(this);
+
+        // OneToMany 연관관계 끊기.
+        deleteMapping();
+
+    }
+
     public void deleteMapping() {
         video = null;
         videoSpaceParticipant = null;

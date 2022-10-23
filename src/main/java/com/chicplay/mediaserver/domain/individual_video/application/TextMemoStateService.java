@@ -67,6 +67,9 @@ public class TextMemoStateService {
 
     public void saveAllToDynamoDb(String individualVideoId) {
 
+        // 권한 체크
+        individualVideoService.checkValidUserAccessId(individualVideoId);
+
         // latest save
         saveLatestToDynamoDb(individualVideoId);
 

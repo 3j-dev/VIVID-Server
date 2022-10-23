@@ -31,8 +31,6 @@ public class IndividualVideoApi {
 
     private final IndividualVideoService individualVideoService;
 
-    private final VideoService videoService;
-
     @PostMapping(value = "/api/individual-videos/{individual-video-id}/snapshot",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "image snapshot save api", description = "이미지 스냅샷을 저장하는 메소드입니다.")
@@ -47,15 +45,6 @@ public class IndividualVideoApi {
             ) {
 
         return individualVideoService.uploadSnapshotImage(multipartFile, individualVideoId,videoTime);
-    }
-
-    @Operation(summary = "individual videos list get api", description = "video space participant id를 이용하여 individual video id list를 get 하는 api입니다")
-    @GetMapping("/api/individual-videos")
-    public List<IndividualVideoGetResponse> getList(@RequestBody @Valid IndividualVideosGetRequest individualVideosGetRequest) {
-
-        List<IndividualVideoGetResponse> individualVideoGetResponse = individualVideoService.findAllByVideoParticipantId(individualVideosGetRequest.getVideoSpaceParticipantId());
-
-        return individualVideoGetResponse;
     }
 
     @Operation(summary = "individual video get api", description = "individual video uuid를 통해 individual video detail info, file url, visual index file path를 get하는 api 입니다.")
@@ -74,5 +63,29 @@ public class IndividualVideoApi {
         // 최종 접근 시간 변경
         individualVideoService.updateLastAccessTime(individualVideoId);
     }
+
+    @Operation(summary = "individual video delete api", description = "individual video를 삭제하는 api입니다.")
+    @DeleteMapping("/api/individual-videos/{individual-video-id}")
+    public void delete(@PathVariable("individual-video-id") String individualVideoId) throws IOException {
+
+        // delete by id
+        individualVideoService.deleteById(individualVideoId);
+
+    }
+
+
+
+
+
+
+    @Operation(summary = "[Deprecated]individual videos list get api", description = "[Deprecated]video space participant id를 이용하여 individual video id list를 get 하는 api입니다")
+    @GetMapping("/api/individual-videos")
+    public List<IndividualVideoGetResponse> getList(@RequestBody @Valid IndividualVideosGetRequest individualVideosGetRequest) {
+
+        List<IndividualVideoGetResponse> individualVideoGetResponse = individualVideoService.findAllByVideoParticipantId(individualVideosGetRequest.getVideoSpaceParticipantId());
+
+        return individualVideoGetResponse;
+    }
+
 
 }
