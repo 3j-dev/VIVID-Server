@@ -1,6 +1,5 @@
 package com.chicplay.mediaserver.domain.user.application;
 
-import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.domain.user.dao.UserDao;
 import com.chicplay.mediaserver.domain.user.dao.UserRepository;
 import com.chicplay.mediaserver.domain.user.domain.User;
@@ -9,7 +8,6 @@ import com.chicplay.mediaserver.domain.user.dto.UserSignUpResponse;
 import com.chicplay.mediaserver.domain.user.exception.AccessTokenNotFoundException;
 import com.chicplay.mediaserver.domain.user.exception.EmailDuplicateException;
 import com.chicplay.mediaserver.domain.user.exception.UserAccessDeniedException;
-import com.chicplay.mediaserver.domain.user.exception.UserNotFoundException;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
 import com.chicplay.mediaserver.global.auth.application.JwtProviderService;
@@ -23,8 +21,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -40,7 +36,7 @@ public class UserService {
     private final JwtProviderService jwtProviderService;
 
     // access token으로부터 현재 로그인된 user를 get한다.
-    public User findByAccessToken() {
+    public User getByAccessToken() {
 
         String email = getEmailFromAuthentication();
 
@@ -76,7 +72,7 @@ public class UserService {
     public String getWebexAccessToken() {
 
         // find user
-        User user = findByAccessToken();
+        User user = getByAccessToken();
 
         // access token get
         String webexAccessToken = user.getInstitution().getWebexAccessToken();
@@ -116,7 +112,7 @@ public class UserService {
 
     public void changeLastAccessIndividualVideoId(UUID lastAccessIndividualVideoId) {
 
-        User user = findByAccessToken();
+        User user = getByAccessToken();
 
         // chagne last
         user.changeLastAccessIndividualVideoId(lastAccessIndividualVideoId);

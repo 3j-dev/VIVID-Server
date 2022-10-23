@@ -65,9 +65,30 @@ public class VideoSpaceParticipant extends BaseTime {
         this.videoSpace.getVideoSpaceParticipants().add(this);
     }
 
-    public void remove() {
+    // 연관 관계 편의 메소드
+    public void delete() {
+
+        // toOne 연관 관계 끊기
+        user.getVideoSpaceParticipants().remove(this);
+        videoSpace.getVideoSpaceParticipants().remove(this);
+        deleteMapping();
+
+        // toMany 연관 관계 끊기
+        for (IndividualVideo individualVideo : individualVideos) {
+            individualVideo.deleteMapping();
+        }
+
+        // toMany 연관관계 끊기
+        individualVideos.clear();
+
+    }
+
+    public void deleteMapping() {
+        this.user = null;
         this.videoSpace = null;
     }
+
+
 
 
 

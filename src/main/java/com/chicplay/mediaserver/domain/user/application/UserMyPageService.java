@@ -28,7 +28,7 @@ public class UserMyPageService {
     public UserMyPageDashboardDataGetResponse getMyPageDashboardData() {
 
         // account get by access token
-        User user = userService.findByAccessToken();
+        User user = userService.getByAccessToken();
 
         // user video space get, inner video data get
         List<VideoSpaceGetResponse> videoSpaces = videoSpaceService.getList();

@@ -25,9 +25,9 @@ public class VideoSpaceGetResponse {
     private List<VideoGetResponse> videos = new ArrayList<>();
 
     @Builder
-    public VideoSpaceGetResponse(VideoSpaceParticipant videoSpaceParticipant, VideoSpace videoSpace) {
+    public VideoSpaceGetResponse(VideoSpace videoSpace) {
 
-        this.id = videoSpaceParticipant.getId();
+        this.id = videoSpace.getId();
         this.name = videoSpace.getName();
         this.description = videoSpace.getDescription();
     }

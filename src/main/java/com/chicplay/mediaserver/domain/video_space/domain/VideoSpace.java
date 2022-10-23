@@ -49,24 +49,28 @@ public class VideoSpace extends BaseTime {
     }
 
     // remove 연관 관계 편의 메소드
-    public void remove() {
+    public void delete() {
 
         // videoSpaecParticipant와 연관 관계 끊기
         for (VideoSpaceParticipant videoSpaceParticipant : videoSpaceParticipants) {
 
             // user와 연관 관계 끊기
-            videoSpaceParticipant.getUser().remove(videoSpaceParticipant);
-            videoSpaceParticipant.remove();
+            videoSpaceParticipant.getUser().getVideoSpaceParticipants().remove(videoSpaceParticipant);
+            videoSpaceParticipant.deleteMapping();
         }
 
         // video와 연관 관계 끊기
         for (Video video : videos) {
-            video.remove();
+            video.deleteMapping();
         }
 
         // 연관관계 끊기
         videos.clear();
         videoSpaceParticipants.clear();
+
+    }
+
+    public void deleteMapping() {
 
     }
 }

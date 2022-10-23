@@ -9,6 +9,7 @@ import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoGetRe
 import com.chicplay.mediaserver.domain.individual_video.dto.SnapshotImageUploadResponse;
 import com.chicplay.mediaserver.domain.individual_video.exception.IndividualVideoNotFoundException;
 import com.chicplay.mediaserver.domain.video.domain.Video;
+import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceParticipantFindService;
 import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceParticipantService;
 import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceService;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
@@ -38,7 +39,7 @@ public class IndividualVideoService {
 
     private final IndividualVideoDao individualVideoDao;
 
-    private final VideoSpaceParticipantService videoSpaceParticipantService;
+    private final VideoSpaceParticipantFindService videoSpaceParticipantFindService;
 
     private final AwsS3Service awsS3Service;
 
@@ -51,7 +52,6 @@ public class IndividualVideoService {
     }
 
     public IndividualVideoDetailsGetResponse getDetailsById(String individualVideoId) throws IOException {
-
 
         IndividualVideo individualVideo = findById(individualVideoId);
 
@@ -104,7 +104,7 @@ public class IndividualVideoService {
     public List<IndividualVideoGetResponse> findAllByVideoParticipantId(Long videoSpaceParticipantId) {
 
         // 로그인 id와 videoSpaceParticipantId의 user id가 같은지 판단.
-        VideoSpaceParticipant videoSpaceParticipant = videoSpaceParticipantService.findById(videoSpaceParticipantId);
+        VideoSpaceParticipant videoSpaceParticipant = videoSpaceParticipantFindService.findById(videoSpaceParticipantId);
         userService.checkValidUserAccess(videoSpaceParticipant.getUser().getEmail());
 
         // find all individual videos

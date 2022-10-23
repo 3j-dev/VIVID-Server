@@ -4,8 +4,6 @@ import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -69,12 +67,12 @@ public class Video extends BaseTime{
 
     }
 
-    public void remove() {
+    public void deleteMapping() {
         this.videoSpace = null;
 
         // individualVideo와 연관관계 끊기
         for (IndividualVideo individualVideo : individualVideos) {
-            individualVideo.remove();
+            individualVideo.deleteMapping();
         }
     }
 }

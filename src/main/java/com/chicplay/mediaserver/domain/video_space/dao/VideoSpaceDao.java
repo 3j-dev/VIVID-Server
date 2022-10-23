@@ -38,7 +38,7 @@ public class VideoSpaceDao {
                 .distinct().fetchOne());
 
         // not found exception
-        videoSpace.orElseThrow(() -> new VideoSpaceNotFoundException(id.toString()));
+        videoSpace.orElseThrow(() -> new VideoSpaceNotFoundException());
 
         return videoSpace.get();
     }

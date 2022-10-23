@@ -32,7 +32,7 @@ public class UserDao {
                 .distinct().fetchOne());
 
         // not found exception
-        user.orElseThrow(() -> new UserNotFoundException(email));
+        user.orElseThrow(() -> new UserNotFoundException());
 
         return user.get();
     }

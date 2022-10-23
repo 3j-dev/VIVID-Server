@@ -5,7 +5,6 @@ import com.chicplay.mediaserver.domain.user.domain.Institution;
 import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveRequest;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveResponse;
-import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
 import com.chicplay.mediaserver.global.infra.webex_api.WebexApiService;
 import com.chicplay.mediaserver.global.infra.webex_api.WebexRecordingGetResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,7 +45,7 @@ public class WebexVideoService {
     public void saveWebexAccessTokenFromWebexApi(String code) {
 
         // user get
-        User user = userService.findByAccessToken();
+        User user = userService.getByAccessToken();
 
         // access token get
         String accessToken = webexApiService.getAccessToken(code);

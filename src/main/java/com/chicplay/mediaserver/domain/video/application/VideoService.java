@@ -9,6 +9,7 @@ import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoDetailsGetResponse;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveRequest;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveResponse;
+import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceFindService;
 import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceService;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.global.infra.storage.AwsS3Service;
@@ -33,7 +34,7 @@ public class VideoService {
 
     private final VideoRepository videoRepository;
 
-    private final VideoSpaceService videoSpaceService;
+    private final VideoSpaceFindService videoSpaceFindService;
 
     private final IndividualVideoService individualVideoService;
 
@@ -48,7 +49,7 @@ public class VideoService {
         String email = userService.getEmailFromAuthentication();
 
         // 해당 video의 video space find
-        VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
+        VideoSpace videoSpace = videoSpaceFindService.findById(videoSpaceId);
 
         // video space의 host email과 현재 접속 user의 email이 불일치할 경우, throw
         if(!videoSpace.getHostEmail().equals(email))
@@ -73,7 +74,7 @@ public class VideoService {
         String email = userService.getEmailFromAuthentication();
 
         // 해당 video의 video space find
-        VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
+        VideoSpace videoSpace = videoSpaceFindService.findById(videoSpaceId);
 
         // video space의 host email과 현재 접속 user의 email이 불일치할 경우, throw
         if(!videoSpace.getHostEmail().equals(email))

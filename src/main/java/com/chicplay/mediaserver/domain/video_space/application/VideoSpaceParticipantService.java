@@ -3,18 +3,19 @@ package com.chicplay.mediaserver.domain.video_space.application;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.domain.user.application.UserService;
 import com.chicplay.mediaserver.domain.user.domain.User;
+import com.chicplay.mediaserver.domain.user.exception.UserAccessDeniedException;
 import com.chicplay.mediaserver.domain.video_space.dao.VideoSpaceParticipantRepository;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
 import com.chicplay.mediaserver.domain.video_space.dto.VideoSpaceParticipantSaveResponse;
+import com.chicplay.mediaserver.domain.video_space.exception.VideoSpaceHostDeleteDeniedException;
+import com.chicplay.mediaserver.domain.video_space.exception.VideoSpaceHostedAccessRequiredException;
 import com.chicplay.mediaserver.domain.video_space.exception.VideoSpaceParticipantDuplicatedException;
 import com.chicplay.mediaserver.domain.video_space.exception.VideoSpaceParticipantNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,27 +25,32 @@ public class VideoSpaceParticipantService {
 
     private final VideoSpaceParticipantRepository videoSpaceParticipantRepository;
 
+    private final VideoSpaceParticipantFindService videoSpaceParticipantFindService;
+
     private final UserService userService;
 
-    private final VideoSpaceService videoSpaceService;
+    private final VideoSpaceFindService videoSpaceFindService;
 
     // 이미 생성돼 있는 videoSpace에 유저 추가 : VideoSpaceParticipant save
-    public VideoSpaceParticipantSaveResponse save(Long videoSpaceId, String userEmail) {
+    public VideoSpaceParticipantSaveResponse save(Long videoSpaceId, String targetEmail) {
 
         // account get by email
-        User user = userService.findByEmail(userEmail);
+        User targetUser = userService.findByEmail(targetEmail);
 
         // video space get by videoId
-        VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
+        VideoSpace videoSpace = videoSpaceFindService.findById(videoSpaceId);
+
+        // video space hosted check
+        checkHostUserAccess(videoSpace.getHostEmail());
 
         // exception by duplicated user
         videoSpace.getVideoSpaceParticipants().forEach(videoSpaceParticipant -> {
-            if (videoSpaceParticipant.getUser().getEmail().equals(userEmail))
+            if (videoSpaceParticipant.getUser().getEmail().equals(targetEmail))
                 throw new VideoSpaceParticipantDuplicatedException();
         });
 
         // Video participant save
-        VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().videoSpace(videoSpace).user(user).build();
+        VideoSpaceParticipant videoSpaceParticipant = VideoSpaceParticipant.builder().videoSpace(videoSpace).user(targetUser).build();
         VideoSpaceParticipant savedVideoSpaceParticipant = videoSpaceParticipantRepository.save(videoSpaceParticipant);
 
         // list에 individulaVideo 객체를 각각 생성해서 add
@@ -59,40 +65,39 @@ public class VideoSpaceParticipantService {
     }
 
     // delete vide space participant
-    public void deleteVideoSpaceParticipant(Long videoSpaceId, String email) {
+    public void deleteVideoSpaceParticipant(Long videoSpaceId, String targetEmail) {
 
         // find video space by id
-        VideoSpace videoSpace = videoSpaceService.findById(videoSpaceId);
+        VideoSpace videoSpace = videoSpaceFindService.findById(videoSpaceId);
 
         // user get
-        User user = userService.findByEmail(email);
+        User user = userService.findByEmail(targetEmail);
 
-        VideoSpaceParticipant videoSpaceParticipant = videoSpaceParticipantRepository.findByVideoSpaceAndUser(videoSpace, user).orElseThrow(VideoSpaceParticipantNotFoundException::new);
+        // video space hosted check
+        checkHostUserAccess(videoSpace.getHostEmail());
 
-        log.info(videoSpaceParticipant.getId().toString());
+        // host 삭제 불가
+        if (targetEmail.equals(videoSpace.getHostEmail()))
+            throw new VideoSpaceHostDeleteDeniedException();
 
+        // find video space participant
+        VideoSpaceParticipant videoSpaceParticipant = videoSpaceParticipantFindService.findByUserAndVideoSpace(user, videoSpace);
 
-        /// 여기
+        // 연관 관계 매팡 제거
+        videoSpaceParticipant.delete();
 
-        //videoSpace.getVideoSpaceParticipants().remove()
-
+        // delete
+        videoSpaceParticipantRepository.deleteById(videoSpaceParticipant.getId());
 
     }
 
-    public VideoSpaceParticipant findById(Long videoSpaceParticipantId) {
+    private void checkHostUserAccess(String hostEmail) {
 
-        // find video space by id
-        VideoSpaceParticipant videoSpaceParticipant = videoSpaceParticipantRepository.findById(videoSpaceParticipantId).orElseThrow(VideoSpaceParticipantNotFoundException::new);
-
-        return videoSpaceParticipant;
-    }
-
-    private void checkValidUserAccessFromId(Long videoSpaceParticipantId) {
-
-        VideoSpaceParticipant videoSpaceParticipant = findById(videoSpaceParticipantId);
-
-        // user 권한 체크
-        userService.checkValidUserAccess(videoSpaceParticipant.getUser().getEmail());
+        try {
+            userService.checkValidUserAccess(hostEmail);
+        } catch (UserAccessDeniedException userAccessDeniedException) {
+            throw new VideoSpaceHostedAccessRequiredException();
+        }
     }
 
 
