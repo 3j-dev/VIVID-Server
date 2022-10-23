@@ -9,6 +9,7 @@ import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.domain.individual_video.dto.IndividualVideoDetailsGetResponse;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveRequest;
 import com.chicplay.mediaserver.domain.video.dto.VideoSaveResponse;
+import com.chicplay.mediaserver.domain.video.exception.VideoNotFoundException;
 import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceFindService;
 import com.chicplay.mediaserver.domain.video_space.application.VideoSpaceService;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
@@ -92,6 +93,20 @@ public class VideoService {
         return videoSaveResponse;
     }
 
+    // delete
+    public void delete(Long videoId) {
+
+        // 해당 video의 find
+//        Video video = videoDao.findById(videoId);
+        Video video = videoRepository.findById(videoId).orElseThrow(VideoNotFoundException::new);
+
+        // 삭제 연관 관계 편의 메소드
+        video.delete();
+
+        // delete by id
+        videoRepository.deleteById(videoId);
+    }
+
     // upload 된 후 video의 uploaded 상태 변경
     public void changeUploadState(Long videoId, boolean isUploaded) {
 
@@ -100,13 +115,6 @@ public class VideoService {
 
         // uploaded true
         video.changeIsUploaded(isUploaded);
-    }
-
-    public String getVisualIndexFilePath(UUID videoId){
-
-        //Video video = videoDao.findById(videoId);
-
-        return null;
     }
 
     public IndividualVideoDetailsGetResponse getFilePath(Long videoId) throws IOException {

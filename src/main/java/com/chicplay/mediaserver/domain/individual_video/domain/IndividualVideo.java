@@ -75,21 +75,21 @@ public class IndividualVideo extends BaseTime {
         this.videoSpaceParticipant.getIndividualVideos().add(this);
     }
 
+    // 전체 연관 관계 삭제 편의 메소드
     public void delete() {
 
-        // ManyToOne 연관관계 끊기.
+        // OneToMany 연관관계(자식) 삭제.
         videoSpaceParticipant.getIndividualVideos().remove(this);
         video.getIndividualVideos().remove(this);
 
-        // OneToMany 연관관계 끊기.
+        // ManyToOne 연관관계(부모) 삭제
         deleteMapping();
-
     }
 
+    // ManyToOne 연관관계(부모) 삭제
     public void deleteMapping() {
         video = null;
         videoSpaceParticipant = null;
     }
-
 
 }

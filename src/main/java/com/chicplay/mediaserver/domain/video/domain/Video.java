@@ -67,12 +67,32 @@ public class Video extends BaseTime{
 
     }
 
+    // 전체 연관 관계 삭제 편의 메소드
+    public void delete() {
+
+        // OneToMany 연관관계 삭제
+        videoSpace.getVideos().remove(this);
+
+        // ManyToOne 연관관계 삭제
+        deleteMapping();
+
+        // OnneToMany 연관관계 삭제
+        for (IndividualVideo individualVideo : individualVideos) {
+            individualVideo.getVideoSpaceParticipant().getIndividualVideos().remove(individualVideo);
+            individualVideo.deleteMapping();
+        }
+
+        // ManyToOne 연관관계 삭제
+        individualVideos.clear();
+    }
+
+    // ManyToOne 연관관계(부모) 삭제
     public void deleteMapping() {
         this.videoSpace = null;
 
-        // individualVideo와 연관관계 끊기
-        for (IndividualVideo individualVideo : individualVideos) {
-            individualVideo.deleteMapping();
-        }
+//        // individualVideo와 연관관계 끊기
+//        for (IndividualVideo individualVideo : individualVideos) {
+//            individualVideo.deleteMapping();
+//        }
     }
 }

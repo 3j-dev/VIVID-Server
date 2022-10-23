@@ -67,12 +67,4 @@ public class User extends BaseTime {
         this.institution = institution;
     }
 
-    public void deleteMapping(VideoSpaceParticipant videoSpaceParticipant) {
-        videoSpaceParticipants.remove(videoSpaceParticipant);
-    }
-
-
-
-
-
 }

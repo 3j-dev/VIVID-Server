@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/videos")
+@RequestMapping()
 public class VideoApi {
 
     private final VideoService videoService;
@@ -33,9 +33,9 @@ public class VideoApi {
      * aws media convert를 이용한
      * 인코딩이 완료되면 lambda 함수를 통해서 자동으로 save api 호출
      */
-    @PostMapping(value = "/{video-space-id}",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "video 직접 업로드 api", description = "video를 직접 업로드하는 api")
+    @PostMapping(value = "/api/videos/{video-space-id}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public VideoSaveResponse upload(
             @RequestPart("video")
             @Parameter(description = "multipartFile video file")
@@ -53,8 +53,15 @@ public class VideoApi {
         return videoSaveResponse;
     }
 
+    @Operation(summary = "video 삭제 api", description = "video를 직접 업로드하는 api")
+    @DeleteMapping(value = "/api/videos/{video-id}")
+    public void delete(@PathVariable("video-id") Long videoId) {
+
+        videoService.delete(videoId);
+    }
+
     @Operation(summary = "video의 업로드 상태를 변환 api", description = "video의 업로드 상태를 true로 바꾸는 api 입니다. 해당 api는 aws 람다에서 호출됩니다.")
-    @PutMapping(value = "/{video-id}/uploaded")
+    @PutMapping(value = "/api/videos/{video-id}/uploaded")
     public void changeUploadStateAfterUploaded(@PathVariable("video-id") Long videoId) {
 
         // upload가 완료된후 uploaded 상태 변경

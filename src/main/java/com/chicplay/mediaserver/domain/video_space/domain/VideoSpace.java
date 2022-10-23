@@ -1,5 +1,6 @@
 package com.chicplay.mediaserver.domain.video_space.domain;
 
+import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.domain.video.domain.Video;
 import com.chicplay.mediaserver.global.common.BaseTime;
 import lombok.AccessLevel;
@@ -48,29 +49,38 @@ public class VideoSpace extends BaseTime {
         this.isIndividualVideoSpace = isIndividualVideoSpace;
     }
 
-    // remove 연관 관계 편의 메소드
+    // 연관 관계 삭제 편의 메소드
     public void delete() {
 
-        // videoSpaecParticipant와 연관 관계 끊기
+        // ManyToOne, videoSpaecParticipant와 연관 관계 끊기
         for (VideoSpaceParticipant videoSpaceParticipant : videoSpaceParticipants) {
 
             // user와 연관 관계 끊기
+
+            // null check
+            if(videoSpaceParticipant.getUser().getVideoSpaceParticipants() == null)
+                continue;
+
             videoSpaceParticipant.getUser().getVideoSpaceParticipants().remove(videoSpaceParticipant);
             videoSpaceParticipant.deleteMapping();
         }
 
-        // video와 연관 관계 끊기
+        // One to Many 연관 관계 끊기.
+        videoSpaceParticipants.clear();
+
+        // ManyToOne, video와 연관 관계 끊기
         for (Video video : videos) {
+
+            // individual video 연관 관계 끊기.
+            for (IndividualVideo individualVideo : video.getIndividualVideos()) {
+                individualVideo.delete();
+            }
+
             video.deleteMapping();
         }
 
-        // 연관관계 끊기
+        // One to Many 연관 관계 끊기.
         videos.clear();
-        videoSpaceParticipants.clear();
-
     }
 
-    public void deleteMapping() {
-
-    }
 }

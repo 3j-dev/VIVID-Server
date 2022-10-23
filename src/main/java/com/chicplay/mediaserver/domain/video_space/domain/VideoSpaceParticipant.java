@@ -68,12 +68,12 @@ public class VideoSpaceParticipant extends BaseTime {
     // 연관 관계 편의 메소드
     public void delete() {
 
-        // toOne 연관 관계 끊기
+        // ManyToOne 연관 관계 끊기
         user.getVideoSpaceParticipants().remove(this);
         videoSpace.getVideoSpaceParticipants().remove(this);
         deleteMapping();
 
-        // toMany 연관 관계 끊기
+        // OnetoMany 연관 관계 끊기
         for (IndividualVideo individualVideo : individualVideos) {
             individualVideo.deleteMapping();
         }
@@ -83,6 +83,7 @@ public class VideoSpaceParticipant extends BaseTime {
 
     }
 
+    // ManyToOne 연관 관계 끊기
     public void deleteMapping() {
         this.user = null;
         this.videoSpace = null;

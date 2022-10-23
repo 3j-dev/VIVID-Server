@@ -74,9 +74,7 @@ public class IndividualVideoApi {
     }
 
 
-
-
-
+    // Deprecated
 
     @Operation(summary = "[Deprecated]individual videos list get api", description = "[Deprecated]video space participant id를 이용하여 individual video id list를 get 하는 api입니다")
     @GetMapping("/api/individual-videos")
