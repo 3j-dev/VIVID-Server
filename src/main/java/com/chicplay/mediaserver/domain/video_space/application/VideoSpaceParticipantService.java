@@ -93,6 +93,7 @@ public class VideoSpaceParticipantService {
 
     }
 
+    // host 권한이 필요한 접근일 때 유효한 접근인지 판단.
     private void checkHostUserAccess(String hostEmail) {
 
         try {

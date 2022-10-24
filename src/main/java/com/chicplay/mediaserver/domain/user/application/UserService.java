@@ -8,6 +8,7 @@ import com.chicplay.mediaserver.domain.user.dto.UserSignUpResponse;
 import com.chicplay.mediaserver.domain.user.exception.AccessTokenNotFoundException;
 import com.chicplay.mediaserver.domain.user.exception.EmailDuplicateException;
 import com.chicplay.mediaserver.domain.user.exception.UserAccessDeniedException;
+import com.chicplay.mediaserver.domain.user.exception.UserNotFoundException;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
 import com.chicplay.mediaserver.global.auth.application.JwtProviderService;
@@ -40,7 +41,7 @@ public class UserService {
 
         String email = getEmailFromAuthentication();
 
-        User user = userDao.findByEmail(email);
+        User user = findByEmail(email);
 
         return user;
     }
@@ -56,7 +57,8 @@ public class UserService {
     // email을 통해 user find
     public User findByEmail(String email) {
 
-        User user = userDao.findByEmail(email);
+//        User user = userDao.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         return user;
     }

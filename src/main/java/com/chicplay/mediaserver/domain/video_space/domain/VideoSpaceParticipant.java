@@ -28,7 +28,7 @@ public class VideoSpaceParticipant extends BaseTime {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "video_space_id")
+    @JoinColumn(name = "video_space_id", nullable = false)
     private VideoSpace videoSpace;
 
     @OneToMany(mappedBy = "videoSpaceParticipant", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -68,15 +68,13 @@ public class VideoSpaceParticipant extends BaseTime {
     // 연관 관계 편의 메소드
     public void delete() {
 
-        // ManyToOne 연관 관계 끊기
-        user.getVideoSpaceParticipants().remove(this);
-        videoSpace.getVideoSpaceParticipants().remove(this);
-        deleteMapping();
-
         // OnetoMany 연관 관계 끊기
         for (IndividualVideo individualVideo : individualVideos) {
             individualVideo.deleteMapping();
         }
+
+        // ManyToOne 연관 관계 끊기, user쪽 영속성 컨텍스트 존재하기 때문에,
+        deleteMapping();
 
         // toMany 연관관계 끊기
         individualVideos.clear();

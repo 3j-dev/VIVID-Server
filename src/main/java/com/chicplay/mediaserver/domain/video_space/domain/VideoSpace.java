@@ -54,14 +54,6 @@ public class VideoSpace extends BaseTime {
 
         // ManyToOne, videoSpaecParticipant와 연관 관계 끊기
         for (VideoSpaceParticipant videoSpaceParticipant : videoSpaceParticipants) {
-
-            // user와 연관 관계 끊기
-
-            // null check
-            if(videoSpaceParticipant.getUser().getVideoSpaceParticipants() == null)
-                continue;
-
-            videoSpaceParticipant.getUser().getVideoSpaceParticipants().remove(videoSpaceParticipant);
             videoSpaceParticipant.deleteMapping();
         }
 
@@ -70,12 +62,6 @@ public class VideoSpace extends BaseTime {
 
         // ManyToOne, video와 연관 관계 끊기
         for (Video video : videos) {
-
-            // individual video 연관 관계 끊기.
-            for (IndividualVideo individualVideo : video.getIndividualVideos()) {
-                individualVideo.delete();
-            }
-
             video.deleteMapping();
         }
 

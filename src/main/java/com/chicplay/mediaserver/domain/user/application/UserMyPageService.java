@@ -1,6 +1,7 @@
 package com.chicplay.mediaserver.domain.user.application;
 
 import com.chicplay.mediaserver.domain.individual_video.dto.DashboardIndividualVideoDto;
+import com.chicplay.mediaserver.domain.user.dao.UserRepository;
 import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.user.dto.UserMyPageDashboardDataGetResponse;
 import com.chicplay.mediaserver.domain.video.dto.VideoGetResponse;
@@ -23,6 +24,8 @@ public class UserMyPageService {
     private final UserService userService;
 
     private final VideoSpaceService videoSpaceService;
+
+    private final UserRepository userRepository;
 
     // dashboard의 user data를 get합니다.
     public UserMyPageDashboardDataGetResponse getMyPageDashboardData() {
@@ -70,8 +73,10 @@ public class UserMyPageService {
             }
         }
 
+        // 접근 시간 순으로 정렬
         dashboardIndividualVideos.sort((o1,o2) -> o2.getLastAccessTime().compareTo(o1.getLastAccessTime()));
 
+        // response dto 생성
         UserMyPageDashboardDataGetResponse userMyPageDashboardDataGetResponse = UserMyPageDashboardDataGetResponse.builder()
                 .user(user)
                 .lastStudiedIndividualVideo(lastStudiedIndividualVideo)
@@ -82,5 +87,18 @@ public class UserMyPageService {
                 .build();
 
         return userMyPageDashboardDataGetResponse;
+    }
+
+    // user 삭제.
+    public void deleteUser() {
+
+        // user get
+        User user = userService.getByAccessToken();
+
+        // 연관 관계 제거
+        user.delete();
+
+        // delete user
+        userRepository.delete(user);
     }
 }

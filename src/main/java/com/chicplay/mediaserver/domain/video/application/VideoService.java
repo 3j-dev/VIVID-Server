@@ -97,7 +97,6 @@ public class VideoService {
     public void delete(Long videoId) {
 
         // 해당 video의 find
-//        Video video = videoDao.findById(videoId);
         Video video = videoRepository.findById(videoId).orElseThrow(VideoNotFoundException::new);
 
         // 삭제 연관 관계 편의 메소드

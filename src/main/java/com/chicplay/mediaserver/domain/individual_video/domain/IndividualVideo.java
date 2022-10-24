@@ -78,9 +78,8 @@ public class IndividualVideo extends BaseTime {
     // 전체 연관 관계 삭제 편의 메소드
     public void delete() {
 
-        // OneToMany 연관관계(자식) 삭제.
+        // OneToMany 연관관계(자식) 삭제. -> 영속성에 이미 있기 때문에,
         videoSpaceParticipant.getIndividualVideos().remove(this);
-        video.getIndividualVideos().remove(this);
 
         // ManyToOne 연관관계(부모) 삭제
         deleteMapping();

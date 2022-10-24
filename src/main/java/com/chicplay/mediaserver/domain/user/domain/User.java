@@ -67,4 +67,15 @@ public class User extends BaseTime {
         this.institution = institution;
     }
 
+    // delete 연관 관계 메소드
+    public void delete() {
+
+        // VideoSpaceParticipant 연관관계 끊기.
+        for (VideoSpaceParticipant videoSpaceParticipant : videoSpaceParticipants) {
+            videoSpaceParticipant.deleteMapping();
+        }
+
+        videoSpaceParticipants.clear();
+    }
+
 }

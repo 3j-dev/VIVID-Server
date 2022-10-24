@@ -5,6 +5,7 @@ import com.chicplay.mediaserver.domain.user.dto.UserMyPageDashboardDataGetRespon
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +29,13 @@ public class UserMyPageApi {
 
     }
 
+    @Operation(summary = "user delete api", description = "user가 회원 탈퇴할 때 사용되는 api입니다.")
+    @DeleteMapping("/api/user")
+    public void delete(){
 
+        // delete user
+        userMyPageService.deleteUser();
+    }
 
 
 }
