@@ -17,6 +17,8 @@ public class VideoGetResponse {
 
     private String title;
 
+    private String thumbnailImagePath;
+
     private String description;
 
     private LocalDateTime lastAccessTime;
@@ -24,10 +26,11 @@ public class VideoGetResponse {
     private Long progressRate;
 
     @Builder
-    public VideoGetResponse(Long id,String title, String description) {
+    public VideoGetResponse(Long id,String title, String description, String thumbnailImagePath) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.thumbnailImagePath = thumbnailImagePath;
     }
 
     public void changeIndividualVideoState(String individualVideoId, LocalDateTime lastAccessTime, Long progressRate) {

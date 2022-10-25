@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 
 @Slf4j
@@ -62,7 +63,7 @@ public class VideoApi {
 
     @Operation(summary = "video의 업로드 상태를 변환 api", description = "video의 업로드 상태를 true로 바꾸는 api 입니다. 해당 api는 aws 람다에서 호출됩니다.")
     @PutMapping(value = "/api/videos/{video-id}/uploaded")
-    public void changeUploadStateAfterUploaded(@PathVariable("video-id") Long videoId) {
+    public void changeUploadStateAfterUploaded(@PathVariable("video-id") Long videoId) throws IOException {
 
         // upload가 완료된후 uploaded 상태 변경
         videoService.changeUploadState(videoId, true);

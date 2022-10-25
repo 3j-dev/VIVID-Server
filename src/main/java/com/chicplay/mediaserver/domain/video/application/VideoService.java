@@ -107,13 +107,21 @@ public class VideoService {
     }
 
     // upload 된 후 video의 uploaded 상태 변경
-    public void changeUploadState(Long videoId, boolean isUploaded) {
+    public void changeUploadState(Long videoId, boolean isUploaded) throws IOException {
 
         // 해당 video의 find
-        Video video = videoDao.findById(videoId);
+//        Video video = videoDao.findById(videoId);
+        Video video = videoRepository.findById(videoId).orElseThrow(VideoNotFoundException::new);
 
         // uploaded true
         video.changeIsUploaded(isUploaded);
+
+        // get thumbnail imgae
+        List<String> visualIndexImages = awsS3Service.getVisualIndexImages(videoId);
+
+        // video thumbnail change
+        video.changeThumbnailImagePath(visualIndexImages.get(0));
+
     }
 
     public IndividualVideoDetailsGetResponse getFilePath(Long videoId) throws IOException {

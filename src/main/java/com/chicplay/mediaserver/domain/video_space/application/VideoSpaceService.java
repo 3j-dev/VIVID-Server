@@ -103,7 +103,9 @@ public class VideoSpaceService {
             hostedVideoSpaceGetResponse.addVideoGetResponse(HostedVideoGetResponse.builder()
                     .id(video.getId())
                     .title(video.getTitle())
-                    .description(video.getDescription()).build());
+                    .description(video.getDescription())
+                    .thumbnailImagePath(video.getThumbnailImagePath()).build());
+
         });
 
         // create user response dto
@@ -144,7 +146,8 @@ public class VideoSpaceService {
                 hostedVideoSpaceGetResponse.addVideoGetResponse(HostedVideoGetResponse.builder()
                         .id(video.getId())
                         .title(video.getTitle())
-                        .description(video.getDescription()).build());
+                        .description(video.getDescription())
+                        .thumbnailImagePath(video.getThumbnailImagePath()).build());
             });
 
             // create user response dto
@@ -221,6 +224,7 @@ public class VideoSpaceService {
                     .id(video.getId())
                     .title(video.getTitle())
                     .description(video.getDescription())
+                    .thumbnailImagePath(video.getThumbnailImagePath())
                     .build();
 
             videoSpaceGetResponseHashMap.put(video.getId(), videoGetResponse);

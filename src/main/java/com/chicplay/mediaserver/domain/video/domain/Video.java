@@ -40,10 +40,16 @@ public class Video extends BaseTime{
     @Column(name = "is_uploaded")
     private boolean isUploaded;
 
+    @Column(name = "thumbnail_image")
+    private String thumbnailImagePath;
+
     public void changeIsUploaded(boolean isUploaded) {
         this.isUploaded = isUploaded;
     }
 
+    public void changeThumbnailImagePath(String thumbnailImagePath) {
+        this.thumbnailImagePath = thumbnailImagePath;
+    }
 
     @Builder
     public Video(VideoSpace videoSpace, String title, String description,String uploaderId) {
@@ -53,6 +59,8 @@ public class Video extends BaseTime{
         this.uploaderId = uploaderId;
         this.isUploaded = false;
     }
+
+
 
     // 연관 관계 편의 메소드
     public void changeVideo(VideoSpace videoSpace){

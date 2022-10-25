@@ -17,10 +17,13 @@ public class HostedVideoGetResponse {
 
     private String description;
 
+    private String thumbnailImagePath;
+
     @Builder
-    public HostedVideoGetResponse(Long id, String title, String description) {
+    public HostedVideoGetResponse(Long id, String title, String description, String thumbnailImagePath) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.thumbnailImagePath = thumbnailImagePath;
     }
 }
