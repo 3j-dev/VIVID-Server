@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class VideoSpaceSaveResponse {
 
-    private Long videoSpaceId;
+    private Long id;
 
     private String name;
 
@@ -20,7 +20,7 @@ public class VideoSpaceSaveResponse {
 
     @Builder
     public VideoSpaceSaveResponse(VideoSpace videoSpace) {
-        this.videoSpaceId = videoSpace.getId();
+        this.id = videoSpace.getId();
         this.name = videoSpace.getName();
         this.description = videoSpace.getDescription();
     }

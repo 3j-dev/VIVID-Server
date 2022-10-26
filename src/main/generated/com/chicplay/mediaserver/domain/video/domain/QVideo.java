@@ -35,6 +35,8 @@ public class QVideo extends EntityPathBase<Video> {
 
     public final BooleanPath isUploaded = createBoolean("isUploaded");
 
+    public final StringPath thumbnailImagePath = createString("thumbnailImagePath");
+
     public final StringPath title = createString("title");
 
     //inherited

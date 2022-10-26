@@ -58,6 +58,9 @@ public class Video extends BaseTime{
         this.description = description;
         this.uploaderId = uploaderId;
         this.isUploaded = false;
+
+        // default image link
+        this.thumbnailImagePath = "https://service-video-storage.s3.ap-northeast-2.amazonaws.com/no_image_available.png";
     }
 
 
