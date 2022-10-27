@@ -1,6 +1,7 @@
 package com.chicplay.mediaserver.global.common;
 
 import lombok.Getter;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -24,6 +25,6 @@ public class BaseEntity {
     private LocalDateTime updatedDate;
 
     @Column(name = "deleted", columnDefinition="tinyint(1) default 0")
-    private boolean deleted = Boolean.FALSE;
+    private boolean deleted;
 
 }

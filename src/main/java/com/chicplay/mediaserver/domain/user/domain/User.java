@@ -4,6 +4,8 @@ import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
 import com.chicplay.mediaserver.global.common.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -14,6 +16,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "user")
 @Getter
+@SQLDelete(sql = "UPDATE user SET deleted = true WHERE user_id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
@@ -34,7 +38,6 @@ public class User extends BaseEntity {
 
     @Column(name="name", nullable = false)
     private String name;
-
 
     @Column(name="picture")
     private String picture;

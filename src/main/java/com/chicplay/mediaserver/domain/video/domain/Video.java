@@ -4,6 +4,8 @@ import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
 import com.chicplay.mediaserver.global.common.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +14,8 @@ import java.util.List;
 @Entity
 @Table(name = "video")
 @Getter
+@SQLDelete(sql = "UPDATE video SET deleted = true WHERE video_id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Video extends BaseEntity {
 

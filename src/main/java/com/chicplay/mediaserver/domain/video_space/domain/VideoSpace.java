@@ -6,6 +6,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ import java.util.List;
 @Entity
 @Table(name = "video_space")
 @Getter
+@SQLDelete(sql = "UPDATE video_space SET deleted = true WHERE video_space_id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class VideoSpace extends BaseEntity {
 

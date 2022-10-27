@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "individual_video")
 @Getter
+@SQLDelete(sql = "UPDATE individual_video SET deleted = true WHERE individual_video_id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class IndividualVideo extends BaseEntity {
 
