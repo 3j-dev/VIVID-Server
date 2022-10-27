@@ -15,8 +15,8 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 //@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 10800)
 //@EnableBatchProcessing
 //@EnableScheduling
+//@EnableAspectJAutoProxy
 @EnableJpaAuditing
-@EnableAspectJAutoProxy
 @SpringBootApplication
 public class MediaServerApplication {
 

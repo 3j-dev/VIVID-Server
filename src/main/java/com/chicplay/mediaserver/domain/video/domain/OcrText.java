@@ -1,18 +1,16 @@
 package com.chicplay.mediaserver.domain.video.domain;
 
-import com.chicplay.mediaserver.global.common.BaseTime;
+import com.chicplay.mediaserver.global.common.BaseEntity;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "ocr_text")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OcrText extends BaseTime {
+public class OcrText extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

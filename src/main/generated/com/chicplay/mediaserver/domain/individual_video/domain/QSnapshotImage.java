@@ -22,10 +22,13 @@ public class QSnapshotImage extends EntityPathBase<SnapshotImage> {
 
     public static final QSnapshotImage snapshotImage = new QSnapshotImage("snapshotImage");
 
-    public final com.chicplay.mediaserver.global.common.QBaseTime _super = new com.chicplay.mediaserver.global.common.QBaseTime(this);
+    public final com.chicplay.mediaserver.global.common.QBaseEntity _super = new com.chicplay.mediaserver.global.common.QBaseEntity(this);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
+
+    //inherited
+    public final BooleanPath deleted = _super.deleted;
 
     public final StringPath filePath = createString("filePath");
 

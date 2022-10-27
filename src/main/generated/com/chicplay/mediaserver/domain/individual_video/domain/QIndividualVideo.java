@@ -22,10 +22,13 @@ public class QIndividualVideo extends EntityPathBase<IndividualVideo> {
 
     public static final QIndividualVideo individualVideo = new QIndividualVideo("individualVideo");
 
-    public final com.chicplay.mediaserver.global.common.QBaseTime _super = new com.chicplay.mediaserver.global.common.QBaseTime(this);
+    public final com.chicplay.mediaserver.global.common.QBaseEntity _super = new com.chicplay.mediaserver.global.common.QBaseEntity(this);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
+
+    //inherited
+    public final BooleanPath deleted = _super.deleted;
 
     public final ComparablePath<java.util.UUID> id = createComparable("id", java.util.UUID.class);
 

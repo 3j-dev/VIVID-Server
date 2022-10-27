@@ -2,7 +2,7 @@ package com.chicplay.mediaserver.domain.video_space.domain;
 
 import com.chicplay.mediaserver.domain.user.domain.User;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
-import com.chicplay.mediaserver.global.common.BaseTime;
+import com.chicplay.mediaserver.global.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.util.List;
 @Table(name = "video_space_participant")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class VideoSpaceParticipant extends BaseTime {
+public class VideoSpaceParticipant extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

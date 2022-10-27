@@ -1,7 +1,7 @@
 package com.chicplay.mediaserver.domain.user.domain;
 
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpaceParticipant;
-import com.chicplay.mediaserver.global.common.BaseTime;
+import com.chicplay.mediaserver.global.common.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Table(name = "user")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseTime {
+public class User extends BaseEntity {
 
     @Id @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")

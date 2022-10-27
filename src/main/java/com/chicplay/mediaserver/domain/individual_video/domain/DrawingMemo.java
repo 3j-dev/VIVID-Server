@@ -1,6 +1,6 @@
 package com.chicplay.mediaserver.domain.individual_video.domain;
 
-import com.chicplay.mediaserver.global.common.BaseTime;
+import com.chicplay.mediaserver.global.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Table(name = "drawing_memo")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DrawingMemo extends BaseTime {
+public class DrawingMemo extends BaseEntity {
 
     @Id
     @GeneratedValue(generator = "uuid2")

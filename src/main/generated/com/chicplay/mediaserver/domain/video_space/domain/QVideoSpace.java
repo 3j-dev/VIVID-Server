@@ -20,10 +20,13 @@ public class QVideoSpace extends EntityPathBase<VideoSpace> {
 
     public static final QVideoSpace videoSpace = new QVideoSpace("videoSpace");
 
-    public final com.chicplay.mediaserver.global.common.QBaseTime _super = new com.chicplay.mediaserver.global.common.QBaseTime(this);
+    public final com.chicplay.mediaserver.global.common.QBaseEntity _super = new com.chicplay.mediaserver.global.common.QBaseEntity(this);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
+
+    //inherited
+    public final BooleanPath deleted = _super.deleted;
 
     public final StringPath description = createString("description");
 

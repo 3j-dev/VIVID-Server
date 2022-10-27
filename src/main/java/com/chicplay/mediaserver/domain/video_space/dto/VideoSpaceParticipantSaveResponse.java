@@ -11,11 +11,11 @@ public class VideoSpaceParticipantSaveResponse {
 
     private String userEmail;
 
-    private Long videoSpaceId;
+    private Long id;
 
     @Builder
     public VideoSpaceParticipantSaveResponse(VideoSpaceParticipant videoSpaceParticipant) {
         this.userEmail = videoSpaceParticipant.getUser().getEmail();
-        this.videoSpaceId = videoSpaceParticipant.getVideoSpace().getId();
+        this.id = videoSpaceParticipant.getVideoSpace().getId();
     }
 }

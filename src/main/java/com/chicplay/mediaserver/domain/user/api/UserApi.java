@@ -50,7 +50,7 @@ public class UserApi {
 
     @Operation(summary = "test api", description = "서버 연결을 테스팅 하기 위한 api 입니다.")
     @GetMapping("/api/test")
-    public String test(@RequestParam("email") String email){
+    public String test(){
 
         return "hello_test";
     }

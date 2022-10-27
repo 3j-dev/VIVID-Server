@@ -2,7 +2,7 @@ package com.chicplay.mediaserver.domain.video.domain;
 
 import com.chicplay.mediaserver.domain.video_space.domain.VideoSpace;
 import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
-import com.chicplay.mediaserver.global.common.BaseTime;
+import com.chicplay.mediaserver.global.common.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @Table(name = "video")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Video extends BaseTime{
+public class Video extends BaseEntity {
 
 
     @Id

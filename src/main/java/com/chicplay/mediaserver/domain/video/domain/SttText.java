@@ -1,21 +1,19 @@
 package com.chicplay.mediaserver.domain.video.domain;
 
-import com.chicplay.mediaserver.global.common.BaseTime;
+import com.chicplay.mediaserver.global.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "stt_text")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SttText extends BaseTime {
+public class SttText extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

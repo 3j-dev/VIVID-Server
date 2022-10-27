@@ -1,17 +1,12 @@
 package com.chicplay.mediaserver.domain.individual_video.domain;
 
-import com.chicplay.mediaserver.domain.individual_video.domain.IndividualVideo;
-import com.chicplay.mediaserver.domain.video.domain.Video;
-import com.chicplay.mediaserver.global.common.BaseTime;
+import com.chicplay.mediaserver.global.common.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -19,7 +14,7 @@ import java.util.UUID;
 @Table(name = "snapshot_image")
 @Getter
 @NoArgsConstructor
-public class SnapshotImage extends BaseTime {
+public class SnapshotImage extends BaseEntity {
 
     @Id @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")

@@ -1,13 +1,12 @@
 package com.chicplay.mediaserver.domain.individual_video.domain;
 
-import com.chicplay.mediaserver.global.common.BaseTime;
+import com.chicplay.mediaserver.global.common.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -15,7 +14,7 @@ import java.util.UUID;
 @Table(name = "bookmark")
 @Getter
 @NoArgsConstructor
-public class Bookmark extends BaseTime {
+public class Bookmark extends BaseEntity {
 
     @Id
     @GeneratedValue(generator = "uuid2")
