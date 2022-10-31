@@ -36,7 +36,7 @@ public class IndividualVideoApi {
     @Operation(summary = "image snapshot save api", description = "이미지 스냅샷을 저장하는 메소드입니다.")
     @ApiResponse(responseCode = "200", description = "이미지 업로드 완료 후, 각각 이미지의 url을 json 형식으로 반환합니다.")
     public SnapshotImageUploadResponse uploadSnapshotImage(
-            @RequestPart("video")
+            @RequestPart("image")
             @Parameter(description = "multipartFile image file")
             MultipartFile multipartFile,
 

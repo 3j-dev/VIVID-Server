@@ -103,7 +103,6 @@ public class TextMemoStateDao {
 
         TextMemoStateLatest textMemoStateLatest = objectMapper.convertValue(map, TextMemoStateLatest.class);
 
-
         return textMemoStateLatest;
     }
 
@@ -205,29 +204,29 @@ public class TextMemoStateDao {
 
     // textMemoState 리스트 저장
     // redis pipeline을 통해 다양한 코드 삽입.
-    public void saveListToRedis(List<TextMemoStateRedisSaveRequest> textMemoStates) {
-
-        // redis pipeline
-        redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
-            textMemoStates.forEach(textMemoState -> {
-
-                TextMemoState textMemoStateEntity = textMemoState.toEntity();
-
-                Map<String, Object> map = objectMapper.convertValue(textMemoStateEntity, Map.class);
-
-                // text_memo_state set 형식에 key값 추가.
-                connection.sAdd(keySerializer.serialize(TEXT_MEMO_STATE_KEY),
-                        valueSerializer.serialize(textMemoStateEntity.getId()));
-
-                // 각각의 객체들 redis에 hash 타입으로 set
-                for (String key : map.keySet()) {
-                    connection.hashCommands().hSet(keySerializer.serialize(TEXT_MEMO_STATE_KEY + ":" + textMemoStateEntity.getId()),
-                            valueSerializer.serialize(key), valueSerializer.serialize(map.get(key)));
-                }
-            });
-            return null;
-        });
-    }
+//    public void saveListToRedis(List<TextMemoStateRedisSaveRequest> textMemoStates) {
+//
+//        // redis pipeline
+//        redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+//            textMemoStates.forEach(textMemoState -> {
+//
+//                TextMemoState textMemoStateEntity = textMemoState.toEntity();
+//
+//                Map<String, Object> map = objectMapper.convertValue(textMemoStateEntity, Map.class);
+//
+//                // text_memo_state set 형식에 key값 추가.
+//                connection.sAdd(keySerializer.serialize(TEXT_MEMO_STATE_KEY),
+//                        valueSerializer.serialize(textMemoStateEntity.getId()));
+//
+//                // 각각의 객체들 redis에 hash 타입으로 set
+//                for (String key : map.keySet()) {
+//                    connection.hashCommands().hSet(keySerializer.serialize(TEXT_MEMO_STATE_KEY + ":" + textMemoStateEntity.getId()),
+//                            valueSerializer.serialize(key), valueSerializer.serialize(map.get(key)));
+//                }
+//            });
+//            return null;
+//        });
+//    }
 
     // key 값 매칭을 통해 scan 하는 코드
     public List<TextMemoStateHistory> getTextMemoStateHistoryFromRedisVer2(String individualVideoId) {

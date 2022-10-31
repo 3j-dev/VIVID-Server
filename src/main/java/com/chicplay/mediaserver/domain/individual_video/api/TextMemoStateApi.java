@@ -29,9 +29,9 @@ public class TextMemoStateApi {
     @Operation(summary = "text state 레디스 save api", description = "text state를 레디스 캐시에 저장합니다.")
     @ApiResponse(responseCode = "200", description = "반환값은 없습니다.")
     @PostMapping("/{individual-video-id}/cache/text-memo-state")
-    public void saveToCache(@RequestBody @Valid final TextMemoStateRedisSaveRequest dto) {
+    public void saveToCache(@RequestBody @Valid final TextMemoStateRedisSaveRequest dto, @PathVariable("individual-video-id") String individualVideoId) {
 
-        textMemoStateService.saveToRedis(dto);
+        textMemoStateService.saveToRedis(dto, individualVideoId);
     }
 
     // dynamodb에 latest,history 모두 save

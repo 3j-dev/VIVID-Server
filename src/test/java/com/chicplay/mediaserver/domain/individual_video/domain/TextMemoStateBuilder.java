@@ -20,7 +20,6 @@ public class TextMemoStateBuilder {
     public static TextMemoStateRedisSaveRequest redisSaveRequestBuilder(String individualVideoId) {
 
         TextMemoStateRedisSaveRequest textMemoStateRedisSaveRequest = TextMemoStateRedisSaveRequest.builder()
-                .individualVideoId(individualVideoId)
                 .stateJson(STATE_JSON)
                 .videoTime(VIDEO_TIME)
                 .build();

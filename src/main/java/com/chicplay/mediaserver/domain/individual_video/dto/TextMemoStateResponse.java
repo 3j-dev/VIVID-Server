@@ -13,10 +13,7 @@ import java.time.LocalTime;
 import java.util.UUID;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TextMemoStateResponse {
-
-    private UUID individualVideoId;
 
     private String stateJson;
 
@@ -24,11 +21,20 @@ public class TextMemoStateResponse {
 
     private LocalDateTime createdAt;
 
+
     @Builder
     public TextMemoStateResponse(TextMemoState textMemoState) {
-        this.individualVideoId = textMemoState.getIndividualVideoId();
         this.stateJson = textMemoState.getStateJson();
         this.videoTime = textMemoState.getVideoTime();
         this.createdAt = textMemoState.getCreatedAt();
     }
+
+    @Builder
+    public TextMemoStateResponse() {
+        this.stateJson = "";
+        this.videoTime = null;
+        this.createdAt = null;
+    }
+
+
 }

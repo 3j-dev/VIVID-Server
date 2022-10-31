@@ -24,7 +24,7 @@ public class BaseEntity {
     @Column(name = "update_at")
     private LocalDateTime updatedDate;
 
-    @Column(name = "deleted", columnDefinition="tinyint(1) default 0")
-    private boolean deleted;
+    @Column(name = "deleted")
+    private boolean deleted = false;
 
 }

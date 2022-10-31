@@ -18,9 +18,6 @@ public class TextMemoStateRedisSaveRequest {
     private String id;
 
     @NotBlank
-    protected String individualVideoId;
-
-    @NotBlank
     private String stateJson;
 
     @NotBlank
@@ -28,13 +25,12 @@ public class TextMemoStateRedisSaveRequest {
 
 
     @Builder
-    public TextMemoStateRedisSaveRequest(String individualVideoId, String stateJson, String videoTime) {
-        this.individualVideoId = individualVideoId;
+    public TextMemoStateRedisSaveRequest(String stateJson, String videoTime) {
         this.stateJson = stateJson;
         this.videoTime = videoTime;
     }
 
-    public TextMemoState toEntity() {
+    public TextMemoState toEntity(String individualVideoId) {
 
         return TextMemoState.builder()
                 .id(UUID.randomUUID().toString())
