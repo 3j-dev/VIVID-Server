@@ -25,7 +25,7 @@ public class UserAccessTokenCookieService {
     @Value("${cookie-domain}")
     private String cookieDomain;
 
-//    private String accessTokenCookieKey = "vivid-at";
+    private String accessTokenSecureCookieKey = "vivid-at";
     private String accessTokenCookieKey = "access-token";
 
     public String getAccessTokenFromCookie() {
@@ -59,7 +59,7 @@ public class UserAccessTokenCookieService {
     public Cookie makeAccessTokenCookie(String accessToken, int time) {
 
         // create a cookie
-        Cookie cookie = new Cookie(accessTokenCookieKey,accessToken);
+        Cookie cookie = new Cookie(accessTokenSecureCookieKey,accessToken);
 
         // expires in 30m
         cookie.setMaxAge(time);
