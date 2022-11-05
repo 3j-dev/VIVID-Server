@@ -25,7 +25,8 @@ public class UserAccessTokenCookieService {
     @Value("${cookie-domain}")
     private String cookieDomain;
 
-    private String accessTokenCookieKey = "vivid-at";
+//    private String accessTokenCookieKey = "vivid-at";
+    private String accessTokenCookieKey = "access-token";
 
     public String getAccessTokenFromCookie() {
 

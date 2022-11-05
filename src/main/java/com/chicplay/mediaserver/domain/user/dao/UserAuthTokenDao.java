@@ -56,8 +56,6 @@ public class UserAuthTokenDao {
     // get refresh token redis
     public String getRefreshToken(String email, String userIp) {
 
-        log.info("refresh-token-get");
-
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
 
         Optional<Object> refreshToken = Optional.ofNullable(hashOperations.get(email, REFRESH_TOKEN_HASH_KEY));
