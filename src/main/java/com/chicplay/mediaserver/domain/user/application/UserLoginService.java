@@ -35,7 +35,8 @@ public class UserLoginService {
     public UserNewTokenDto reIssueAccessToken() {
 
         // 쿠키에 access token을 get, 이 때 쿠키에 값 없으면 throw exception
-        String accessToken = userAccessTokenCookieService.getAccessTokenFromCookie();
+        //String accessToken = userAccessTokenCookieService.getAccessTokenFromCookie();
+        String accessToken = jwtProviderService.getAccessToken();
 
         String email = jwtProviderService.getEmail(accessToken);
 
