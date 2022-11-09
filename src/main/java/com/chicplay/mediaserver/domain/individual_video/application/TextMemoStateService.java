@@ -32,10 +32,10 @@ public class TextMemoStateService {
 
 
     // redis에 textMemoState 객체 하나 저장 메소드
-    public void saveToRedis(final TextMemoStateRedisSaveRequest textMemoState, String individualVideoId) {
+    public void saveToRedis(final TextMemoStateRedisSaveRequest textMemoStateRedisSaveRequest, String individualVideoId) {
 
         // save to redis
-        textMemoStateDao.saveToRedis(textMemoState.toEntity(individualVideoId));
+        textMemoStateDao.saveToRedis(textMemoStateRedisSaveRequest.toEntity(individualVideoId));
     }
 
     // redis로 부터 latest get
@@ -80,13 +80,13 @@ public class TextMemoStateService {
     }
 
     // redis 캐시에 있던 데이터 전부 save
-    public void saveAllToDynamoDb(String individualVideoId) {
+    public void saveAllToDynamoDb(TextMemoStateRedisSaveRequest textMemoStateRedisSaveRequest, String individualVideoId) {
 
         // 권한 체크
         individualVideoService.checkValidUserAccessId(individualVideoId);
 
-        // latest save
-        saveLatestToDynamoDb(individualVideoId);
+        // save latest to redis, 캐시에는 남겨 놓는다.
+        saveLatestToDynamoDb(textMemoStateRedisSaveRequest, individualVideoId);
 
         // history save
         saveHistoryToDynamoDb(individualVideoId);
@@ -95,17 +95,20 @@ public class TextMemoStateService {
 
     // dynamo db에 textMemoStateLatest문 insert
     // save시 redis에서 delete
-    public void saveLatestToDynamoDb(String individualVideoId) {
+    public void saveLatestToDynamoDb(TextMemoStateRedisSaveRequest textMemoStateRedisSaveRequest, String individualVideoId) {
 
         // 요청된 individualVideoId의 state latest를 redis에서 가져온다. 없을 경우 예외 throw
-        TextMemoStateLatest textMemoStateLatest = Optional.ofNullable(textMemoStateDao.getLatestFromRedis(individualVideoId))
-                .orElseThrow(TextMemoStateNotExistException::new);
+//        TextMemoStateLatest textMemoStateLatest = Optional.ofNullable(textMemoStateDao.getLatestFromRedis(individualVideoId))
+//                .orElseThrow(TextMemoStateNotExistException::new);
 
-        // 해당 state를 저장한다.
-        textMemoStateDao.saveLatestToDynamo(textMemoStateLatest);
+        // change to textmemo entity
+        TextMemoState textMemoState = textMemoStateRedisSaveRequest.toEntity(individualVideoId);
 
-        // redis에서 삭제
-        textMemoStateDao.deleteLatestFromRedis(individualVideoId);
+        // save latest to redis
+        textMemoStateDao.saveToRedis(textMemoState);
+
+        // save latest to dynamo
+        textMemoStateDao.saveLatestToDynamo(textMemoState.toLatestTextMemoState());
     }
 
     // dynamo db에 textMemoStateHistory문 insert

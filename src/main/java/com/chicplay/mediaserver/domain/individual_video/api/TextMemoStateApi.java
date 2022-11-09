@@ -38,9 +38,9 @@ public class TextMemoStateApi {
     @Operation(summary = "text state 다이나모DB save api", description = "레디스 캐시에 있는 text state 모두를 다이나모DB에 저장합니다.")
     @ApiResponse(responseCode = "200", description = "반환값은 없습니다.")
     @PostMapping("/{individual-video-id}/text-memo-states")
-    public void saveListToDynamoDb(@PathVariable("individual-video-id") String individualVideoId) {
+    public void saveListToDynamoDb(@RequestBody @Valid final TextMemoStateRedisSaveRequest dto, @PathVariable("individual-video-id") String individualVideoId) {
 
-        textMemoStateService.saveAllToDynamoDb(individualVideoId);
+        textMemoStateService.saveAllToDynamoDb(dto, individualVideoId);
     }
 
     // redis 캐시로 부터 text memo state latest get

@@ -27,8 +27,9 @@ public class TextMemoStateLatest extends TextMemoState{
     @DynamoDBHashKey(attributeName = "individual_video_id")
     private UUID individualVideoId;
 
-    public TextMemoStateLatest(String id, UUID individualVideoId, String stateJson, LocalTime videoTime, LocalDateTime createdAt) {
-        super(id, individualVideoId,  stateJson, videoTime, createdAt);
-        this.individualVideoId = individualVideoId;
+    public TextMemoStateLatest(TextMemoState textMemoState) {
+
+        super(textMemoState.getId(), textMemoState.getIndividualVideoId(),  textMemoState.getStateJson(), textMemoState.getVideoTime(), textMemoState.getCreatedAt());
+        this.individualVideoId = textMemoState.getIndividualVideoId();
     }
 }

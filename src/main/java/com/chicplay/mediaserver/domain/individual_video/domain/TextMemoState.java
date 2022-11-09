@@ -53,4 +53,12 @@ public class TextMemoState {
         this.videoTime = videoTime;
         this.createdAt = createdAt;
     }
+
+    public TextMemoStateLatest toLatestTextMemoState() {
+
+        TextMemoStateLatest textMemoStateLatest = new TextMemoStateLatest(this);
+
+        return textMemoStateLatest;
+    }
+
 }
