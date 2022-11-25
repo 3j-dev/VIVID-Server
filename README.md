@@ -23,38 +23,6 @@
 
 <br>
 
-## 💻 개발 내용/프로젝트 중점 사항
-- **Spring boot와 JPA를 기반으로 REST API를 구현**했습니다. 이 때 **RESTful API Spec을 준수하여 URI와 API를 설계**했습니다.
-- **Spring boot, JPA, OOP의 동작 원리와 기본 개념**의 학습을 토대로 코드를 작성했습니다. **특정 방식과 기술에 매몰되지 않고, Trade-off를 고려하여 적합한 방식을 찾아 적용**하기 위해 노력했습니다.
-- 전반적인 Backend 사이드의 **웹 서비스 인프라, 클라우드 아키텍처를 설계하고 구현** 했으며, 배포 및 운영을 담당했습니다.
-- **MySQL을 기반으로 RDBMS 스키마를 설계하고 운영**했으며, **JSON 타입 데이터 저장을 위한 DynamoDB와 Cache 스토리지 용도의 Redis를 활용한 비즈니스 로직을 구현**했습니다.
-- **Spring Web 계층별 책임과 역할의 분리를 위한 프로젝트 구조를 설계**했습니다.
-- **클린 코드, 문서화, 트러블 슈팅 과정 기록** 통해 협업에 편리한 프로젝트를 만들었습니다.
-
-<br>
-
-## 🎯 트러블 슈팅 & 개발 일지
-
-[**해당 프로젝트를 개발하면서, 기술적 이슈를 해결한 과정과 학습에 필요한 내용을 정리한 포스팅을 작성**](https://velog.io/@jsb100800/series/Srping-Boot-Development)했습니다.하나의 포스팅을 작성하는 것에는 정말로 많은 시간이 들었습니다. 이미 지나간 경험을 복기해보고 기술에 대해 한 뎁스 깊게 탐구하여 글로 표현한다는 것은 꽤나 막막한 일이었기 때문입니다.
-
-포스팅을 작성할 때 **해당 이슈가 생긴 이유**와 어떤 방법으로 어떻게 해결했는지, 그리고 이 과정에서 **내가 고민한 것은 무엇**이고, **내가 기술적으로 성장한 부분은 무엇인지를 중심으로 작성**했습니다.
-
-- [**JPA Soft Delete 구현하기.**](https://velog.io/@jsb100800/Spring-boot-JPA-Soft-Delete-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
-- [**JPA Delete is not Working, 영속성와 연관 관계를 고려했는가.**](https://velog.io/@jsb100800/spring-12)
-- [**JPA N+1 문제 발견과 돌파.**](https://velog.io/@jsb100800/Spring-boot-JPA-N1)
-- [**Spring boot 디렉터리 패키지 구조의 선택.**](https://velog.io/@jsb100800/Spring-boot-directory-package)
-- [**JPA PK 매핑 전략, Auto Increment Key와 UUID 선택의 기준.**](https://velog.io/@jsb100800/Spring-boot-JPA-PK-MAPPING)
-- [**DTO와 Entity 간의 변환이 일어나는 Layer에 대한 고민.**](https://velog.io/@jsb100800/Spring-boot-DTO-Entity-%EA%B0%84-%EB%B3%80%ED%99%98-%EC%96%B4%EB%8A%90-Layer%EC%97%90%EC%84%9C-%ED%95%98%EB%8A%94%EA%B2%8C-%EC%A2%8B%EC%9D%84%EA%B9%8C)
-- [**Test Containers를 활용한 Redis & DynamoDB Test 환경 구축.**](https://velog.io/@jsb100800/Spring-boot-Test)
-- [**Redis Pipeline을 활용한 Redis 다중 Insert 작업 구현.**](https://velog.io/@jsb100800/redis-pipelining)
-- [**DynamoDB Read시 객체 매핑 이슈 해결.**](https://velog.io/@jsb100800/Spring-boot-DynamoDB-Read)
-- [**상속 관계가 있는 Entity에 @Builder 적용시 이슈 해결.**](https://velog.io/@jsb100800/super-builder)
-- [**DynamoDB Type Convert 이슈 트러블 슈팅.**](https://velog.io/@jsb100800/spring123)
-- [**Spring Docs Swagger의 Content-Type 불일치 이슈.**](https://velog.io/@jsb100800/Spring-boot-Swagger-issue1)
-- [**@Valid가 동작하지 않을 때 이슈 트러블 슈팅.**](https://velog.io/@jsb100800/Spring-boot-Valid-is-not-working-Valid%EA%B0%80-%EB%8F%99%EC%9E%91%ED%95%98%EC%A7%80-%EC%95%8A%EC%9D%84-%EB%95%8C)
-
-<br>
-
 ##  📋  API Docs
 
 [API Docs](https://cooing-delivery-882.notion.site/VIVID-API-DOCS-2a2e38bedafe407e98387a7421d25429)
